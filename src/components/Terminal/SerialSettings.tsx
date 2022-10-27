@@ -1,0 +1,241 @@
+/*
+ * Copyright (c) 2015 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-4-Clause
+ */
+
+import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+    Dropdown,
+    DropdownItem,
+    Group,
+    Toggle,
+    truncateMiddle,
+} from 'pc-nrfconnect-shared';
+
+import { createModem } from '../../features/terminal/modem';
+import {
+    getAutoConnected,
+    getAvailableSerialPorts,
+    getModem,
+    getSelectedSerialport,
+    getSerialOptions,
+    SerialOptions,
+    setAutoConnected,
+    setModem,
+    setSelectedSerialport,
+    setSerialOptions,
+} from '../../features/terminal/terminalSlice';
+
+type Parity = 'none' | 'even' | 'mark' | 'odd' | 'space' | undefined;
+type DataBits = 8 | 7 | 6 | 5 | undefined;
+type StopBits = 1 | 2 | undefined;
+
+const convertToDropDownItems: <T>(
+    data: T[],
+    addAuto?: boolean
+) => DropdownItem[] = (data, addAuto = true) => {
+    const mappedData = data.map(v => ({
+        label: `${v}`,
+        value: `${v}`,
+    }));
+
+    return addAuto
+        ? [{ label: 'Auto', value: 'undefined' }, ...mappedData]
+        : mappedData;
+};
+
+const SerialSettings = () => {
+    const serialOptions = useSelector(getSerialOptions);
+    const availablePorts = useSelector(getAvailableSerialPorts);
+    const selectedSerialport = useSelector(getSelectedSerialport);
+    const autoConnected = useSelector(getAutoConnected);
+    const modem = useSelector(getModem);
+
+    const dispatch = useDispatch();
+
+    const comPortsDropdownItems =
+        availablePorts.length > 0
+            ? [
+                  { label: 'Not connected', value: 'Not connected' },
+                  ...availablePorts.map(portPath => ({
+                      label: truncateMiddle(portPath, 20, 8),
+                      value: portPath as string,
+                  })),
+              ]
+            : [];
+
+    const selectedComPortItem = selectedSerialport
+        ? comPortsDropdownItems[
+              comPortsDropdownItems.findIndex(
+                  e => e.value === selectedSerialport
+              )
+          ]
+        : comPortsDropdownItems[0];
+
+    const updateSerialPort = (
+        portPath: string | undefined,
+        options: SerialOptions
+    ) => {
+        if (
+            (typeof portPath !== 'undefined' && portPath !== 'Not connected') ||
+            options !== serialOptions
+        ) {
+            const action = () =>
+                dispatch(setModem(createModem(portPath as string, options)));
+
+            modem ? modem?.close(action) : action();
+        } else {
+            modem?.close();
+            setModem(undefined);
+        }
+
+        dispatch(setSelectedSerialport(portPath));
+        dispatch(setSerialOptions(options));
+    };
+
+    const { argv } = process;
+
+    const portNameIndex = argv.findIndex(arg => arg === '--comPort');
+    const portName = portNameIndex > -1 ? argv[portNameIndex + 1] : undefined;
+    const shouldAutoConnect = !autoConnected && portName;
+
+    if (shouldAutoConnect) {
+        updateSerialPort(portName, serialOptions);
+        dispatch(setAutoConnected(true));
+    }
+
+    const boadrateItems = convertToDropDownItems(
+        [
+            115200, 57600, 38400, 19200, 9600, 4800, 2400, 1800, 1200, 600, 300,
+            200, 150, 134, 110, 75, 50,
+        ],
+        false
+    );
+
+    const dataBitsItems = convertToDropDownItems([8, 7, 6, 5], true);
+    const stopBitsItems = convertToDropDownItems([1, 2], true);
+    const parityItems = convertToDropDownItems(
+        ['none', 'even', 'mark', 'odd', 'space'],
+        true
+    );
+
+    return (
+        <Group heading="Serial Settings">
+            <Dropdown
+                onSelect={({ value }) => updateSerialPort(value, serialOptions)}
+                items={comPortsDropdownItems}
+                selectedItem={selectedComPortItem}
+            />
+            <Dropdown
+                label="Baud Rate"
+                onSelect={item =>
+                    updateSerialPort(selectedSerialport, {
+                        ...serialOptions,
+                        baudRate: Number(item.value),
+                    })
+                }
+                items={boadrateItems}
+                selectedItem={
+                    boadrateItems[
+                        boadrateItems.findIndex(
+                            e => e.value === `${serialOptions.baudRate}`
+                        )
+                    ]
+                }
+            />
+            <Dropdown
+                label="Data bits"
+                onSelect={item =>
+                    updateSerialPort(selectedSerialport, {
+                        ...serialOptions,
+                        dataBits: (['8', '7', '6', '5'].indexOf(item.value) ===
+                        -1
+                            ? undefined
+                            : Number(item.value)) as DataBits,
+                    })
+                }
+                items={dataBitsItems}
+                defaultIndex={0}
+                selectedItem={
+                    dataBitsItems[
+                        dataBitsItems.findIndex(
+                            e => e.value === `${serialOptions.dataBits}`
+                        )
+                    ]
+                }
+            />
+            <Dropdown
+                label="Stop bits"
+                onSelect={item =>
+                    updateSerialPort(selectedSerialport, {
+                        ...serialOptions,
+                        stopBits: (['1', '2'].indexOf(item.value) === -1
+                            ? undefined
+                            : Number(item.value)) as StopBits,
+                    })
+                }
+                items={stopBitsItems}
+                defaultIndex={0}
+            />
+            <Dropdown
+                label="Parity"
+                onSelect={item =>
+                    updateSerialPort(selectedSerialport, {
+                        ...serialOptions,
+                        parity: ([
+                            'none',
+                            'even',
+                            'mark',
+                            'odd',
+                            'space',
+                        ].indexOf(item.value) === -1
+                            ? undefined
+                            : item.value) as Parity,
+                    })
+                }
+                items={parityItems}
+                defaultIndex={0}
+            />
+            <Toggle
+                onToggle={item =>
+                    updateSerialPort(selectedSerialport, {
+                        ...serialOptions,
+                        rtscts: item,
+                    })
+                }
+                label="rts/cts"
+            />
+            <Toggle
+                onToggle={item =>
+                    updateSerialPort(selectedSerialport, {
+                        ...serialOptions,
+                        xon: item,
+                    })
+                }
+                label="xOn"
+            />
+            <Toggle
+                onToggle={item =>
+                    updateSerialPort(selectedSerialport, {
+                        ...serialOptions,
+                        xoff: item,
+                    })
+                }
+                label="xOff"
+            />
+            <Toggle
+                onToggle={item =>
+                    updateSerialPort(selectedSerialport, {
+                        ...serialOptions,
+                        xany: item,
+                    })
+                }
+                label="xAny"
+            />
+        </Group>
+    );
+};
+
+export default SerialSettings;
