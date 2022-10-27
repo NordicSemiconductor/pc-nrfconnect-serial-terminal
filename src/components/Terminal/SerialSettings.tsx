@@ -102,7 +102,10 @@ const SerialSettings = () => {
     const shouldAutoConnect = !autoConnected && portName;
 
     if (shouldAutoConnect) {
-        updateSerialPort(portName, serialOptions);
+        const portExists = availablePorts.indexOf(portName) !== -1;
+
+        if (portExists) updateSerialPort(portName, serialOptions);
+
         dispatch(setAutoConnected(true));
     }
 
