@@ -5,7 +5,7 @@
  */
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Group, Toggle } from 'pc-nrfconnect-shared';
+import { Group, StateSelector, Toggle } from 'pc-nrfconnect-shared';
 
 import {
     getAppendCarriageReturn,
@@ -32,15 +32,10 @@ const TerminalSettings = () => {
 
     return (
         <Group heading="Terminal Settings">
-            <Toggle
-                isToggled={lineMode}
-                onToggle={value => dispatch(setLineMode(value))}
-                label="Line Mode"
-            />
-            <Toggle
-                isToggled={!lineMode}
-                onToggle={value => dispatch(setLineMode(!value))}
-                label="Shell Mode"
+            <StateSelector
+                items={['Line', 'Shell']}
+                defaultIndex={0}
+                onSelect={value => dispatch(setLineMode(value === 0))}
             />
             {lineMode && (
                 <>
