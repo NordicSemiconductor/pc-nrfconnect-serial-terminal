@@ -16,6 +16,7 @@ import useFitAddon from '../../hooks/useFitAddon';
 
 import 'xterm/css/xterm.css';
 import './terminal.scss';
+import styles from './Terminal.module.scss';
 
 interface Props {
     commandCallback: (command: string) => string | undefined;
@@ -106,8 +107,8 @@ const Terminal: React.FC<Props> = ({
     const terminalOptions = {
         convertEol: false,
         theme: {
-            foreground: '#eceff1',
-            background: '#263238',
+            foreground: styles.terminalForeground,
+            background: styles.terminalBackground,
         },
         disableStdin: lineMode, // Line mode user needs to use the input field not the terminal
     };
@@ -116,12 +117,12 @@ const Terminal: React.FC<Props> = ({
         <div ref={resizeRef} style={{ height: '100%' }}>
             {lineMode && (
                 <form onSubmit={() => handleUserInputLineMode(cmdLine)}>
-                    <Form.Group controlId="commandPrompt">
+                    <Form.Group className="commandPrompt">
                         <InputGroup>
                             <Form.Control
                                 value={cmdLine}
                                 type="text"
-                                placeholder="Type and press send"
+                                placeholder="Type and press enter to send"
                                 onChange={({ target }) => {
                                     setCmdLine(target.value);
                                 }}
@@ -142,7 +143,7 @@ const Terminal: React.FC<Props> = ({
             <div
                 style={
                     lineMode
-                        ? { height: 'calc(100% - 49px)' }
+                        ? { height: 'calc(100% - 38px)' }
                         : { height: '100%' }
                 }
             >

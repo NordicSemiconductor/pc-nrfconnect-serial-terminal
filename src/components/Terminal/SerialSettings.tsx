@@ -126,81 +126,86 @@ const SerialSettings = () => {
 
     return (
         <Group heading="Serial Settings">
-            <Dropdown
-                onSelect={({ value }) => updateSerialPort(value, serialOptions)}
-                items={comPortsDropdownItems}
-                selectedItem={selectedComPortItem}
-            />
-            <Dropdown
-                label="Baud Rate"
-                onSelect={item =>
-                    updateSerialPort(selectedSerialport, {
-                        ...serialOptions,
-                        baudRate: Number(item.value),
-                    })
-                }
-                items={boadrateItems}
-                selectedItem={
-                    boadrateItems[
-                        boadrateItems.findIndex(
-                            e => e.value === `${serialOptions.baudRate}`
-                        )
-                    ]
-                }
-            />
-            <Dropdown
-                label="Data bits"
-                onSelect={item =>
-                    updateSerialPort(selectedSerialport, {
-                        ...serialOptions,
-                        dataBits: (['8', '7', '6', '5'].indexOf(item.value) ===
-                        -1
-                            ? undefined
-                            : Number(item.value)) as DataBits,
-                    })
-                }
-                items={dataBitsItems}
-                defaultIndex={0}
-                selectedItem={
-                    dataBitsItems[
-                        dataBitsItems.findIndex(
-                            e => e.value === `${serialOptions.dataBits}`
-                        )
-                    ]
-                }
-            />
-            <Dropdown
-                label="Stop bits"
-                onSelect={item =>
-                    updateSerialPort(selectedSerialport, {
-                        ...serialOptions,
-                        stopBits: (['1', '2'].indexOf(item.value) === -1
-                            ? undefined
-                            : Number(item.value)) as StopBits,
-                    })
-                }
-                items={stopBitsItems}
-                defaultIndex={0}
-            />
-            <Dropdown
-                label="Parity"
-                onSelect={item =>
-                    updateSerialPort(selectedSerialport, {
-                        ...serialOptions,
-                        parity: ([
-                            'none',
-                            'even',
-                            'mark',
-                            'odd',
-                            'space',
-                        ].indexOf(item.value) === -1
-                            ? undefined
-                            : item.value) as Parity,
-                    })
-                }
-                items={parityItems}
-                defaultIndex={0}
-            />
+            <div className="body" style={{ marginBottom: '16px' }}>
+                <Dropdown
+                    onSelect={({ value }) =>
+                        updateSerialPort(value, serialOptions)
+                    }
+                    items={comPortsDropdownItems}
+                    selectedItem={selectedComPortItem}
+                />
+                <Dropdown
+                    label="Baud Rate"
+                    onSelect={item =>
+                        updateSerialPort(selectedSerialport, {
+                            ...serialOptions,
+                            baudRate: Number(item.value),
+                        })
+                    }
+                    items={boadrateItems}
+                    selectedItem={
+                        boadrateItems[
+                            boadrateItems.findIndex(
+                                e => e.value === `${serialOptions.baudRate}`
+                            )
+                        ]
+                    }
+                />
+                <Dropdown
+                    label="Data bits"
+                    onSelect={item =>
+                        updateSerialPort(selectedSerialport, {
+                            ...serialOptions,
+                            dataBits: (['8', '7', '6', '5'].indexOf(
+                                item.value
+                            ) === -1
+                                ? undefined
+                                : Number(item.value)) as DataBits,
+                        })
+                    }
+                    items={dataBitsItems}
+                    defaultIndex={0}
+                    selectedItem={
+                        dataBitsItems[
+                            dataBitsItems.findIndex(
+                                e => e.value === `${serialOptions.dataBits}`
+                            )
+                        ]
+                    }
+                />
+                <Dropdown
+                    label="Stop bits"
+                    onSelect={item =>
+                        updateSerialPort(selectedSerialport, {
+                            ...serialOptions,
+                            stopBits: (['1', '2'].indexOf(item.value) === -1
+                                ? undefined
+                                : Number(item.value)) as StopBits,
+                        })
+                    }
+                    items={stopBitsItems}
+                    defaultIndex={0}
+                />
+                <Dropdown
+                    label="Parity"
+                    onSelect={item =>
+                        updateSerialPort(selectedSerialport, {
+                            ...serialOptions,
+                            parity: ([
+                                'none',
+                                'even',
+                                'mark',
+                                'odd',
+                                'space',
+                            ].indexOf(item.value) === -1
+                                ? undefined
+                                : item.value) as Parity,
+                        })
+                    }
+                    items={parityItems}
+                    defaultIndex={0}
+                />
+            </div>
             <Toggle
                 onToggle={item =>
                     updateSerialPort(selectedSerialport, {

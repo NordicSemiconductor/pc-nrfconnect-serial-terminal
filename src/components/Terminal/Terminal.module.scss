@@ -1,0 +1,12 @@
+/*
+ * Copyright (c) 2021 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-4-Clause
+ */
+$terminal-foreground: #eceff1;
+$terminal-background: #263238;
+
+:export {
+    terminalForeground: $terminal-foreground;
+    terminalBackground: $terminal-background;
+}

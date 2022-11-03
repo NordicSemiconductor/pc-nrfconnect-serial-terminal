@@ -6,6 +6,8 @@
 @import '~pc-xterm-lib/styles';
 @import '~pc-nrfconnect-shared/styles';
 
+@import './Terminal.module.scss';
+
 .terminal-window {
     height: 100%;
 }
@@ -53,4 +55,55 @@
 .terminal-window .xterm-viewport {
     overflow-y: overlay;
     @include terminalScrollbar();
+}
+
+
+
+.form-group.commandPrompt {
+    margin-bottom: 4px;
+
+    .input-group {
+        &::before {
+            content: ">";
+            background-color: $terminal-background;
+            color: $terminal-foreground;
+            padding: 6px 0 6px 6px;
+            font-size: 110%;
+        }
+
+        .form-control {
+            padding-left: 5px;
+            border-radius: 0;
+            margin-right: 0;
+            background-color: $terminal-background ;
+            border: none;
+            color: $terminal-foreground;
+
+            &:focus {
+                border-color: inherit;
+                box-shadow: none;
+            }
+
+            &::placeholder{
+                color: $gray-200;
+            }
+        }
+
+        button {
+            border: none;
+            background-color: $gray-700;
+
+            &:disabled {
+                opacity: 1 !important;
+            }
+
+            &:hover {
+                background-color: $gray-700 !important;
+            }
+            
+            &:active {
+                background-color: $gray-700 !important;
+            }
+        }
+    }
 }

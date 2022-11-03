@@ -52,9 +52,9 @@ const Main = ({ active }: PaneProps) => {
 
     const commandCallback = useCallback(
         (command: string) => {
-            if (!modem) return 'Please connect a device\r\n';
+            if (!modem) return 'Please connect a device';
 
-            if (!modem.isOpen()) return 'Connection is not open\r\n';
+            if (!modem.isOpen()) return 'Connection is not open';
 
             command += lineMode
                 ? (appendCarriageReturn ? '\r' : '') +
