@@ -6,7 +6,9 @@
 
 import EventEmitter from 'events';
 import { logger } from 'pc-nrfconnect-shared';
-import SerialPort, { OpenOptions } from 'serialport';
+import { OpenOptions } from 'serialport';
+import { SerialPort } from './serialportWrapper';
+import { ipcRenderer } from 'electron';
 
 export type Modem = ReturnType<typeof createModem>;
 
@@ -23,15 +25,16 @@ export const createModem = (
         `Opening: '${serialPortPath}' with options: ${JSON.stringify(options)}`
     );
 
-    const serialPort = new SerialPort(serialPortPath, options, e => {
-        if (e) {
-            logger.error(e);
-        }
-    });
+    // const serialPort = new SerialPort(serialPortPath, options, e => {
+    //     if (e) {
+    //         logger.error(e);
+    //     }
+    // });
+    const serialPort = SerialPort(serialPortPath, options);
 
-    serialPort.on('open', () => {
-        eventEmitter.emit('open');
-    });
+    // serialPort.on('open', () => {
+    //     eventEmitter.emit('open');
+    // });
 
     serialPort.on('data', (data: Buffer) => {
         eventEmitter.emit('response', [data]);
@@ -48,15 +51,15 @@ export const createModem = (
             return () => eventEmitter.removeListener('open', handler);
         },
 
-        close: (callback?: (error?: Error | null) => void) => {
-            if (serialPort.isOpen) {
+        close: async (callback?: (error?: Error | null) => void) => {
+            if (await serialPort.isOpen()) {
                 logger.info(`Closing: '${serialPort.path}'`);
-                serialPort.close(callback);
+                await serialPort.close();
             }
         },
 
-        write: (command: string) => {
-            serialPort.write(command, e => {
+        write: async (command: string) => {
+            await serialPort.write(command, e => {
                 if (e) console.error(e);
             });
 
