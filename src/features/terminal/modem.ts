@@ -8,8 +8,6 @@ import EventEmitter from 'events';
 import { logger } from 'pc-nrfconnect-shared';
 import SerialPort, { OpenOptions } from 'serialport';
 
-export type Response = string[];
-
 export type Modem = ReturnType<typeof createModem>;
 
 const cleanUndefined = (obj: OpenOptions) => JSON.parse(JSON.stringify(obj));
@@ -35,12 +33,12 @@ export const createModem = (
         eventEmitter.emit('open');
     });
 
-    serialPort.on('data', (data: string) => {
+    serialPort.on('data', (data: Buffer) => {
         eventEmitter.emit('response', [data]);
     });
 
     return {
-        onResponse: (handler: (lines: Response, error?: string) => void) => {
+        onResponse: (handler: (data: Buffer[], error?: string) => void) => {
             eventEmitter.on('response', handler);
             return () => eventEmitter.removeListener('response', handler);
         },

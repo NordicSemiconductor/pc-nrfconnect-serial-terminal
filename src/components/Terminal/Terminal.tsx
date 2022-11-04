@@ -22,7 +22,7 @@ import styles from './Terminal.module.scss';
 
 interface Props {
     commandCallback: (command: string) => string | undefined;
-    onModemData: (listener: (line: string) => void) => () => void;
+    onModemData: (listener: (data: Buffer) => void) => () => void;
     onModemOpen: (listener: () => void) => () => void;
     clearOnSend: boolean;
     lineMode: boolean;
@@ -67,7 +67,6 @@ const Terminal: React.FC<Props> = ({
     const handleUserInputShellMode = useCallback(
         (data: string) => {
             if (!echoOnShell) {
-                console.log(data);
                 if (data === '\r') xtermRef.current?.terminal.write('\r\n');
                 else xtermRef.current?.terminal.write(data);
             }
@@ -95,10 +94,7 @@ const Terminal: React.FC<Props> = ({
     }, [commandCallback, lineMode, onModemOpen]);
 
     useEffect(
-        () =>
-            onModemData(data => {
-                xtermRef.current?.terminal.write(data);
-            }),
+        () => onModemData(data => xtermRef.current?.terminal.write(data)),
         [onModemData]
     );
 

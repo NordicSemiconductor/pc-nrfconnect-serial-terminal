@@ -25,7 +25,7 @@ const Main = ({ active }: PaneProps) => {
     const clearOnSend = useSelector(getClearOnSend);
 
     const onModemData = useCallback(
-        (listener: (data: string) => void) => {
+        (listener: (data: Buffer) => void) => {
             if (!modem) return () => {};
 
             const cleanup = [modem.onResponse(data => data.forEach(listener))];
