@@ -59,10 +59,14 @@ const SerialSettings = () => {
         portPath: string | undefined,
         options: SerialOptions
     ) => {
-        if (
-            (typeof portPath !== 'undefined' && portPath !== 'Not connected') ||
-            options !== serialOptions
-        ) {
+        console.log(portPath);
+
+        if (typeof portPath === 'undefined') {
+            dispatch(setSerialOptions(options));
+            return;
+        }
+
+        if (portPath !== 'Not connected' || options !== serialOptions) {
             const action = () =>
                 dispatch(setModem(createModem(portPath as string, options)));
 
