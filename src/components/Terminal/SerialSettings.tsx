@@ -191,6 +191,7 @@ const SerialSettings = () => {
                 />
             </div>
             <Toggle
+                isToggled={serialOptions.rtscts}
                 onToggle={item =>
                     updateSerialPort(selectedSerialport, {
                         ...serialOptions,
@@ -200,6 +201,7 @@ const SerialSettings = () => {
                 label="rts/cts"
             />
             <Toggle
+                isToggled={serialOptions.xon}
                 onToggle={item =>
                     updateSerialPort(selectedSerialport, {
                         ...serialOptions,
@@ -209,6 +211,7 @@ const SerialSettings = () => {
                 label="xOn"
             />
             <Toggle
+                isToggled={serialOptions.xoff}
                 onToggle={item =>
                     updateSerialPort(selectedSerialport, {
                         ...serialOptions,
@@ -218,6 +221,7 @@ const SerialSettings = () => {
                 label="xOff"
             />
             <Toggle
+                isToggled={serialOptions.xany}
                 onToggle={item =>
                     updateSerialPort(selectedSerialport, {
                         ...serialOptions,
