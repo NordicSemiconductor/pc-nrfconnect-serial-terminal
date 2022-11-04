@@ -8,10 +8,12 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
+import { useSelector } from 'react-redux';
 import { useResizeDetector } from 'react-resize-detector';
 import { cursorTo, eraseLine } from 'ansi-escapes';
 import { XTerm } from 'xterm-for-react';
 
+import { getEchoOnShell } from '../../features/terminal/terminalSlice';
 import useFitAddon from '../../hooks/useFitAddon';
 
 import 'xterm/css/xterm.css';
@@ -37,6 +39,7 @@ const Terminal: React.FC<Props> = ({
     const xtermRef = useRef<XTerm | null>(null);
     const { width, height, ref: resizeRef } = useResizeDetector();
     const fitAddon = useFitAddon(height, width, lineMode);
+    const echoOnShell = useSelector(getEchoOnShell);
 
     // In Line mode we need to explicitly write the date send to the terminal
     // In addition we need to also write the data we got from the serial back
@@ -63,12 +66,18 @@ const Terminal: React.FC<Props> = ({
     // the shell mode devide do all the auto complete etc...
     const handleUserInputShellMode = useCallback(
         (data: string) => {
+            if (!echoOnShell) {
+                console.log(data);
+                if (data === '\r') xtermRef.current?.terminal.write('\r\n');
+                else xtermRef.current?.terminal.write(data);
+            }
+
             const ret = commandCallback(data);
             if (ret) {
                 xtermRef.current?.terminal.write(ret);
             }
         },
-        [commandCallback]
+        [commandCallback, echoOnShell]
     );
 
     const clearTermial = () => {

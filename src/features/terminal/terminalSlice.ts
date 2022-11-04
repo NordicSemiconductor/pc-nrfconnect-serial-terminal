@@ -51,6 +51,7 @@ interface TerminalState {
     appendNewLine: boolean;
     appendNullTerminator: boolean;
     lineMode: boolean;
+    echoOnShell: boolean;
 }
 
 const initialState: TerminalState = {
@@ -64,6 +65,7 @@ const initialState: TerminalState = {
     appendNewLine: true,
     appendNullTerminator: false,
     lineMode: true,
+    echoOnShell: true,
 };
 
 const terminalSlice = createSlice({
@@ -103,6 +105,9 @@ const terminalSlice = createSlice({
         setLineMode: (state, action: PayloadAction<boolean>) => {
             state.lineMode = action.payload;
         },
+        setEchoOnShell: (state, action: PayloadAction<boolean>) => {
+            state.echoOnShell = action.payload;
+        },
     },
 });
 
@@ -124,6 +129,8 @@ export const getAppendNewLine = (state: RootState) =>
 export const getAppendNullTerminator = (state: RootState) =>
     state.app.terminal.appendNullTerminator;
 export const getLineMode = (state: RootState) => state.app.terminal.lineMode;
+export const getEchoOnShell = (state: RootState) =>
+    state.app.terminal.echoOnShell;
 
 export const {
     setModem,
@@ -136,5 +143,6 @@ export const {
     setAppendNewLine,
     setAppendNullTerminator,
     setLineMode,
+    setEchoOnShell,
 } = terminalSlice.actions;
 export default terminalSlice.reducer;

@@ -12,11 +12,13 @@ import {
     getAppendNewLine,
     getAppendNullTerminator,
     getClearOnSend,
+    getEchoOnShell,
     getLineMode,
     setAppendCarriageReturn,
     setAppendNewLine,
     setAppendNullTerminator,
     setClearOnSend,
+    setEchoOnShell,
     setLineMode,
 } from '../../features/terminal/terminalSlice';
 
@@ -25,6 +27,7 @@ const TerminalSettings = () => {
     const appendCarriageReturn = useSelector(getAppendCarriageReturn);
     const appendNewLine = useSelector(getAppendNewLine);
     const appendNullTerminator = useSelector(getAppendNullTerminator);
+    const echoOnShell = useSelector(getEchoOnShell);
 
     const lineMode = useSelector(getLineMode);
 
@@ -64,6 +67,13 @@ const TerminalSettings = () => {
                         label="Append Null Terminator"
                     />
                 </>
+            )}
+            {!lineMode && (
+                <Toggle
+                    isToggled={echoOnShell}
+                    onToggle={value => dispatch(setEchoOnShell(value))}
+                    label="Echo on Shell"
+                />
             )}
         </Group>
     );
