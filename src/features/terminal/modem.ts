@@ -7,8 +7,8 @@
 import EventEmitter from 'events';
 import { logger } from 'pc-nrfconnect-shared';
 import { OpenOptions } from 'serialport';
+
 import { SerialPort } from './serialportWrapper';
-import { ipcRenderer } from 'electron';
 
 export type Modem = ReturnType<typeof createModem>;
 

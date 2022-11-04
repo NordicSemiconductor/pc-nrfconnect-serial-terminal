@@ -75,7 +75,7 @@ const SerialSettings = () => {
             }
         } else {
             modem?.close();
-            setModem(undefined);
+            dispatch(setModem(undefined));
         }
 
         dispatch(setSelectedSerialport(portPath));

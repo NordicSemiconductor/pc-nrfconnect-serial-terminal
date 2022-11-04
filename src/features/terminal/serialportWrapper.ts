@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2021 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-4-Clause
+ */
+
 /* Should work as a wrapper to the SerialPort library 
 
 E.g. should support the same features that is needed from the SerialPort
@@ -43,13 +49,10 @@ export const SerialPort = (path: string, options: OpenOptions) => {
         ipcRenderer.invoke('serialport:write', path, data).then(callback);
     };
 
-    const isOpen = async (): Promise<boolean> => {
-        return await ipcRenderer.invoke('serialport:isOpen', path);
-    };
+    const isOpen = (): Promise<boolean> =>
+        ipcRenderer.invoke('serialport:isOpen', path);
 
-    const close = async () => {
-        return await ipcRenderer.invoke('serialport:close', path);
-    };
+    const close = () => ipcRenderer.invoke('serialport:close', path);
 
     ipcRenderer
         .invoke('serialport:new', path, options)
