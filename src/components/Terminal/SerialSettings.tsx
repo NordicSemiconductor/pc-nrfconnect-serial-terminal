@@ -84,7 +84,7 @@ const SerialSettings = () => {
     const portName = portNameIndex > -1 ? argv[portNameIndex + 1] : undefined;
     const shouldAutoConnect = !autoConnected && portName;
 
-    if (shouldAutoConnect) {
+    if (shouldAutoConnect && availablePorts.length > 0) {
         const portExists = availablePorts.indexOf(portName) !== -1;
 
         if (portExists) updateSerialPort(portName, serialOptions);
