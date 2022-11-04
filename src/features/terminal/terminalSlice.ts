@@ -60,7 +60,7 @@ const initialState: TerminalState = {
     autoConnected: false,
     serialOptions: { baudRate: 115200 },
     clearOnSend: true,
-    lineEnding: 'NONE',
+    lineEnding: 'CRLF',
     lineMode: true,
     echoOnShell: true,
 };
