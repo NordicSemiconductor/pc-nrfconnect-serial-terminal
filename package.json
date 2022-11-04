@@ -36,7 +36,7 @@
         "ansi-escapes": "^4.3.1",
         "esbuild-sass-plugin": "^2.3.1",
         "jest-fetch-mock": "^3.0.3",
-        "pc-nrfconnect-shared": "git+https://github.com/NordicSemiconductor/pc-nrfconnect-shared.git",
+        "pc-nrfconnect-shared": "git+https://github.com/NordicSemiconductor/pc-nrfconnect-shared.git#v6.8.0",
         "pc-xterm-lib": "git+https://github.com/NordicPlayground/pc-xterm-lib#6934b5b769b942945527a79787732bec6874309f",
         "serialport": "^9.0.6",
         "xterm-addon-fit": "^0.5.0",

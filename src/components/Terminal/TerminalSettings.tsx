@@ -38,12 +38,15 @@ const TerminalSettings = () => {
         ? lineEndings[lineEndings.findIndex(e => e.value === lineEnding)]
         : lineEndings[0];
 
+    const lineModeItems = ['Line', 'Shell'];
+
     return (
         <Group heading="Terminal Settings">
             <StateSelector
-                items={['Line', 'Shell']}
+                items={lineModeItems}
                 defaultIndex={0}
                 onSelect={value => dispatch(setLineMode(value === 0))}
+                selectedItem={lineModeItems[lineMode ? 0 : 1]}
             />
             {lineMode && (
                 <>
