@@ -45,7 +45,7 @@ const SerialSettings = () => {
                       value: portPath as string,
                   })),
               ]
-            : [];
+            : [{ label: 'Not connected', value: 'Not connected' }];
 
     const selectedComPortItem = selectedSerialport
         ? comPortsDropdownItems[
@@ -59,8 +59,6 @@ const SerialSettings = () => {
         portPath: string | undefined,
         options: SerialOptions
     ) => {
-        console.log(portPath);
-
         if (typeof portPath === 'undefined') {
             dispatch(setSerialOptions(options));
             return;
@@ -118,6 +116,7 @@ const SerialSettings = () => {
                     }
                     items={comPortsDropdownItems}
                     selectedItem={selectedComPortItem}
+                    disabled={availablePorts.length === 0}
                 />
                 <Dropdown
                     label="Baud Rate"
