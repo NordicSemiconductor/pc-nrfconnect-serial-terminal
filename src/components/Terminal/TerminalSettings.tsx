@@ -44,7 +44,6 @@ const TerminalSettings = () => {
         <Group heading="Terminal Settings">
             <StateSelector
                 items={lineModeItems}
-                defaultIndex={0}
                 onSelect={value => dispatch(setLineMode(value === 0))}
                 selectedItem={lineModeItems[lineMode ? 0 : 1]}
             />

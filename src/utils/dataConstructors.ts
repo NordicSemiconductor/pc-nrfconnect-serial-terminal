@@ -16,6 +16,6 @@ export const convertToDropDownItems: <T>(
     }));
 
     return addAuto
-        ? [{ label: 'Auto', value: 'undefined' }, ...mappedData]
+        ? [{ label: 'Default', value: 'undefined' }, ...mappedData]
         : mappedData;
 };

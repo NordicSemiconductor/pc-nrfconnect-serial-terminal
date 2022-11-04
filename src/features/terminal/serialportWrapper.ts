@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2021 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-4-Clause
+ */
+
 /* Should work as a wrapper to the SerialPort library 
 
 E.g. should support the same features that is needed from the SerialPort
@@ -10,17 +16,18 @@ port.write(data);
 
 */
 
+import type { AutoDetectTypes } from '@serialport/bindings-cpp';
 import { ipcRenderer } from 'electron';
 import { logger } from 'pc-nrfconnect-shared';
-import { OpenOptions } from 'serialport';
-//
+import type { SerialPortOpenOptions } from 'serialport';
 
-export const SerialPort = (path: string, options: OpenOptions) => {
+export const SerialPort = (options: SerialPortOpenOptions<AutoDetectTypes>) => {
+    const { path } = options;
     const events = ['open', 'close', 'data'] as const;
 
     const on = (
         event: typeof events[number],
-        callback: (data?: any) => void
+        callback: (data?: unknown) => void
     ) => {
         // if (event === 'open') {
         //     ipcRenderer.invoke('serialport:on-open').then(callback);
@@ -34,25 +41,18 @@ export const SerialPort = (path: string, options: OpenOptions) => {
         }
     };
 
-    const write = async (
+    const write = (
         data: string | number[] | Buffer,
-        callback?:
-            | ((error: Error | null | undefined, bytesWritten: number) => void)
-            | undefined
-    ): any => {
-        ipcRenderer.invoke('serialport:write', path, data).then(callback);
-    };
+        callback?: ((error: Error | null | undefined) => void) | undefined
+    ) => ipcRenderer.invoke('serialport:write', path, data).then(callback);
 
-    const isOpen = async (): Promise<boolean> => {
-        return await ipcRenderer.invoke('serialport:isOpen', path);
-    };
+    const isOpen = (): Promise<boolean> =>
+        ipcRenderer.invoke('serialport:isOpen', path);
 
-    const close = async () => {
-        return await ipcRenderer.invoke('serialport:close', path);
-    };
+    const close = () => ipcRenderer.invoke('serialport:close', path);
 
     ipcRenderer
-        .invoke('serialport:new', path, options)
+        .invoke('serialport:new', options)
         .then(() => logger.info(`Serialport ${path} opened.`));
 
     return { path, on, write, close, isOpen };

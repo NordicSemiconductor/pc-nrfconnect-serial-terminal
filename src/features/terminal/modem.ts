@@ -4,41 +4,61 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-4-Clause
  */
 
+import type {
+    AutoDetectTypes,
+    SetOptions,
+    UpdateOptions,
+} from '@serialport/bindings-cpp';
 import EventEmitter from 'events';
-import { logger } from 'pc-nrfconnect-shared';
-import { OpenOptions } from 'serialport';
-import { SerialPort } from './serialportWrapper';
-import { ipcRenderer } from 'electron';
+import { logger, SerialPort } from 'pc-nrfconnect-shared';
+import type { SerialPortOpenOptions } from 'serialport';
 
-export type Modem = ReturnType<typeof createModem>;
+import { TDispatch } from '../../thunk';
+import {
+    SerialOptions,
+    setSerialOptions,
+    setSetOptions,
+    setUpdateOptions,
+} from './terminalSlice';
 
-const cleanUndefined = (obj: OpenOptions) => JSON.parse(JSON.stringify(obj));
+export type Modem = Awaited<ReturnType<typeof createModem>>;
 
-export const createModem = (
-    serialPortPath: string,
-    options: OpenOptions = {}
+const cleanUndefined = (obj: SerialOptions) => JSON.parse(JSON.stringify(obj));
+
+export const createModem = async (
+    options: SerialOptions,
+    overwrite: boolean,
+    dispatch: TDispatch
 ) => {
     const eventEmitter = new EventEmitter();
     options = cleanUndefined(options);
+    logger.info(`Opening: with options: ${JSON.stringify(options)}`);
 
-    logger.info(
-        `Opening: '${serialPortPath}' with options: ${JSON.stringify(options)}`
-    );
-
-    // const serialPort = new SerialPort(serialPortPath, options, e => {
-    //     if (e) {
-    //         logger.error(e);
-    //     }
-    // });
-    const serialPort = SerialPort(serialPortPath, options);
-
-    // serialPort.on('open', () => {
-    //     eventEmitter.emit('open');
-    // });
-
-    serialPort.on('data', (data: Buffer) => {
-        eventEmitter.emit('response', [data]);
-    });
+    let serialPort: Awaited<ReturnType<typeof SerialPort>>;
+    try {
+        serialPort = await SerialPort(
+            options as SerialPortOpenOptions<AutoDetectTypes>,
+            { overwrite },
+            {
+                onData: data => eventEmitter.emit('response', [data]),
+                onUpdate: newOptions => dispatch(setUpdateOptions(newOptions)),
+                onSet: newOptions => dispatch(setSetOptions(newOptions)),
+                onChange: newOptions => {
+                    dispatch(setSerialOptions(newOptions));
+                    console.log(
+                        `Received new settings from serial port: ${JSON.stringify(
+                            newOptions
+                        )}`
+                    );
+                },
+                onDataWritten: data => {
+                    eventEmitter.emit('separateWrite', [data]);
+                },
+            }
+        );
+    } catch (error) {
+        return undefined;
+    }
 
     return {
         onResponse: (handler: (data: Buffer[], error?: string) => void) => {
@@ -51,23 +71,30 @@ export const createModem = (
             return () => eventEmitter.removeListener('open', handler);
         },
 
-        close: async (callback?: (error?: Error | null) => void) => {
+        close: async () => {
             if (await serialPort.isOpen()) {
                 logger.info(`Closing: '${serialPort.path}'`);
-                await serialPort.close();
+                return serialPort.close();
             }
         },
 
-        write: async (command: string) => {
-            await serialPort.write(command, e => {
-                if (e) console.error(e);
-            });
+        onSeparateWrite: (handler: (data: Buffer[]) => void) => {
+            eventEmitter.on('separateWrite', handler);
+            return () => eventEmitter.removeListener('separateWrite', handler);
+        },
 
+        write: (command: string) => {
+            serialPort.write(command);
             return true;
         },
 
-        isOpen: () => serialPort.isOpen,
+        update: (newOptions: UpdateOptions): void =>
+            serialPort.update(newOptions),
 
-        getpath: () => serialPort.path,
+        set: (newOptions: SetOptions): void => serialPort.set(newOptions),
+
+        isOpen: (): Promise<boolean> => serialPort.isOpen(),
+
+        getPath: (): string => serialPort.path,
     };
 };
