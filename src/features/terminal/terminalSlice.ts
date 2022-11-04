@@ -39,6 +39,7 @@ export interface SerialOptions {
     xoff?: boolean | undefined;
     xany?: boolean | undefined;
 }
+export type LineEnding = 'NONE' | 'LF' | 'CR' | 'CRLF';
 
 interface TerminalState {
     availableSerialPorts: string[];
@@ -47,9 +48,7 @@ interface TerminalState {
     autoConnected: boolean;
     serialOptions: SerialOptions;
     clearOnSend: boolean;
-    appendCarriageReturn: boolean;
-    appendNewLine: boolean;
-    appendNullTerminator: boolean;
+    lineEnding: LineEnding;
     lineMode: boolean;
     echoOnShell: boolean;
 }
@@ -61,9 +60,7 @@ const initialState: TerminalState = {
     autoConnected: false,
     serialOptions: { baudRate: 115200 },
     clearOnSend: true,
-    appendCarriageReturn: true,
-    appendNewLine: true,
-    appendNullTerminator: false,
+    lineEnding: 'NONE',
     lineMode: true,
     echoOnShell: true,
 };
@@ -93,14 +90,8 @@ const terminalSlice = createSlice({
         setClearOnSend: (state, action: PayloadAction<boolean>) => {
             state.clearOnSend = action.payload;
         },
-        setAppendCarriageReturn: (state, action: PayloadAction<boolean>) => {
-            state.appendCarriageReturn = action.payload;
-        },
-        setAppendNewLine: (state, action: PayloadAction<boolean>) => {
-            state.appendNewLine = action.payload;
-        },
-        setAppendNullTerminator: (state, action: PayloadAction<boolean>) => {
-            state.appendNullTerminator = action.payload;
+        setLineEnding: (state, action: PayloadAction<LineEnding>) => {
+            state.lineEnding = action.payload;
         },
         setLineMode: (state, action: PayloadAction<boolean>) => {
             state.lineMode = action.payload;
@@ -122,12 +113,8 @@ export const getSerialOptions = (state: RootState) =>
     state.app.terminal.serialOptions;
 export const getClearOnSend = (state: RootState) =>
     state.app.terminal.clearOnSend;
-export const getAppendCarriageReturn = (state: RootState) =>
-    state.app.terminal.appendCarriageReturn;
-export const getAppendNewLine = (state: RootState) =>
-    state.app.terminal.appendNewLine;
-export const getAppendNullTerminator = (state: RootState) =>
-    state.app.terminal.appendNullTerminator;
+export const getLineEnding = (state: RootState) =>
+    state.app.terminal.lineEnding;
 export const getLineMode = (state: RootState) => state.app.terminal.lineMode;
 export const getEchoOnShell = (state: RootState) =>
     state.app.terminal.echoOnShell;
@@ -139,9 +126,7 @@ export const {
     setSerialOptions,
     setAutoConnected,
     setClearOnSend,
-    setAppendCarriageReturn,
-    setAppendNewLine,
-    setAppendNullTerminator,
+    setLineEnding,
     setLineMode,
     setEchoOnShell,
 } = terminalSlice.actions;

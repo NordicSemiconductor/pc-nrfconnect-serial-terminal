@@ -6,13 +6,7 @@
 
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-    Dropdown,
-    DropdownItem,
-    Group,
-    Toggle,
-    truncateMiddle,
-} from 'pc-nrfconnect-shared';
+import { Dropdown, Group, Toggle, truncateMiddle } from 'pc-nrfconnect-shared';
 
 import { createModem } from '../../features/terminal/modem';
 import {
@@ -27,24 +21,11 @@ import {
     setSelectedSerialport,
     setSerialOptions,
 } from '../../features/terminal/terminalSlice';
+import { convertToDropDownItems } from '../../utils/dataConstructors';
 
 type Parity = 'none' | 'even' | 'mark' | 'odd' | 'space' | undefined;
 type DataBits = 8 | 7 | 6 | 5 | undefined;
 type StopBits = 1 | 2 | undefined;
-
-const convertToDropDownItems: <T>(
-    data: T[],
-    addAuto?: boolean
-) => DropdownItem[] = (data, addAuto = true) => {
-    const mappedData = data.map(v => ({
-        label: `${v}`,
-        value: `${v}`,
-    }));
-
-    return addAuto
-        ? [{ label: 'Auto', value: 'undefined' }, ...mappedData]
-        : mappedData;
-};
 
 const SerialSettings = () => {
     const serialOptions = useSelector(getSerialOptions);

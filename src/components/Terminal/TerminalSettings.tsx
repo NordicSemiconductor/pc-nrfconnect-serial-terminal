@@ -5,33 +5,38 @@
  */
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Group, StateSelector, Toggle } from 'pc-nrfconnect-shared';
+import { Dropdown, Group, StateSelector, Toggle } from 'pc-nrfconnect-shared';
 
 import {
-    getAppendCarriageReturn,
-    getAppendNewLine,
-    getAppendNullTerminator,
     getClearOnSend,
     getEchoOnShell,
+    getLineEnding,
     getLineMode,
-    setAppendCarriageReturn,
-    setAppendNewLine,
-    setAppendNullTerminator,
+    LineEnding,
     setClearOnSend,
     setEchoOnShell,
+    setLineEnding,
     setLineMode,
 } from '../../features/terminal/terminalSlice';
+import { convertToDropDownItems } from '../../utils/dataConstructors';
 
 const TerminalSettings = () => {
     const clearOnSend = useSelector(getClearOnSend);
-    const appendCarriageReturn = useSelector(getAppendCarriageReturn);
-    const appendNewLine = useSelector(getAppendNewLine);
-    const appendNullTerminator = useSelector(getAppendNullTerminator);
+    const lineEnding = useSelector(getLineEnding);
     const echoOnShell = useSelector(getEchoOnShell);
 
     const lineMode = useSelector(getLineMode);
 
     const dispatch = useDispatch();
+
+    const lineEndings = convertToDropDownItems<string>(
+        ['NONE', 'LF', 'CR', 'CRLF'],
+        false
+    );
+
+    const selectedLineEnding = lineEnding
+        ? lineEndings[lineEndings.findIndex(e => e.value === lineEnding)]
+        : lineEndings[0];
 
     return (
         <Group heading="Terminal Settings">
@@ -47,24 +52,13 @@ const TerminalSettings = () => {
                         onToggle={value => dispatch(setClearOnSend(value))}
                         label="Clear on Send"
                     />
-                    <Toggle
-                        isToggled={appendCarriageReturn}
-                        onToggle={value =>
-                            dispatch(setAppendCarriageReturn(value))
+                    <Dropdown
+                        label="Line Ending"
+                        onSelect={value =>
+                            dispatch(setLineEnding(value.value as LineEnding))
                         }
-                        label="Append Carriage Return (CR)"
-                    />
-                    <Toggle
-                        isToggled={appendNewLine}
-                        onToggle={value => dispatch(setAppendNewLine(value))}
-                        label="Append New Line (NL)"
-                    />
-                    <Toggle
-                        isToggled={appendNullTerminator}
-                        onToggle={value =>
-                            dispatch(setAppendNullTerminator(value))
-                        }
-                        label="Append Null Terminator"
+                        items={lineEndings}
+                        selectedItem={selectedLineEnding}
                     />
                 </>
             )}

@@ -9,10 +9,8 @@ import { useSelector } from 'react-redux';
 import { PaneProps } from 'pc-nrfconnect-shared';
 
 import {
-    getAppendCarriageReturn,
-    getAppendNewLine,
-    getAppendNullTerminator,
     getClearOnSend,
+    getLineEnding,
     getLineMode,
     getModem,
 } from '../../features/terminal/terminalSlice';
@@ -22,9 +20,7 @@ import './overlay.scss';
 
 const Main = ({ active }: PaneProps) => {
     const modem = useSelector(getModem);
-    const appendCarriageReturn = useSelector(getAppendCarriageReturn);
-    const appendNewLine = useSelector(getAppendNewLine);
-    const appendNullTerminator = useSelector(getAppendNullTerminator);
+    const lineEnding = useSelector(getLineEnding);
     const lineMode = useSelector(getLineMode);
     const clearOnSend = useSelector(getClearOnSend);
 
@@ -56,21 +52,23 @@ const Main = ({ active }: PaneProps) => {
 
             if (!modem.isOpen()) return 'Connection is not open';
 
-            command += lineMode
-                ? (appendCarriageReturn ? '\r' : '') +
-                  (appendNewLine ? '\n' : '') +
-                  (appendNullTerminator ? '\0' : '')
-                : '';
+            if (lineMode) {
+                switch (lineEnding) {
+                    case 'CR':
+                        command += '\r';
+                        break;
+                    case 'CRLF':
+                        command += '\r\n';
+                        break;
+                    case 'LF':
+                        command += '\n';
+                        break;
+                }
+            }
 
             if (!modem?.write(command)) return 'Modem busy or invalid command';
         },
-        [
-            modem,
-            appendCarriageReturn,
-            appendNewLine,
-            appendNullTerminator,
-            lineMode,
-        ]
+        [modem, lineEnding, lineMode]
     );
 
     return (
