@@ -97,8 +97,8 @@ const Terminal: React.FC<Props> = ({
         () =>
             onModemOpen(() => {
                 if (!lineMode) {
-                    commandCallback(String.fromCharCode(12)); // init shell mode
-                    // we need New Page (Ascii 12) so not to create an empty line on top of shell
+                    commandCallback(String.fromCharCode(27)); // init shell mode
+                    // we need ESC (Ascii 27) to be send  to allow device to send initial text e.g uart:~$
                 }
             }),
         [commandCallback, lineMode, onModemOpen]
