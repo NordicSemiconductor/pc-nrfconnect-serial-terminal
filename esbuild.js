@@ -18,7 +18,7 @@ Promise.all([
             bundle: true,
             write: true,
             watch: {
-                onRebuild(error, result) {
+                onRebuild(error) {
                     if (error) {
                         console.error('watch build failed:', error);
                     } else {
@@ -39,7 +39,7 @@ Promise.all([
             bundle: true,
             write: true,
             watch: {
-                onRebuild(error, result) {
+                onRebuild(error) {
                     if (error) {
                         console.error('watch build failed:', error);
                     } else {
