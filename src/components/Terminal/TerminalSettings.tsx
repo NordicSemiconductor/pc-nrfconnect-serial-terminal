@@ -69,7 +69,7 @@ const TerminalSettings = () => {
                 <Toggle
                     isToggled={echoOnShell}
                     onToggle={value => dispatch(setEchoOnShell(value))}
-                    label="Echo on Shell"
+                    label="Echo on shell"
                 />
             )}
         </Group>

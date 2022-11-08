@@ -1,8 +1,8 @@
 {
     "name": "pc-nrfconnect-terminal",
     "version": "0.0.1",
-    "description": "Serial terminal",
-    "displayName": "Serial terminal",
+    "description": "Serial Terminal",
+    "displayName": "Serial Terminal",
     "repository": {
         "type": "git",
         "url": "https://github.com/NordicSemiconductor/pc-nrfconnect-cellularmonitor.git"
