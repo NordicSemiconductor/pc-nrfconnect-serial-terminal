@@ -18,10 +18,11 @@ port.write(data);
 
 import { ipcRenderer } from 'electron';
 import { logger } from 'pc-nrfconnect-shared';
-import { OpenOptions } from 'serialport';
-//
+import type { SerialPortOpenOptions } from 'serialport';
+import type { AutoDetectTypes } from '@serialport/bindings-cpp';
 
-export const SerialPort = (path: string, options: OpenOptions) => {
+export const SerialPort = (options: SerialPortOpenOptions<AutoDetectTypes>) => {
+    const { path } = options;
     const events = ['open', 'close', 'data'] as const;
 
     const on = (
@@ -55,7 +56,7 @@ export const SerialPort = (path: string, options: OpenOptions) => {
     const close = () => ipcRenderer.invoke('serialport:close', path);
 
     ipcRenderer
-        .invoke('serialport:new', path, options)
+        .invoke('serialport:new', options)
         .then(() => logger.info(`Serialport ${path} opened.`));
 
     return { path, on, write, close, isOpen };

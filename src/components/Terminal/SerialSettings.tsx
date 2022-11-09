@@ -66,7 +66,7 @@ const SerialSettings = () => {
 
         if (portPath !== 'Not connected' || options !== serialOptions) {
             const action = () =>
-                dispatch(setModem(createModem(portPath as string, options)));
+                dispatch(setModem(createModem({ path: portPath, ...options })));
 
             if (modem?.isOpen()) {
                 modem.close(action);

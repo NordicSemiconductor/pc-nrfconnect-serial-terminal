@@ -6,7 +6,6 @@
 
 import EventEmitter from 'events';
 import { logger } from 'pc-nrfconnect-shared';
-import { OpenOptions } from 'serialport';
 
 import { SerialPort } from './serialportWrapper';
 
@@ -14,27 +13,13 @@ export type Modem = ReturnType<typeof createModem>;
 
 const cleanUndefined = (obj: OpenOptions) => JSON.parse(JSON.stringify(obj));
 
-export const createModem = (
-    serialPortPath: string,
-    options: OpenOptions = {}
-) => {
+export const createModem = (options: OpenOptions = {}) => {
     const eventEmitter = new EventEmitter();
     options = cleanUndefined(options);
 
-    logger.info(
-        `Opening: '${serialPortPath}' with options: ${JSON.stringify(options)}`
-    );
+    logger.info(`Opening: with options: ${JSON.stringify(options)}`);
 
-    // const serialPort = new SerialPort(serialPortPath, options, e => {
-    //     if (e) {
-    //         logger.error(e);
-    //     }
-    // });
-    const serialPort = SerialPort(serialPortPath, options);
-
-    // serialPort.on('open', () => {
-    //     eventEmitter.emit('open');
-    // });
+    const serialPort = SerialPort(options);
 
     serialPort.on('data', (data: Buffer) => {
         eventEmitter.emit('response', [data]);
