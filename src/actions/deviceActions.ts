@@ -8,6 +8,7 @@ import { Device, logger } from 'pc-nrfconnect-shared';
 
 import {
     setAvailableSerialPorts,
+    setModem,
     setSelectedSerialport,
 } from '../features/terminal/terminalSlice';
 import type { TAction } from '../thunk';
@@ -16,6 +17,7 @@ export const closeDevice = (): TAction => dispatch => {
     logger.info('Closing device');
     dispatch(setAvailableSerialPorts([]));
     dispatch(setSelectedSerialport(undefined));
+    dispatch(setModem(undefined));
 };
 
 export const openDevice =
