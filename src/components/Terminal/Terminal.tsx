@@ -67,8 +67,8 @@ const Terminal: React.FC<Props> = ({
     const handleUserInputShellMode = useCallback(
         (data: string) => {
             if (!echoOnShell) {
-                if (data === '\r') xtermRef.current?.terminal.write('\r\n');
-                else xtermRef.current?.terminal.write(data);
+                if (data.charCodeAt(0) >= 32 && data.charCodeAt(0) <= 126)
+                    xtermRef.current?.terminal.write(data);
             }
 
             const ret = commandCallback(data);
