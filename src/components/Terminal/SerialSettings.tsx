@@ -55,7 +55,7 @@ const SerialSettings = () => {
           ]
         : comPortsDropdownItems[0];
 
-    const updateSerialPort = (
+    const updateSerialPort = async (
         portPath: string | undefined,
         options: SerialOptions
     ) => {
@@ -68,13 +68,12 @@ const SerialSettings = () => {
             const action = () =>
                 dispatch(setModem(createModem({ path: portPath, ...options })));
 
-            if (modem?.isOpen()) {
+            if ( await modem?.isOpen() && modem) {
                 modem.close(action);
             } else {
                 action();
             }
         } else {
-            modem?.close();
             dispatch(setModem(undefined));
         }
 

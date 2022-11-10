@@ -5,9 +5,7 @@
  */
 
 import EventEmitter from 'events';
-import { logger } from 'pc-nrfconnect-shared';
-
-import { SerialPort } from './serialportWrapper';
+import { logger, SerialPort } from 'pc-nrfconnect-shared';
 
 export type Modem = ReturnType<typeof createModem>;
 
@@ -51,7 +49,7 @@ export const createModem = (options: OpenOptions = {}) => {
             return true;
         },
 
-        isOpen: () => serialPort.isOpen,
+        isOpen: async () => await serialPort.isOpen(),
 
         getpath: () => serialPort.path,
     };
