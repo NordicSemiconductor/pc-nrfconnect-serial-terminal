@@ -5,40 +5,13 @@
  */
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import type { AutoDetectTypes } from '@serialport/bindings-cpp';
+import type { SerialPortOpenOptions } from 'serialport';
 
 import type { RootState } from '../../appReducer';
-import { Modem } from './modem';
+import type { Modem } from './modem';
 
-// Options Type Defs
-export interface SerialOptions {
-    baudRate?:
-        | 115200
-        | 57600
-        | 38400
-        | 19200
-        | 9600
-        | 4800
-        | 2400
-        | 1800
-        | 1200
-        | 600
-        | 300
-        | 200
-        | 150
-        | 134
-        | 110
-        | 75
-        | 50
-        | number
-        | undefined;
-    dataBits?: 8 | 7 | 6 | 5 | undefined;
-    stopBits?: 1 | 2 | undefined;
-    parity?: 'none' | 'even' | 'mark' | 'odd' | 'space' | undefined;
-    rtscts?: boolean | undefined;
-    xon?: boolean | undefined;
-    xoff?: boolean | undefined;
-    xany?: boolean | undefined;
-}
+export type SerialOptions = Partial<SerialPortOpenOptions<AutoDetectTypes>>;
 export type LineEnding = 'NONE' | 'LF' | 'CR' | 'CRLF';
 
 interface TerminalState {
@@ -79,7 +52,6 @@ const terminalSlice = createSlice({
             state.selectedSerialport = action.payload;
         },
         setModem: (state, action: PayloadAction<Modem | undefined>) => {
-            state.modem?.close();
             state.modem = action.payload;
         },
         setSerialOptions: (state, action: PayloadAction<SerialOptions>) => {

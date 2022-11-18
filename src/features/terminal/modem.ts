@@ -4,24 +4,53 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-4-Clause
  */
 
+import type {
+    AutoDetectTypes,
+    SetOptions,
+    UpdateOptions,
+} from '@serialport/bindings-cpp';
 import EventEmitter from 'events';
 import { logger, SerialPort } from 'pc-nrfconnect-shared';
+import type { SerialPortOpenOptions } from 'serialport';
 
-export type Modem = ReturnType<typeof createModem>;
+import { TDispatch } from '../../thunk';
+import { SerialOptions, setSerialOptions } from './terminalSlice';
 
-const cleanUndefined = (obj: OpenOptions) => JSON.parse(JSON.stringify(obj));
+export type Modem = Awaited<ReturnType<typeof createModem>>;
 
-export const createModem = (options: OpenOptions = {}) => {
+const cleanUndefined = (obj: SerialOptions) => JSON.parse(JSON.stringify(obj));
+
+export const createModem = async (
+    options: SerialOptions,
+    overwrite: boolean,
+    dispatch: TDispatch
+) => {
     const eventEmitter = new EventEmitter();
     options = cleanUndefined(options);
 
     logger.info(`Opening: with options: ${JSON.stringify(options)}`);
 
-    const serialPort = SerialPort(options);
-
-    serialPort.on('data', (data: Buffer) => {
-        eventEmitter.emit('response', [data]);
-    });
+    let serialPort: Awaited<ReturnType<typeof SerialPort>>;
+    try {
+        serialPort = await SerialPort(
+            options as SerialPortOpenOptions<AutoDetectTypes>,
+            overwrite,
+            data => eventEmitter.emit('response', [data]),
+            () => {},
+            newOptions => dispatch(setSerialOptions(newOptions)),
+            newOptions => dispatch(setSerialOptions(newOptions)),
+            newOptions => {
+                dispatch(setSerialOptions(newOptions));
+                console.log(
+                    `Received new settings from serial port: ${JSON.stringify(
+                        newOptions
+                    )}`
+                );
+            }
+        );
+    } catch (error) {
+        return undefined;
+    }
 
     return {
         onResponse: (handler: (data: Buffer[], error?: string) => void) => {
@@ -34,23 +63,25 @@ export const createModem = (options: OpenOptions = {}) => {
             return () => eventEmitter.removeListener('open', handler);
         },
 
-        close: async (callback?: (error?: Error | null) => void) => {
+        close: async () => {
             if (await serialPort.isOpen()) {
                 logger.info(`Closing: '${serialPort.path}'`);
-                await serialPort.close();
+                return serialPort.close();
             }
         },
 
-        write: async (command: string) => {
-            await serialPort.write(command, e => {
-                if (e) console.error(e);
-            });
-
+        write: (command: string) => {
+            serialPort.write(command);
             return true;
         },
 
-        isOpen: async () => await serialPort.isOpen(),
+        update: (newOptions: UpdateOptions): void =>
+            serialPort.update(newOptions),
 
-        getpath: () => serialPort.path,
+        set: (newOptions: SetOptions): void => serialPort.set(newOptions),
+
+        isOpen: (): Promise<boolean> => serialPort.isOpen(),
+
+        getPath: (): string => serialPort.path,
     };
 };
