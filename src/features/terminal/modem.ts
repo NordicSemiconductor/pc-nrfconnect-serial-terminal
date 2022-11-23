@@ -35,17 +35,18 @@ export const createModem = async (
         serialPort = await SerialPort(
             options as SerialPortOpenOptions<AutoDetectTypes>,
             overwrite,
-            data => eventEmitter.emit('response', [data]),
-            () => {},
-            newOptions => dispatch(setSerialOptions(newOptions)),
-            newOptions => dispatch(setSerialOptions(newOptions)),
-            newOptions => {
-                dispatch(setSerialOptions(newOptions));
-                console.log(
-                    `Received new settings from serial port: ${JSON.stringify(
-                        newOptions
-                    )}`
-                );
+            {
+                onData: data => eventEmitter.emit('response', [data]),
+                onUpdate: newOptions => dispatch(setSerialOptions(newOptions)),
+                onSet: newOptions => dispatch(setSerialOptions(newOptions)),
+                onChange: newOptions => {
+                    dispatch(setSerialOptions(newOptions));
+                    console.log(
+                        `Received new settings from serial port: ${JSON.stringify(
+                            newOptions
+                        )}`
+                    );
+                },
             }
         );
     } catch (error) {
