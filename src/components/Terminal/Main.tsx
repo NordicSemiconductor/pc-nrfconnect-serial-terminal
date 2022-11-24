@@ -24,6 +24,14 @@ const Main = ({ active }: PaneProps) => {
     const lineMode = useSelector(getLineMode);
     const clearOnSend = useSelector(getClearOnSend);
 
+    const onSeparateWrite = useCallback(
+        (listener: (data: Buffer) => void) => {
+            if (!modem) return () => {};
+
+            return modem.onSeparateWrite(data => data.forEach(listener));
+        },
+        [modem]
+    );
     const onModemData = useCallback(
         (listener: (data: Buffer) => void) => {
             if (!modem) return () => {};
@@ -78,6 +86,7 @@ const Main = ({ active }: PaneProps) => {
                 <Terminal
                     commandCallback={commandCallback}
                     onModemData={onModemData}
+                    onModemSeparateWrite={onSeparateWrite}
                     onModemOpen={onModemOpen}
                     clearOnSend={clearOnSend}
                     lineMode={lineMode}

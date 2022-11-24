@@ -23,6 +23,7 @@ import styles from './Terminal.module.scss';
 interface Props {
     commandCallback: (command: string) => string | undefined;
     onModemData: (listener: (data: Buffer) => void) => () => void;
+    onModemSeparateWrite: (listener: (data: Buffer) => void) => () => void;
     onModemOpen: (listener: () => void) => () => void;
     clearOnSend: boolean;
     lineMode: boolean;
@@ -31,6 +32,7 @@ interface Props {
 const Terminal: React.FC<Props> = ({
     commandCallback,
     onModemData,
+    onModemSeparateWrite,
     onModemOpen,
     clearOnSend,
     lineMode,
@@ -41,12 +43,25 @@ const Terminal: React.FC<Props> = ({
     const fitAddon = useFitAddon(height, width, lineMode);
     const echoOnShell = useSelector(getEchoOnShell);
 
+    const writeLineModeToXterm = (data: string) => {
+        if (new Date().getMonth() === 11) {
+            xtermRef.current?.terminal.writeln(`${data.trim()} 🎄`);
+        } else {
+            xtermRef.current?.terminal.writeln(`${data.trim()} >`);
+        }
+    };
+
+    const writeShellModeEchoOffToXterm = (character: string) => {
+        if (character.charCodeAt(0) >= 32 && character.charCodeAt(0) <= 126)
+            xtermRef.current?.terminal.write(character);
+    };
+
     // In Line mode we need to explicitly write the date send to the terminal
     // In addition we need to also write the data we got from the serial back
     // to the terminal
     const handleUserInputLineMode = useCallback(
         (data: string) => {
-            xtermRef.current?.terminal.write(`(${data})> `);
+            writeLineModeToXterm(data);
 
             if (clearOnSend) setCmdLine('');
 
@@ -54,8 +69,6 @@ const Terminal: React.FC<Props> = ({
             if (ret) {
                 xtermRef.current?.terminal.write(ret);
             }
-
-            xtermRef.current?.terminal.write('\r\n');
         },
         [commandCallback, clearOnSend]
     );
@@ -65,13 +78,12 @@ const Terminal: React.FC<Props> = ({
     // all we need to do is write the data back to the terminal and let
     // the shell mode devide do all the auto complete etc...
     const handleUserInputShellMode = useCallback(
-        (data: string) => {
+        (character: string) => {
             if (!echoOnShell) {
-                if (data.charCodeAt(0) >= 32 && data.charCodeAt(0) <= 126)
-                    xtermRef.current?.terminal.write(data);
+                writeShellModeEchoOffToXterm(character);
             }
 
-            const ret = commandCallback(data);
+            const ret = commandCallback(character);
             if (ret) {
                 xtermRef.current?.terminal.write(ret);
             }
@@ -107,6 +119,18 @@ const Terminal: React.FC<Props> = ({
                 }
             }),
         [commandCallback, lineMode, onModemOpen]
+    );
+
+    useEffect(
+        () =>
+            onModemSeparateWrite(data => {
+                if (!lineMode && !echoOnShell) {
+                    writeShellModeEchoOffToXterm(data.toString());
+                } else if (lineMode) {
+                    writeLineModeToXterm(data.toString());
+                }
+            }),
+        [lineMode, onModemSeparateWrite, echoOnShell]
     );
 
     const terminalOptions = {

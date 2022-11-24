@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-4-Clause
  */
 
+import { useSelector } from 'react-redux';
 import type {
     AutoDetectTypes,
     SetOptions,
@@ -14,7 +15,11 @@ import { logger, SerialPort } from 'pc-nrfconnect-shared';
 import type { SerialPortOpenOptions } from 'serialport';
 
 import { TDispatch } from '../../thunk';
-import { SerialOptions, setSerialOptions } from './terminalSlice';
+import {
+    getEchoOnShell,
+    SerialOptions,
+    setSerialOptions,
+} from './terminalSlice';
 
 export type Modem = Awaited<ReturnType<typeof createModem>>;
 
@@ -27,7 +32,6 @@ export const createModem = async (
 ) => {
     const eventEmitter = new EventEmitter();
     options = cleanUndefined(options);
-
     logger.info(`Opening: with options: ${JSON.stringify(options)}`);
 
     let serialPort: Awaited<ReturnType<typeof SerialPort>>;
@@ -46,6 +50,9 @@ export const createModem = async (
                             newOptions
                         )}`
                     );
+                },
+                onSeparateWrite: data => {
+                    eventEmitter.emit('separateWrite', [data]);
                 },
             }
         );
@@ -69,6 +76,11 @@ export const createModem = async (
                 logger.info(`Closing: '${serialPort.path}'`);
                 return serialPort.close();
             }
+        },
+
+        onSeparateWrite: (handler: (data: Buffer[]) => void) => {
+            eventEmitter.on('separateWrite', handler);
+            return () => eventEmitter.removeListener('separateWrite', handler);
         },
 
         write: (command: string) => {
