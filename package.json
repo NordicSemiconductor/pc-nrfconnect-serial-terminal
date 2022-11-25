@@ -33,7 +33,7 @@
         "prepare": "husky install"
     },
     "devDependencies": {
-        "ansi-escapes": "^4.3.1",
+        "ansi-escapes": "^4.3.2",
         "esbuild-sass-plugin": "^2.3.1",
         "jest-fetch-mock": "^3.0.3",
         "pc-nrfconnect-shared": "git+https://github.com/NordicSemiconductor/pc-nrfconnect-shared.git#v6.8.0",
