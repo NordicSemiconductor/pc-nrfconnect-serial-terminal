@@ -29,7 +29,7 @@
         "check:lint": "eslint --color .",
         "check:types": "check-for-typescript tsc --noEmit --pretty",
         "check:license": "nrfconnect-license check",
-        "nordic-publish": "nordic-publish",
+        "nordic-publish": "node ./dist/nordic-publish.js",
         "prepare": "husky install"
     },
     "devDependencies": {
@@ -42,7 +42,6 @@
         "xterm-for-react": "^1.0.4"
     },
     "dependencies": {
-        "@nordicsemiconductor/nrf-monitor-lib-js": "^0.7.5",
         "esbuild": "^0.14.50",
         "npm": "^6.14.13"
     },
