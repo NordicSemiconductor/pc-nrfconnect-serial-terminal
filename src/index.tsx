@@ -12,11 +12,8 @@ import DeviceSelector from './components/DeviceSelector';
 import DocumentationSections from './components/DocumentationSection';
 import Terminal from './components/Terminal/Main';
 import TerminalSidePanel from './components/Terminal/SidePanel';
-import logLibVersions from './utils/logLibVersions';
 
 import './index.scss';
-
-logLibVersions();
 
 export default () => (
     <App
