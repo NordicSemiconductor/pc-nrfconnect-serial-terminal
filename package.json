@@ -1,5 +1,5 @@
 {
-    "name": "pc-nrfconnect-terminal",
+    "name": "pc-nrfconnect-serial-terminal",
     "version": "0.0.1",
     "description": "Serial Terminal",
     "displayName": "Serial Terminal",
