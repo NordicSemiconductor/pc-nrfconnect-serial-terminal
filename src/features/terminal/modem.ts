@@ -4,7 +4,6 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-4-Clause
  */
 
-import { useSelector } from 'react-redux';
 import type {
     AutoDetectTypes,
     SetOptions,
@@ -16,9 +15,10 @@ import type { SerialPortOpenOptions } from 'serialport';
 
 import { TDispatch } from '../../thunk';
 import {
-    getEchoOnShell,
     SerialOptions,
     setSerialOptions,
+    setSetOptions,
+    setUpdateOptions,
 } from './terminalSlice';
 
 export type Modem = Awaited<ReturnType<typeof createModem>>;
@@ -41,8 +41,8 @@ export const createModem = async (
             overwrite,
             {
                 onData: data => eventEmitter.emit('response', [data]),
-                onUpdate: newOptions => dispatch(setSerialOptions(newOptions)),
-                onSet: newOptions => dispatch(setSerialOptions(newOptions)),
+                onUpdate: newOptions => dispatch(setUpdateOptions(newOptions)),
+                onSet: newOptions => dispatch(setSetOptions(newOptions)),
                 onChange: newOptions => {
                     dispatch(setSerialOptions(newOptions));
                     console.log(

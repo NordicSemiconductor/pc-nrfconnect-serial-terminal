@@ -16,10 +16,10 @@ port.write(data);
 
 */
 
+import type { AutoDetectTypes } from '@serialport/bindings-cpp';
 import { ipcRenderer } from 'electron';
 import { logger } from 'pc-nrfconnect-shared';
 import type { SerialPortOpenOptions } from 'serialport';
-import type { AutoDetectTypes } from '@serialport/bindings-cpp';
 
 export const SerialPort = (options: SerialPortOpenOptions<AutoDetectTypes>) => {
     const { path } = options;
@@ -27,7 +27,7 @@ export const SerialPort = (options: SerialPortOpenOptions<AutoDetectTypes>) => {
 
     const on = (
         event: typeof events[number],
-        callback: (data?: any) => void
+        callback: (data?: unknown) => void
     ) => {
         // if (event === 'open') {
         //     ipcRenderer.invoke('serialport:on-open').then(callback);
@@ -41,14 +41,10 @@ export const SerialPort = (options: SerialPortOpenOptions<AutoDetectTypes>) => {
         }
     };
 
-    const write = async (
+    const write = (
         data: string | number[] | Buffer,
-        callback?:
-            | ((error: Error | null | undefined, bytesWritten: number) => void)
-            | undefined
-    ): any => {
-        ipcRenderer.invoke('serialport:write', path, data).then(callback);
-    };
+        callback?: ((error: Error | null | undefined) => void) | undefined
+    ) => ipcRenderer.invoke('serialport:write', path, data).then(callback);
 
     const isOpen = (): Promise<boolean> =>
         ipcRenderer.invoke('serialport:isOpen', path);

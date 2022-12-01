@@ -17,7 +17,6 @@ import {
 
 import { createModem } from '../../features/terminal/modem';
 import {
-    getAskToOverwriteSettings,
     getAutoConnected,
     getAvailableSerialPorts,
     getModem,
@@ -108,7 +107,7 @@ const SerialSettings = () => {
         if (device) {
             dispatch(setSelectedSerialport(selectedComPortItem.value));
         }
-    }, [device, dispatch]);
+    }, [device, dispatch, selectedComPortItem.value]);
 
     const { argv } = process;
     const portNameIndex = argv.findIndex(arg => arg === '--comPort');
@@ -142,6 +141,8 @@ const SerialSettings = () => {
     const dataBitsItems = convertToDropDownItems([8, 7, 6, 5], true);
     const stopBitsItems = convertToDropDownItems([1, 2], true);
     const parityItems = convertToDropDownItems(parityOptions(), true);
+
+    const onOffItems = convertToDropDownItems(['on', 'off'], true);
 
     return (
         <>
@@ -214,7 +215,6 @@ const SerialSettings = () => {
                             })
                         }
                         items={dataBitsItems}
-                        defaultIndex={0}
                         selectedItem={
                             dataBitsItems[
                                 dataBitsItems.findIndex(
@@ -241,7 +241,6 @@ const SerialSettings = () => {
                                 )
                             ]
                         }
-                        defaultIndex={0}
                     />
                     <Dropdown
                         label="Parity"
@@ -262,48 +261,125 @@ const SerialSettings = () => {
                                 )
                             ]
                         }
-                        defaultIndex={0}
                     />
                 </div>
-                <Toggle
-                    isToggled={serialOptions.rtscts}
-                    onToggle={item =>
-                        updateSerialPort(selectedSerialport, {
-                            ...serialOptions,
-                            rtscts: item,
-                        })
-                    }
+                <Dropdown
                     label="rts/cts"
-                />
-                <Toggle
-                    isToggled={serialOptions.xon}
-                    onToggle={item =>
+                    onSelect={item =>
                         updateSerialPort(selectedSerialport, {
                             ...serialOptions,
-                            xon: item,
+                            rtscts:
+                                ['on', 'off'].indexOf(item.value) === -1
+                                    ? undefined
+                                    : item.value === 'on',
                         })
                     }
+                    items={onOffItems}
+                    selectedItem={
+                        onOffItems[
+                            onOffItems.findIndex(e => {
+                                if (serialOptions.rtscts === undefined) {
+                                    return (
+                                        e.value === `${serialOptions.dataBits}`
+                                    );
+                                }
+
+                                return (
+                                    e.value ===
+                                    (serialOptions.rtscts === true
+                                        ? 'on'
+                                        : 'off')
+                                );
+                            })
+                        ]
+                    }
+                />
+                <Dropdown
                     label="xOn"
-                />
-                <Toggle
-                    isToggled={serialOptions.xoff}
-                    onToggle={item =>
+                    onSelect={item =>
                         updateSerialPort(selectedSerialport, {
                             ...serialOptions,
-                            xoff: item,
+                            xon:
+                                ['on', 'off'].indexOf(item.value) === -1
+                                    ? undefined
+                                    : item.value === 'on',
                         })
                     }
+                    items={onOffItems}
+                    selectedItem={
+                        onOffItems[
+                            onOffItems.findIndex(e => {
+                                if (serialOptions.xon === undefined) {
+                                    return (
+                                        e.value === `${serialOptions.dataBits}`
+                                    );
+                                }
+
+                                return (
+                                    e.value ===
+                                    (serialOptions.xon === true ? 'on' : 'off')
+                                );
+                            })
+                        ]
+                    }
+                />
+                <Dropdown
                     label="xOff"
-                />
-                <Toggle
-                    isToggled={serialOptions.xany}
-                    onToggle={item =>
+                    onSelect={item =>
                         updateSerialPort(selectedSerialport, {
                             ...serialOptions,
-                            xany: item,
+                            xoff:
+                                ['on', 'off'].indexOf(item.value) === -1
+                                    ? undefined
+                                    : item.value === 'on',
                         })
                     }
+                    items={onOffItems}
+                    selectedItem={
+                        onOffItems[
+                            onOffItems.findIndex(e => {
+                                if (serialOptions.xoff === undefined) {
+                                    return (
+                                        e.value === `${serialOptions.dataBits}`
+                                    );
+                                }
+
+                                return (
+                                    e.value ===
+                                    (serialOptions.xoff === true ? 'on' : 'off')
+                                );
+                            })
+                        ]
+                    }
+                />
+                <Dropdown
                     label="xAny"
+                    onSelect={item =>
+                        updateSerialPort(selectedSerialport, {
+                            ...serialOptions,
+                            xany:
+                                ['on', 'off'].indexOf(item.value) === -1
+                                    ? undefined
+                                    : item.value === 'on',
+                        })
+                    }
+                    items={onOffItems}
+                    selectedItem={
+                        onOffItems[
+                            onOffItems.findIndex(e => {
+                                if (serialOptions.xany === undefined) {
+                                    return (
+                                        e.value === `${serialOptions.dataBits}`
+                                    );
+                                }
+
+                                return (
+                                    e.value ===
+                                    (serialOptions.xany === true ? 'on' : 'off')
+                                );
+                            })
+                        ]
+                    }
                 />
             </Group>
         </>

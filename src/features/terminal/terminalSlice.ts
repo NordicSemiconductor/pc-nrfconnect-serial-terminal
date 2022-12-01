@@ -5,7 +5,11 @@
  */
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import type { AutoDetectTypes } from '@serialport/bindings-cpp';
+import type {
+    AutoDetectTypes,
+    SetOptions,
+    UpdateOptions,
+} from '@serialport/bindings-cpp';
 import type { SerialPortOpenOptions } from 'serialport';
 
 import type { RootState } from '../../appReducer';
@@ -54,6 +58,12 @@ const terminalSlice = createSlice({
         setModem: (state, action: PayloadAction<Modem | undefined>) => {
             state.modem = action.payload;
         },
+        setUpdateOptions: (state, action: PayloadAction<UpdateOptions>) => {
+            state.serialOptions = { ...state.serialOptions, ...action.payload };
+        },
+        setSetOptions: (state, action: PayloadAction<SetOptions>) => {
+            state.serialOptions = { ...state.serialOptions, ...action.payload };
+        },
         setSerialOptions: (state, action: PayloadAction<SerialOptions>) => {
             state.serialOptions = action.payload;
         },
@@ -97,6 +107,8 @@ export const {
     setAvailableSerialPorts,
     setSelectedSerialport,
     setSerialOptions,
+    setUpdateOptions,
+    setSetOptions,
     setAutoConnected,
     setClearOnSend,
     setLineEnding,
