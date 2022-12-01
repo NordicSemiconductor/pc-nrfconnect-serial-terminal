@@ -57,6 +57,8 @@ const SerialSettings = () => {
     const autoConnected = useSelector(getAutoConnected);
     const modem = useSelector(getModem);
 
+    const isConnected = modem !== undefined;
+
     const dispatch = useDispatch();
 
     const [overwrite, setOverwrite] = useState(false);
@@ -171,7 +173,7 @@ const SerialSettings = () => {
                 </Button>
             ) : (
                 <Button
-                    className="btn-secondary w-100"
+                    className="btn-secondary w-100 h-100"
                     onClick={async () => {
                         await modem.close();
                         dispatch(setModem(undefined));
@@ -194,7 +196,7 @@ const SerialSettings = () => {
                         }
                         items={comPortsDropdownItems}
                         selectedItem={selectedComPortItem}
-                        disabled={availablePorts.length === 0}
+                        disabled={availablePorts.length === 0 || isConnected}
                     />
                     <Dropdown
                         label="Baud Rate"
@@ -230,6 +232,7 @@ const SerialSettings = () => {
                             dataBitsItems,
                             serialOptions.dataBits
                         )}
+                        disabled={isConnected}
                     />
                     <Dropdown
                         label="Stop bits"
@@ -247,6 +250,7 @@ const SerialSettings = () => {
                             stopBitsItems,
                             serialOptions.stopBits
                         )}
+                        disabled={isConnected}
                     />
                     <Dropdown
                         label="Parity"
@@ -264,6 +268,7 @@ const SerialSettings = () => {
                             parityItems,
                             serialOptions.parity
                         )}
+                        disabled={isConnected}
                     />
                 </div>
                 <Dropdown
@@ -276,6 +281,7 @@ const SerialSettings = () => {
                     }
                     items={onOffItems}
                     selectedItem={getItem(onOffItems, serialOptions.rtscts)}
+                    disabled={isConnected}
                 />
                 <Dropdown
                     label="xOn"
@@ -287,6 +293,7 @@ const SerialSettings = () => {
                     }
                     items={onOffItems}
                     selectedItem={getItem(onOffItems, serialOptions.xon)}
+                    disabled={isConnected}
                 />
                 <Dropdown
                     label="xOff"
@@ -298,6 +305,7 @@ const SerialSettings = () => {
                     }
                     items={onOffItems}
                     selectedItem={getItem(onOffItems, serialOptions.xoff)}
+                    disabled={isConnected}
                 />
                 <Dropdown
                     label="xAny"
@@ -309,6 +317,7 @@ const SerialSettings = () => {
                     }
                     items={onOffItems}
                     selectedItem={getItem(onOffItems, serialOptions.xany)}
+                    disabled={isConnected}
                 />
             </Group>
         </>
