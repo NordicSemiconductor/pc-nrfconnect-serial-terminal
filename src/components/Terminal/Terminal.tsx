@@ -92,7 +92,6 @@ const Terminal: React.FC<Props> = ({
 
     // Prepare Terminal for new connection or mode
     useEffect(() => {
-        clearTermial(); // New connection or mode: clear terminal
         if (!lineMode) {
             commandCallback(String.fromCharCode(12)); // init shell mode
             // we need New Page (Ascii 12) so not to create an empty line on top of shell
@@ -107,6 +106,7 @@ const Terminal: React.FC<Props> = ({
     useEffect(
         () =>
             onModemOpen(() => {
+                clearTermial(); // New connection or mode: clear terminal
                 if (!lineMode) {
                     commandCallback(String.fromCharCode(12)); // init shell mode
                     // we need New Page (Ascii 12) so not to create an empty line on top of shell
