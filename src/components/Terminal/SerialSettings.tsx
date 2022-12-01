@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
     Button,
     Dropdown,
+    DropdownItem,
     Group,
     selectedDevice,
     Toggle,
@@ -33,6 +34,20 @@ import { convertToDropDownItems } from '../../utils/dataConstructors';
 type Parity = 'none' | 'even' | 'mark' | 'odd' | 'space' | undefined;
 type DataBits = 8 | 7 | 6 | 5 | undefined;
 type StopBits = 1 | 2 | undefined;
+
+const getItem = (itemList: DropdownItem[], value: unknown) => {
+    if (typeof value === 'boolean') value = value ? 'on' : 'off';
+
+    const result = itemList[itemList.findIndex(e => e.value === `${value}`)];
+
+    return result === undefined ? itemList[0] : result;
+};
+
+const convertOnOffItemToBoolean = (item: DropdownItem) =>
+    ['on', 'off'].indexOf(item.value) === -1 ? undefined : item.value === 'on';
+
+const convertItemToValue = (valueList: string[], item: DropdownItem) =>
+    valueList.indexOf(item.value) === -1 ? undefined : item.value;
 
 const SerialSettings = () => {
     const device = useSelector(selectedDevice);
@@ -194,73 +209,61 @@ const SerialSettings = () => {
                             }
                         }}
                         items={baudRateItems}
-                        selectedItem={
-                            baudRateItems[
-                                baudRateItems.findIndex(
-                                    e => e.value === `${serialOptions.baudRate}`
-                                )
-                            ]
-                        }
+                        selectedItem={getItem(
+                            baudRateItems,
+                            serialOptions.baudRate
+                        )}
                     />
                     <Dropdown
                         label="Data bits"
                         onSelect={item =>
                             updateSerialPort(selectedSerialport, {
                                 ...serialOptions,
-                                dataBits: (['8', '7', '6', '5'].indexOf(
-                                    item.value
-                                ) === -1
-                                    ? undefined
-                                    : Number(item.value)) as DataBits,
+                                dataBits: convertItemToValue(
+                                    ['8', '7', '6', '5'],
+                                    item
+                                ) as DataBits,
                             })
                         }
                         items={dataBitsItems}
-                        selectedItem={
-                            dataBitsItems[
-                                dataBitsItems.findIndex(
-                                    e => e.value === `${serialOptions.dataBits}`
-                                )
-                            ]
-                        }
+                        selectedItem={getItem(
+                            dataBitsItems,
+                            serialOptions.dataBits
+                        )}
                     />
                     <Dropdown
                         label="Stop bits"
                         onSelect={item =>
                             updateSerialPort(selectedSerialport, {
                                 ...serialOptions,
-                                stopBits: (['1', '2'].indexOf(item.value) === -1
-                                    ? undefined
-                                    : Number(item.value)) as StopBits,
+                                stopBits: convertItemToValue(
+                                    ['1', '2'],
+                                    item
+                                ) as StopBits,
                             })
                         }
                         items={stopBitsItems}
-                        selectedItem={
-                            stopBitsItems[
-                                stopBitsItems.findIndex(
-                                    e => e.value === `${serialOptions.stopBits}`
-                                )
-                            ]
-                        }
+                        selectedItem={getItem(
+                            stopBitsItems,
+                            serialOptions.stopBits
+                        )}
                     />
                     <Dropdown
                         label="Parity"
                         onSelect={item =>
                             updateSerialPort(selectedSerialport, {
                                 ...serialOptions,
-                                parity: (parityOptions().indexOf(item.value) ===
-                                -1
-                                    ? undefined
-                                    : item.value) as Parity,
+                                parity: convertItemToValue(
+                                    parityOptions(),
+                                    item
+                                ) as Parity,
                             })
                         }
                         items={parityItems}
-                        selectedItem={
-                            parityItems[
-                                parityItems.findIndex(
-                                    e => e.value === `${serialOptions.parity}`
-                                )
-                            ]
-                        }
+                        selectedItem={getItem(
+                            parityItems,
+                            serialOptions.parity
+                        )}
                     />
                 </div>
                 <Dropdown
@@ -268,118 +271,44 @@ const SerialSettings = () => {
                     onSelect={item =>
                         updateSerialPort(selectedSerialport, {
                             ...serialOptions,
-                            rtscts:
-                                ['on', 'off'].indexOf(item.value) === -1
-                                    ? undefined
-                                    : item.value === 'on',
+                            rtscts: convertOnOffItemToBoolean(item),
                         })
                     }
                     items={onOffItems}
-                    selectedItem={
-                        onOffItems[
-                            onOffItems.findIndex(e => {
-                                if (serialOptions.rtscts === undefined) {
-                                    return (
-                                        e.value === `${serialOptions.dataBits}`
-                                    );
-                                }
-
-                                return (
-                                    e.value ===
-                                    (serialOptions.rtscts === true
-                                        ? 'on'
-                                        : 'off')
-                                );
-                            })
-                        ]
-                    }
+                    selectedItem={getItem(onOffItems, serialOptions.rtscts)}
                 />
                 <Dropdown
                     label="xOn"
                     onSelect={item =>
                         updateSerialPort(selectedSerialport, {
                             ...serialOptions,
-                            xon:
-                                ['on', 'off'].indexOf(item.value) === -1
-                                    ? undefined
-                                    : item.value === 'on',
+                            xon: convertOnOffItemToBoolean(item),
                         })
                     }
                     items={onOffItems}
-                    selectedItem={
-                        onOffItems[
-                            onOffItems.findIndex(e => {
-                                if (serialOptions.xon === undefined) {
-                                    return (
-                                        e.value === `${serialOptions.dataBits}`
-                                    );
-                                }
-
-                                return (
-                                    e.value ===
-                                    (serialOptions.xon === true ? 'on' : 'off')
-                                );
-                            })
-                        ]
-                    }
+                    selectedItem={getItem(onOffItems, serialOptions.xon)}
                 />
                 <Dropdown
                     label="xOff"
                     onSelect={item =>
                         updateSerialPort(selectedSerialport, {
                             ...serialOptions,
-                            xoff:
-                                ['on', 'off'].indexOf(item.value) === -1
-                                    ? undefined
-                                    : item.value === 'on',
+                            xoff: convertOnOffItemToBoolean(item),
                         })
                     }
                     items={onOffItems}
-                    selectedItem={
-                        onOffItems[
-                            onOffItems.findIndex(e => {
-                                if (serialOptions.xoff === undefined) {
-                                    return (
-                                        e.value === `${serialOptions.dataBits}`
-                                    );
-                                }
-
-                                return (
-                                    e.value ===
-                                    (serialOptions.xoff === true ? 'on' : 'off')
-                                );
-                            })
-                        ]
-                    }
+                    selectedItem={getItem(onOffItems, serialOptions.xoff)}
                 />
                 <Dropdown
                     label="xAny"
                     onSelect={item =>
                         updateSerialPort(selectedSerialport, {
                             ...serialOptions,
-                            xany:
-                                ['on', 'off'].indexOf(item.value) === -1
-                                    ? undefined
-                                    : item.value === 'on',
+                            xany: convertOnOffItemToBoolean(item),
                         })
                     }
                     items={onOffItems}
-                    selectedItem={
-                        onOffItems[
-                            onOffItems.findIndex(e => {
-                                if (serialOptions.xany === undefined) {
-                                    return (
-                                        e.value === `${serialOptions.dataBits}`
-                                    );
-                                }
-
-                                return (
-                                    e.value ===
-                                    (serialOptions.xany === true ? 'on' : 'off')
-                                );
-                            })
-                        ]
-                    }
+                    selectedItem={getItem(onOffItems, serialOptions.xany)}
                 />
             </Group>
         </>
