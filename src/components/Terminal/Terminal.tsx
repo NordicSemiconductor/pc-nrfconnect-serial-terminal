@@ -61,8 +61,6 @@ const Terminal: React.FC<Props> = ({
     // to the terminal
     const handleUserInputLineMode = useCallback(
         (data: string) => {
-            writeLineModeToXterm(data);
-
             if (clearOnSend) setCmdLine('');
 
             const ret = commandCallback(data.trim());
@@ -79,16 +77,12 @@ const Terminal: React.FC<Props> = ({
     // the shell mode devide do all the auto complete etc...
     const handleUserInputShellMode = useCallback(
         (character: string) => {
-            if (!echoOnShell) {
-                writeShellModeEchoOffToXterm(character);
-            }
-
             const ret = commandCallback(character);
             if (ret) {
                 xtermRef.current?.terminal.write(ret);
             }
         },
-        [commandCallback, echoOnShell]
+        [commandCallback]
     );
 
     const clearTermial = () => {
