@@ -38,7 +38,7 @@ export const createModem = async (
     try {
         serialPort = await SerialPort(
             options as SerialPortOpenOptions<AutoDetectTypes>,
-            overwrite,
+            { overwrite },
             {
                 onData: data => eventEmitter.emit('response', [data]),
                 onUpdate: newOptions => dispatch(setUpdateOptions(newOptions)),
@@ -51,7 +51,7 @@ export const createModem = async (
                         )}`
                     );
                 },
-                onSeparateWrite: data => {
+                onDataWritten: data => {
                     eventEmitter.emit('separateWrite', [data]);
                 },
             }
