@@ -189,89 +189,84 @@ const SerialSettings = () => {
             />
 
             <Group heading="Serial Settings">
-                <div className="body" style={{ marginBottom: '16px' }}>
-                    <Dropdown
-                        label="Port"
-                        onSelect={({ value }) =>
-                            updateSerialPort(value, serialOptions)
-                        }
-                        items={comPortsDropdownItems}
-                        selectedItem={selectedComPortItem}
-                        disabled={availablePorts.length === 0 || isConnected}
-                    />
-                    <Dropdown
-                        label="Baud Rate"
-                        onSelect={item => {
-                            if (selectedSerialport != null) {
-                                modem?.update({ baudRate: Number(item.value) });
-                            } else {
-                                updateSerialPort(selectedSerialport, {
-                                    ...serialOptions,
-                                    baudRate: Number(item.value),
-                                });
-                            }
-                        }}
-                        items={baudRateItems}
-                        selectedItem={getItem(
-                            baudRateItems,
-                            serialOptions.baudRate
-                        )}
-                    />
-                    <Dropdown
-                        label="Data bits"
-                        onSelect={item =>
+                <Dropdown
+                    label="Port"
+                    onSelect={({ value }) =>
+                        updateSerialPort(value, serialOptions)
+                    }
+                    items={comPortsDropdownItems}
+                    selectedItem={selectedComPortItem}
+                    disabled={availablePorts.length === 0 || isConnected}
+                />
+                <Dropdown
+                    label="Baud Rate"
+                    onSelect={item => {
+                        if (selectedSerialport != null) {
+                            modem?.update({ baudRate: Number(item.value) });
+                        } else {
                             updateSerialPort(selectedSerialport, {
                                 ...serialOptions,
-                                dataBits: convertItemToValue(
-                                    ['8', '7', '6', '5'],
-                                    item
-                                ) as DataBits,
-                            })
+                                baudRate: Number(item.value),
+                            });
                         }
-                        items={dataBitsItems}
-                        selectedItem={getItem(
-                            dataBitsItems,
-                            serialOptions.dataBits
-                        )}
-                        disabled={isConnected}
-                    />
-                    <Dropdown
-                        label="Stop bits"
-                        onSelect={item =>
-                            updateSerialPort(selectedSerialport, {
-                                ...serialOptions,
-                                stopBits: convertItemToValue(
-                                    ['1', '2'],
-                                    item
-                                ) as StopBits,
-                            })
-                        }
-                        items={stopBitsItems}
-                        selectedItem={getItem(
-                            stopBitsItems,
-                            serialOptions.stopBits
-                        )}
-                        disabled={isConnected}
-                    />
-                    <Dropdown
-                        label="Parity"
-                        onSelect={item =>
-                            updateSerialPort(selectedSerialport, {
-                                ...serialOptions,
-                                parity: convertItemToValue(
-                                    parityOptions(),
-                                    item
-                                ) as Parity,
-                            })
-                        }
-                        items={parityItems}
-                        selectedItem={getItem(
-                            parityItems,
-                            serialOptions.parity
-                        )}
-                        disabled={isConnected}
-                    />
-                </div>
+                    }}
+                    items={baudRateItems}
+                    selectedItem={getItem(
+                        baudRateItems,
+                        serialOptions.baudRate
+                    )}
+                />
+                <Dropdown
+                    label="Data bits"
+                    onSelect={item =>
+                        updateSerialPort(selectedSerialport, {
+                            ...serialOptions,
+                            dataBits: convertItemToValue(
+                                ['8', '7', '6', '5'],
+                                item
+                            ) as DataBits,
+                        })
+                    }
+                    items={dataBitsItems}
+                    selectedItem={getItem(
+                        dataBitsItems,
+                        serialOptions.dataBits
+                    )}
+                    disabled={isConnected}
+                />
+                <Dropdown
+                    label="Stop bits"
+                    onSelect={item =>
+                        updateSerialPort(selectedSerialport, {
+                            ...serialOptions,
+                            stopBits: convertItemToValue(
+                                ['1', '2'],
+                                item
+                            ) as StopBits,
+                        })
+                    }
+                    items={stopBitsItems}
+                    selectedItem={getItem(
+                        stopBitsItems,
+                        serialOptions.stopBits
+                    )}
+                    disabled={isConnected}
+                />
+                <Dropdown
+                    label="Parity"
+                    onSelect={item =>
+                        updateSerialPort(selectedSerialport, {
+                            ...serialOptions,
+                            parity: convertItemToValue(
+                                parityOptions(),
+                                item
+                            ) as Parity,
+                        })
+                    }
+                    items={parityItems}
+                    selectedItem={getItem(parityItems, serialOptions.parity)}
+                    disabled={isConnected}
+                />
                 <Dropdown
                     label="rts/cts"
                     onSelect={item =>
