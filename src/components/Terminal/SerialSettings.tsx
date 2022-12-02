@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-4-Clause
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     Button,
@@ -35,12 +35,16 @@ type Parity = 'none' | 'even' | 'mark' | 'odd' | 'space' | undefined;
 type DataBits = 8 | 7 | 6 | 5 | undefined;
 type StopBits = 1 | 2 | undefined;
 
-const getItem = (itemList: DropdownItem[], value: unknown) => {
+const getItem = (
+    itemList: DropdownItem[],
+    value: unknown,
+    notFound?: DropdownItem
+) => {
     if (typeof value === 'boolean') value = value ? 'on' : 'off';
 
     const result = itemList[itemList.findIndex(e => e.value === `${value}`)];
 
-    return result === undefined ? itemList[0] : result;
+    return result === undefined ? notFound ?? itemList[0] : result;
 };
 
 const convertOnOffItemToBoolean = (item: DropdownItem) =>
@@ -63,24 +67,26 @@ const SerialSettings = () => {
 
     const [overwrite, setOverwrite] = useState(false);
 
-    const comPortsDropdownItems =
-        availablePorts.length > 0
-            ? [
-                  ...availablePorts.map(portPath => ({
-                      label: truncateMiddle(portPath, 20, 8),
-                      value: portPath as string,
-                  })),
-              ]
-            : [{ label: 'Not connected', value: 'Not connected' }];
+    const comPortsDropdownItems = useMemo(
+        () =>
+            availablePorts.length > 0
+                ? [
+                      ...availablePorts.map(portPath => ({
+                          label: truncateMiddle(portPath, 20, 8),
+                          value: portPath as string,
+                      })),
+                  ]
+                : [{ label: 'Not connected', value: 'Not connected' }],
+        [availablePorts]
+    );
 
-    const selectedComPortItem =
-        selectedSerialport != null
-            ? comPortsDropdownItems[
-                  comPortsDropdownItems.findIndex(
-                      e => e.value === selectedSerialport
-                  )
-              ]
-            : comPortsDropdownItems[0];
+    const selectedComPortItem = useMemo(
+        () =>
+            selectedSerialport != null
+                ? getItem(comPortsDropdownItems, selectedSerialport)
+                : comPortsDropdownItems[0],
+        [comPortsDropdownItems, selectedSerialport]
+    );
 
     const updateSerialPort = async (
         portPath: string | undefined,
@@ -124,7 +130,7 @@ const SerialSettings = () => {
         if (device) {
             dispatch(setSelectedSerialport(selectedComPortItem.value));
         }
-    }, [device, dispatch, selectedComPortItem.value]);
+    }, [device, dispatch, selectedComPortItem]);
 
     const { argv } = process;
     const portNameIndex = argv.findIndex(arg => arg === '--comPort');
