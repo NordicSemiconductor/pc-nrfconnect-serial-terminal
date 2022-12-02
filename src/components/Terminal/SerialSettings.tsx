@@ -191,6 +191,7 @@ const SerialSettings = () => {
             <Group heading="Serial Settings">
                 <div className="body" style={{ marginBottom: '16px' }}>
                     <Dropdown
+                        label="Port"
                         onSelect={({ value }) =>
                             updateSerialPort(value, serialOptions)
                         }
