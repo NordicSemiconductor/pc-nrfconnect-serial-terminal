@@ -1,9 +1,9 @@
 # nRF Terminal
 
-[![Build Status](https://dev.azure.com/NordicSemiconductor/Wayland/_apis/build/status/pc-nrfconnect-cellularmonitor?branchName=master)](https://dev.azure.com/NordicSemiconductor/Wayland/_build/latest?definitionId=65&branchName=master)
+[![Build Status](https://dev.azure.com/NordicSemiconductor/Wayland/_apis/build/status/pc-nrfconnect-serial-terminal?branchName=main)](https://dev.azure.com/NordicSemiconductor/Wayland/_build/latest?definitionId=126&branchName=main)
 [![License](https://img.shields.io/badge/license-Modified%20BSD%20License-blue.svg)](LICENSE)
 
-_nRF Terminal_ is a tool that...
+_nRF Serial Terminal_ is a tool that allows you to connect to serial devices.
 
 ![screenshot](resources/screenshot.gif)
 

@@ -1,3 +1,3 @@
-## 0.0.1 - 2022-10-27
+## 0.0.1 - 2022-12-07
 
--   Initial public release, as an unsupported, experimental preview.
+-   Initial public release.
