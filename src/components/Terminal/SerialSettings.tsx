@@ -11,6 +11,7 @@ import {
     Dropdown,
     DropdownItem,
     Group,
+    persistSerialPort,
     selectedDevice,
     Toggle,
     truncateMiddle,
@@ -123,6 +124,10 @@ const SerialSettings = () => {
                     )
                 )
             );
+            persistSerialPort(device?.serialNumber, 'serial-terminal', {
+                path: selectedSerialport,
+                ...serialOptions,
+            });
         }
     };
 
@@ -167,7 +172,6 @@ const SerialSettings = () => {
 
     const onOffItems = convertToDropDownItems(['on', 'off'], true);
 
-
     return (
         <>
             {modem == null ? (
@@ -210,12 +214,11 @@ const SerialSettings = () => {
                     onSelect={item => {
                         if (selectedSerialport != null) {
                             modem?.update({ baudRate: Number(item.value) });
-                        } else {
-                            updateSerialPort(selectedSerialport, {
-                                ...serialOptions,
-                                baudRate: Number(item.value),
-                            });
                         }
+                        updateSerialPort(selectedSerialport, {
+                            ...serialOptions,
+                            baudRate: Number(item.value),
+                        });
                     }}
                     items={baudRateItems}
                     selectedItem={getItem(
