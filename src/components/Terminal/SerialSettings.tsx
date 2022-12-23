@@ -6,6 +6,7 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import type { AutoDetectTypes } from '@serialport/bindings-cpp';
 import {
     Button,
     Dropdown,
@@ -16,6 +17,7 @@ import {
     Toggle,
     truncateMiddle,
 } from 'pc-nrfconnect-shared';
+import { SerialPortOpenOptions } from 'serialport';
 
 import { createModem } from '../../features/terminal/modem';
 import {
@@ -96,7 +98,6 @@ const SerialSettings = () => {
         // If a port is not selected : just update settings
         if (portPath == null || portPath === 'Not connected') {
             if (modem != null) {
-                await modem.close();
                 dispatch(setModem(undefined));
             }
             dispatch(setSelectedSerialport(undefined));
@@ -124,10 +125,12 @@ const SerialSettings = () => {
                     )
                 )
             );
-            persistSerialPort(device?.serialNumber, 'serial-terminal', {
-                path: selectedSerialport,
-                ...serialOptions,
-            });
+            if (device?.serialNumber) {
+                persistSerialPort(device?.serialNumber, 'serial-terminal', {
+                    ...serialOptions,
+                    path: selectedSerialport,
+                } as SerialPortOpenOptions<AutoDetectTypes>);
+            }
         }
     };
 
@@ -185,8 +188,7 @@ const SerialSettings = () => {
             ) : (
                 <Button
                     className="btn-secondary w-100 h-100"
-                    onClick={async () => {
-                        await modem.close();
+                    onClick={() => {
                         dispatch(setModem(undefined));
                     }}
                 >

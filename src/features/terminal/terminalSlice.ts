@@ -56,6 +56,7 @@ const terminalSlice = createSlice({
             state.selectedSerialport = action.payload;
         },
         setModem: (state, action: PayloadAction<Modem | undefined>) => {
+            state.modem?.close();
             state.modem = action.payload;
         },
         setUpdateOptions: (state, action: PayloadAction<UpdateOptions>) => {

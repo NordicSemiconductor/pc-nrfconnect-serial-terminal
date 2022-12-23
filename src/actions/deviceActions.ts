@@ -3,9 +3,12 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-4-Clause
  */
-import { AutoDetectTypes } from '@serialport/bindings-cpp';
-import { Device, getPersistedSerialPort, logger } from 'pc-nrfconnect-shared';
-import { SerialPortOpenOptions } from 'serialport';
+import {
+    Device,
+    getPersistedSerialPort,
+    logger,
+    SerialSettings,
+} from 'pc-nrfconnect-shared';
 
 import { createModem } from '../features/terminal/modem';
 import {
@@ -17,6 +20,7 @@ import {
 import type { TAction } from '../thunk';
 
 export const closeDevice = (): TAction => dispatch => {
+    // TODO persistSerialPort
     logger.info('Closing device');
     dispatch(setAvailableSerialPorts([]));
     dispatch(setSelectedSerialport(undefined));
@@ -27,25 +31,25 @@ export const openDevice =
     (device: Device): TAction =>
     async dispatch => {
         // Reset serial port settings
-        const storedOptions:
-            | SerialPortOpenOptions<AutoDetectTypes>
-            | undefined = getPersistedSerialPort(
-            device.serialNumber,
-            'serial-terminal'
-        );
+        const serialSettings: SerialSettings | undefined =
+            getPersistedSerialPort(device.serialNumber, 'serial-terminal');
         logger.info(
-            `Got the options for app: ${JSON.stringify(storedOptions)}`
+            `Got the options for app: ${JSON.stringify(
+                serialSettings.serialPortOptions
+            )}`
         );
+
+        dispatch(setAvailableSerialPorts([]));
+        dispatch(setSelectedSerialport(undefined));
+
+        const storedOptions = serialSettings.serialPortOptions;
         if (storedOptions) {
             dispatch(setSerialOptions(storedOptions));
-            dispatch(setAvailableSerialPorts([]));
             dispatch(setSelectedSerialport(storedOptions.path));
             await dispatch(
                 setModem(await createModem(storedOptions, false, dispatch))
             );
         }
-        dispatch(setAvailableSerialPorts([]));
-        dispatch(setSelectedSerialport(undefined));
 
         const ports = device.serialPorts;
         if (ports?.length > 0) {
