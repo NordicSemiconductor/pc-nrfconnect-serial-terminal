@@ -6,5 +6,25 @@
         "type": "npm",
         "script": "build:dev",
       },
+      {
+        "label": "Clean Packed Shared",
+        "type": "shell",
+        "command": "rm pc-nrfconnect-shared-*.tgz || echo 0",
+        "windows": {
+          "command": "rm $pc-nrfconnect-shared-*.tgz || echo 0",
+        },
+      },
+      {
+        "label": "Pack Shared and Install",
+        "type": "shell",
+        "command": "npm pack ${SharedWorkspace} && npm i pc-nrfconnect-shared-*.tgz",
+        "windows": {
+          "command": "npm pack ${SharedWorkspace} && npm i pc-nrfconnect-shared-*.tgz",
+        },
+      },
+      {
+        "label": "Install Local Shared",
+        "dependsOn": ["Clean Packed Shared", "Pack Shared and Install"]
+      }
     ]
   }
