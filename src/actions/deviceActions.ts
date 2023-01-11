@@ -43,26 +43,27 @@ export const deviceDisconnected =
 
 export const openDevice =
     (device: Device): TAction =>
-    async dispatch => {
+    async (dispatch, getState) => {
         // Reset serial port settings
-        const serialSettings: SerialSettings | undefined =
-            getPersistedSerialPort(device.serialNumber, 'serial-terminal');
+        const globalAutoReconnect = getState().device.autoReconnect;
 
-        dispatch(setAvailableSerialPorts([]));
-        dispatch(setSelectedSerialport(undefined));
+        if (globalAutoReconnect) {
+            const serialSettings: SerialSettings | undefined =
+                getPersistedSerialPort(device.serialNumber, 'serial-terminal');
 
-        if (serialSettings) {
-            const storedOptions = serialSettings.serialPortOptions;
-            logger.info(
-                `Got the options for app: ${JSON.stringify(
-                    serialSettings.serialPortOptions
-                )}`
-            );
-            dispatch(setSerialOptions(storedOptions));
-            dispatch(setSelectedSerialport(storedOptions.path));
-            await dispatch(
-                setModem(await createModem(storedOptions, false, dispatch))
-            );
+            if (serialSettings) {
+                const storedOptions = serialSettings.serialPortOptions;
+                logger.info(
+                    `Got the options for app: ${JSON.stringify(
+                        serialSettings.serialPortOptions
+                    )}`
+                );
+                dispatch(setSerialOptions(storedOptions));
+                dispatch(setSelectedSerialport(storedOptions.path));
+                await dispatch(
+                    setModem(await createModem(storedOptions, false, dispatch))
+                );
+            }
         }
 
         const ports = device.serialPorts;
