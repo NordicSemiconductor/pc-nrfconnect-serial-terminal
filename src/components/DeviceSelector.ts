@@ -13,7 +13,12 @@ import {
     logger,
 } from 'pc-nrfconnect-shared';
 
-import { closeDevice, openDevice } from '../actions/deviceActions';
+import {
+    closeDevice,
+    deviceConnected,
+    deviceDisconnected,
+    openDevice,
+} from '../actions/deviceActions';
 import { TDispatch } from '../thunk';
 /**
  * Configures which device types to show in the device selector.
@@ -68,6 +73,14 @@ const mapDispatch = (dispatch: TDispatch): Partial<DeviceSelectorProps> => ({
     onDeviceDeselected: () => {
         logger.info('Deselected device');
         dispatch(closeDevice());
+    },
+
+    onDeviceConnected(device) {
+        dispatch(deviceConnected(device));
+    },
+
+    onDeviceDisconnected(device) {
+        dispatch(deviceDisconnected(device));
     },
 });
 

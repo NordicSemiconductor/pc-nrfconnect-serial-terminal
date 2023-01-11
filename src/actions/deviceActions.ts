@@ -27,23 +27,37 @@ export const closeDevice = (): TAction => dispatch => {
     dispatch(setModem(undefined));
 };
 
+export const deviceConnected =
+    (device: Device): TAction =>
+    () => {
+        // TODO persistSerialPort
+        logger.info(`Device Connected SN:${device.serialNumber}`);
+    };
+
+export const deviceDisconnected =
+    (device: Device): TAction =>
+    () => {
+        // TODO persistSerialPort
+        logger.info(`Device Disconnected SN:${device.serialNumber}`);
+    };
+
 export const openDevice =
     (device: Device): TAction =>
     async dispatch => {
         // Reset serial port settings
         const serialSettings: SerialSettings | undefined =
             getPersistedSerialPort(device.serialNumber, 'serial-terminal');
-        logger.info(
-            `Got the options for app: ${JSON.stringify(
-                serialSettings.serialPortOptions
-            )}`
-        );
 
         dispatch(setAvailableSerialPorts([]));
         dispatch(setSelectedSerialport(undefined));
 
-        const storedOptions = serialSettings.serialPortOptions;
-        if (storedOptions) {
+        if (serialSettings) {
+            const storedOptions = serialSettings.serialPortOptions;
+            logger.info(
+                `Got the options for app: ${JSON.stringify(
+                    serialSettings.serialPortOptions
+                )}`
+            );
             dispatch(setSerialOptions(storedOptions));
             dispatch(setSelectedSerialport(storedOptions.path));
             await dispatch(
@@ -52,7 +66,7 @@ export const openDevice =
         }
 
         const ports = device.serialPorts;
-        if (ports?.length > 0) {
+        if (ports && ports?.length > 0) {
             dispatch(
                 setAvailableSerialPorts(ports.map(port => port.comName ?? ''))
             );
