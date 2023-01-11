@@ -85,7 +85,7 @@ const Terminal: React.FC<Props> = ({
         [commandCallback]
     );
 
-    const clearTermial = () => {
+    const clearTerminal = () => {
         xtermRef.current?.terminal.write(
             ansiEscapes.eraseLine + ansiEscapes.cursorTo(0)
         );
@@ -108,7 +108,7 @@ const Terminal: React.FC<Props> = ({
     useEffect(
         () =>
             onModemOpen(() => {
-                clearTermial(); // New connection or mode: clear terminal
+                clearTerminal(); // New connection or mode: clear terminal
                 if (!lineMode) {
                     commandCallback(String.fromCharCode(12)); // init shell mode
                     // we need New Page (Ascii 12) so not to create an empty line on top of shell
@@ -189,7 +189,7 @@ const Terminal: React.FC<Props> = ({
                             right: '0',
                         }}
                         className="clear-console"
-                        onClick={() => clearTermial()}
+                        onClick={() => clearTerminal()}
                     >
                         clear console
                     </Button>
