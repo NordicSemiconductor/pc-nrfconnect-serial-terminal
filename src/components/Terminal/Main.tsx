@@ -43,17 +43,6 @@ const Main = ({ active }: PaneProps) => {
         [modem]
     );
 
-    const onModemOpen = useCallback(
-        (listener: () => void) => {
-            if (!modem) return () => {};
-
-            const cleanup = [modem.onOpen(listener)];
-
-            return () => cleanup.forEach(fn => fn());
-        },
-        [modem]
-    );
-
     const commandCallback = useCallback(
         (command: string) => {
             if (!modem) return 'Please connect a device';
@@ -87,7 +76,6 @@ const Main = ({ active }: PaneProps) => {
                     commandCallback={commandCallback}
                     onModemData={onModemData}
                     onModemSeparateWrite={onSeparateWrite}
-                    onModemOpen={onModemOpen}
                     clearOnSend={clearOnSend}
                     lineMode={lineMode}
                 />

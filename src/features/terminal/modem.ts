@@ -66,11 +66,6 @@ export const createModem = async (
             return () => eventEmitter.removeListener('response', handler);
         },
 
-        onOpen: (handler: (error?: string) => void) => {
-            eventEmitter.on('open', handler);
-            return () => eventEmitter.removeListener('open', handler);
-        },
-
         close: async () => {
             if (await serialPort.isOpen()) {
                 logger.info(`Closing: '${serialPort.path}'`);

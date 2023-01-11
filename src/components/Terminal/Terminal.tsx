@@ -13,7 +13,10 @@ import { useResizeDetector } from 'react-resize-detector';
 import ansiEscapes from 'ansi-escapes';
 import { XTerm } from 'xterm-for-react';
 
-import { getEchoOnShell } from '../../features/terminal/terminalSlice';
+import {
+    getEchoOnShell,
+    getModem,
+} from '../../features/terminal/terminalSlice';
 import useFitAddon from '../../hooks/useFitAddon';
 
 import 'xterm/css/xterm.css';
@@ -24,7 +27,6 @@ interface Props {
     commandCallback: (command: string) => string | undefined;
     onModemData: (listener: (data: Buffer) => void) => () => void;
     onModemSeparateWrite: (listener: (data: Buffer) => void) => () => void;
-    onModemOpen: (listener: () => void) => () => void;
     clearOnSend: boolean;
     lineMode: boolean;
 }
@@ -33,7 +35,6 @@ const Terminal: React.FC<Props> = ({
     commandCallback,
     onModemData,
     onModemSeparateWrite,
-    onModemOpen,
     clearOnSend,
     lineMode,
 }) => {
@@ -42,6 +43,7 @@ const Terminal: React.FC<Props> = ({
     const { width, height, ref: resizeRef } = useResizeDetector();
     const fitAddon = useFitAddon(height, width, lineMode);
     const echoOnShell = useSelector(getEchoOnShell);
+    const modem = useSelector(getModem);
 
     const writeLineModeToXterm = (data: string) => {
         if (new Date().getMonth() === 11) {
@@ -72,9 +74,9 @@ const Terminal: React.FC<Props> = ({
     );
 
     // In Shell mode we need to only write to the serial port
-    // Shell mode will garantee that data is echoed back and hence
+    // Shell mode will guarantee that data is echoed back and hence
     // all we need to do is write the data back to the terminal and let
-    // the shell mode devide do all the auto complete etc...
+    // the shell mode device do all the auto complete etc...
     const handleUserInputShellMode = useCallback(
         (character: string) => {
             const ret = commandCallback(character);
@@ -85,36 +87,40 @@ const Terminal: React.FC<Props> = ({
         [commandCallback]
     );
 
-    const clearTerminal = () => {
+    const clearTerminal = useCallback(() => {
         xtermRef.current?.terminal.write(
             ansiEscapes.eraseLine + ansiEscapes.cursorTo(0)
         );
         xtermRef.current?.terminal.clear();
-    };
+    }, [xtermRef]);
+
+    // Prepare Terminal for new connection or mode
+    useEffect(() => {
+        modem?.isOpen().then(open => {
+            if (open) {
+                clearTerminal();
+            }
+        }); // init shell mode
+
+        // we need New Page (Ascii 12) so not to create an empty line on top of shell
+    }, [clearTerminal, modem]);
 
     // Prepare Terminal for new connection or mode
     useEffect(() => {
         if (!lineMode) {
-            commandCallback(String.fromCharCode(12)); // init shell mode
+            modem?.isOpen().then(open => {
+                if (open) {
+                    commandCallback(String.fromCharCode(12));
+                }
+            }); // init shell mode
+
             // we need New Page (Ascii 12) so not to create an empty line on top of shell
         }
-    }, [commandCallback, lineMode, onModemOpen]);
+    }, [commandCallback, lineMode, modem]);
 
     useEffect(
         () => onModemData(data => xtermRef.current?.terminal.write(data)),
         [onModemData]
-    );
-
-    useEffect(
-        () =>
-            onModemOpen(() => {
-                clearTerminal(); // New connection or mode: clear terminal
-                if (!lineMode) {
-                    commandCallback(String.fromCharCode(12)); // init shell mode
-                    // we need New Page (Ascii 12) so not to create an empty line on top of shell
-                }
-            }),
-        [commandCallback, lineMode, onModemOpen]
     );
 
     useEffect(
