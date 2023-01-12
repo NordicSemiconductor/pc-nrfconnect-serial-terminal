@@ -126,10 +126,17 @@ const SerialSettings = () => {
                 )
             );
             if (device?.serialNumber) {
-                persistSerialPort(device?.serialNumber, 'serial-terminal', {
-                    ...serialOptions,
-                    path: selectedSerialport,
-                } as SerialPortOpenOptions<AutoDetectTypes>);
+                persistSerialPort(
+                    device?.serialNumber,
+                    'serial-terminal',
+                    {
+                        ...serialOptions,
+                        path: selectedSerialport,
+                    } as SerialPortOpenOptions<AutoDetectTypes>,
+                    availablePorts.findIndex(
+                        port => port === selectedSerialport
+                    )
+                );
             }
         }
     };

@@ -3,15 +3,25 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-4-Clause
  */
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Dropdown, Group, StateSelector, Toggle } from 'pc-nrfconnect-shared';
+import {
+    Dropdown,
+    getPersistedTerminalSettings,
+    Group,
+    persistTerminalSettings,
+    selectedDevice,
+    StateSelector,
+    Toggle,
+} from 'pc-nrfconnect-shared';
 
 import {
     getClearOnSend,
     getEchoOnShell,
     getLineEnding,
     getLineMode,
+    getModem,
+    getSelectedSerialport,
     LineEnding,
     setClearOnSend,
     setEchoOnShell,
@@ -21,6 +31,11 @@ import {
 import { convertToDropDownItems } from '../../utils/dataConstructors';
 
 const TerminalSettings = () => {
+    const device = useSelector(selectedDevice);
+    const modem = useSelector(getModem);
+    const lastModemOpenState = useRef(false);
+    const selectedSerialport = useSelector(getSelectedSerialport);
+
     const clearOnSend = useSelector(getClearOnSend);
     const lineEnding = useSelector(getLineEnding);
     const echoOnShell = useSelector(getEchoOnShell);
@@ -39,6 +54,81 @@ const TerminalSettings = () => {
         : lineEndings[0];
 
     const lineModeItems = ['Line', 'Shell'];
+
+    useEffect(() => {
+        if (!modem) {
+            lastModemOpenState.current = false;
+        }
+    }, [modem]);
+
+    useEffect(() => {
+        if (modem) {
+            modem.isOpen().then(open => {
+                if (lastModemOpenState.current !== open && device) {
+                    const vComIndex = device.serialPorts?.findIndex(
+                        dev => dev.comName === selectedSerialport
+                    );
+
+                    if (vComIndex === undefined || vComIndex === -1) {
+                        return;
+                    }
+
+                    const terminalSettings = getPersistedTerminalSettings(
+                        device.serialNumber,
+                        vComIndex
+                    );
+
+                    if (terminalSettings) {
+                        dispatch(setLineMode(terminalSettings.lineMode));
+                        dispatch(setEchoOnShell(terminalSettings.echoOnShell));
+                        dispatch(
+                            setLineEnding(
+                                terminalSettings.lineEnding as LineEnding
+                            )
+                        );
+                        dispatch(setClearOnSend(terminalSettings.clearOnSend));
+                    }
+                }
+
+                lastModemOpenState.current = open;
+            });
+        } else {
+            lastModemOpenState.current = false;
+        }
+    }, [device, dispatch, modem, selectedSerialport]);
+
+    useEffect(() => {
+        if (!device) {
+            return;
+        }
+
+        !modem?.isOpen().then(open => {
+            if (!open) return;
+
+            const vComIndex = device.serialPorts?.findIndex(
+                dev => dev.comName === selectedSerialport
+            );
+
+            if (vComIndex === undefined || vComIndex === -1) {
+                return;
+            }
+
+            persistTerminalSettings(device.serialNumber, vComIndex, {
+                lineMode,
+                echoOnShell,
+                lineEnding,
+                clearOnSend,
+            });
+        });
+    }, [
+        clearOnSend,
+        device,
+        echoOnShell,
+        lineEnding,
+        lineMode,
+        selectedSerialport,
+        modem,
+    ]);
 
     return (
         <Group heading="Terminal Settings">

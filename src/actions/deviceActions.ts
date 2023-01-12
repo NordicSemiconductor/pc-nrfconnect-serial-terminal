@@ -20,7 +20,6 @@ import {
 import type { TAction } from '../thunk';
 
 export const closeDevice = (): TAction => dispatch => {
-    // TODO persistSerialPort
     logger.info('Closing device');
     dispatch(setAvailableSerialPorts([]));
     dispatch(setSelectedSerialport(undefined));
@@ -30,14 +29,12 @@ export const closeDevice = (): TAction => dispatch => {
 export const deviceConnected =
     (device: Device): TAction =>
     () => {
-        // TODO persistSerialPort
         logger.info(`Device Connected SN:${device.serialNumber}`);
     };
 
 export const deviceDisconnected =
     (device: Device): TAction =>
     () => {
-        // TODO persistSerialPort
         logger.info(`Device Disconnected SN:${device.serialNumber}`);
     };
 
@@ -46,13 +43,24 @@ export const openDevice =
     async (dispatch, getState) => {
         // Reset serial port settings
         const globalAutoReconnect = getState().device.autoReconnect;
+        const ports = device.serialPorts;
 
-        if (globalAutoReconnect) {
+        if (ports && ports?.length > 0) {
+            dispatch(
+                setAvailableSerialPorts(ports.map(port => port.comName ?? ''))
+            );
+        }
+
+        if (globalAutoReconnect && ports) {
             const serialSettings: SerialSettings | undefined =
                 getPersistedSerialPort(device.serialNumber, 'serial-terminal');
 
-            if (serialSettings) {
+            if (serialSettings && ports?.length > serialSettings.vComIndex) {
                 const storedOptions = serialSettings.serialPortOptions;
+                storedOptions.path =
+                    ports[serialSettings.vComIndex].comName ??
+                    storedOptions.path;
+
                 logger.info(
                     `Got the options for app: ${JSON.stringify(
                         serialSettings.serialPortOptions
@@ -64,12 +72,5 @@ export const openDevice =
                     setModem(await createModem(storedOptions, false, dispatch))
                 );
             }
-        }
-
-        const ports = device.serialPorts;
-        if (ports && ports?.length > 0) {
-            dispatch(
-                setAvailableSerialPorts(ports.map(port => port.comName ?? ''))
-            );
         }
     };
