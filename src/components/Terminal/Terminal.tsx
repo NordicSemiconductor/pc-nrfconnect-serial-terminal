@@ -46,6 +46,8 @@ const Terminal: React.FC<Props> = ({
     const modem = useSelector(getModem);
 
     const writeLineModeToXterm = (data: string) => {
+        if (data.length === 1 && data.charCodeAt(0) === 12) return;
+
         if (new Date().getMonth() === 11) {
             xtermRef.current?.terminal.writeln(`${data.trim()} 🎄`);
         } else {
@@ -109,7 +111,7 @@ const Terminal: React.FC<Props> = ({
     useEffect(() => {
         if (!lineMode) {
             modem?.isOpen().then(open => {
-                if (open) {
+                if (open && !lineMode) {
                     commandCallback(String.fromCharCode(12));
                 }
             }); // init shell mode
@@ -119,13 +121,20 @@ const Terminal: React.FC<Props> = ({
     }, [commandCallback, lineMode, modem]);
 
     useEffect(
-        () => onModemData(data => xtermRef.current?.terminal.write(data)),
+        () =>
+            onModemData(data => {
+                if (data.length > 0) {
+                    xtermRef.current?.terminal.write(data);
+                }
+            }),
         [onModemData]
     );
 
     useEffect(
         () =>
             onModemSeparateWrite(data => {
+                if (data.byteLength === 0) return;
+
                 if (!lineMode && !echoOnShell) {
                     writeShellModeEchoOffToXterm(data.toString());
                 } else if (lineMode) {
