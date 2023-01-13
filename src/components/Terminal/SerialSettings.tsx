@@ -9,9 +9,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { AutoDetectTypes } from '@serialport/bindings-cpp';
 import {
     Button,
+    CollapsibleGroup,
     Dropdown,
     DropdownItem,
-    Group,
     persistSerialPort,
     selectedDevice,
     Toggle,
@@ -207,17 +207,15 @@ const SerialSettings = () => {
                 onToggle={() => setOverwrite(!overwrite)}
                 label="overwrite settings"
             />
+            <Dropdown
+                label="Port"
+                onSelect={({ value }) => updateSerialPort(value, serialOptions)}
+                items={comPortsDropdownItems}
+                selectedItem={selectedComPortItem}
+                disabled={availablePorts.length === 0 || isConnected}
+            />
 
-            <Group heading="Serial Settings">
-                <Dropdown
-                    label="Port"
-                    onSelect={({ value }) =>
-                        updateSerialPort(value, serialOptions)
-                    }
-                    items={comPortsDropdownItems}
-                    selectedItem={selectedComPortItem}
-                    disabled={availablePorts.length === 0 || isConnected}
-                />
+            <CollapsibleGroup heading="Serial Settings">
                 <Dropdown
                     label="Baud Rate"
                     onSelect={item => {
@@ -334,7 +332,7 @@ const SerialSettings = () => {
                     selectedItem={getItem(onOffItems, serialOptions.xany)}
                     disabled={isConnected}
                 />
-            </Group>
+            </CollapsibleGroup>
         </>
     );
 };

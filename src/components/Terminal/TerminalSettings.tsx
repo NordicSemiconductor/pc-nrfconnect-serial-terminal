@@ -6,9 +6,9 @@
 import React, { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
+    CollapsibleGroup,
     Dropdown,
     getPersistedTerminalSettings,
-    Group,
     persistTerminalSettings,
     selectedDevice,
     StateSelector,
@@ -131,7 +131,7 @@ const TerminalSettings = () => {
     ]);
 
     return (
-        <Group heading="Terminal Settings">
+        <CollapsibleGroup heading="Terminal Settings">
             <StateSelector
                 items={lineModeItems}
                 onSelect={value => dispatch(setLineMode(value === 0))}
@@ -161,7 +161,7 @@ const TerminalSettings = () => {
                     label="Echo on shell"
                 />
             )}
-        </Group>
+        </CollapsibleGroup>
     );
 };
 
