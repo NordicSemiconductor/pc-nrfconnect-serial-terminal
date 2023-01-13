@@ -29,5 +29,6 @@ export default () => (
             },
         ]}
         documentation={DocumentationSections}
+        autoReconnectByDefault
     />
 );
