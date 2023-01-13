@@ -18,6 +18,7 @@ import {
     SerialOptions,
     setSerialOptions,
     setSetOptions,
+    setShowOverwriteDialog,
     setUpdateOptions,
 } from './terminalSlice';
 
@@ -57,6 +58,10 @@ export const createModem = async (
             }
         );
     } catch (error) {
+        if ((error as Error).message.includes('FAILED_DIFFERENT_SETTINGS')) {
+            dispatch(setShowOverwriteDialog(true));
+        }
+
         return undefined;
     }
 

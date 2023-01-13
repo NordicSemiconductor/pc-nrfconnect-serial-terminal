@@ -4,17 +4,17 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-4-Clause
  */
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AutoDetectTypes } from '@serialport/bindings-cpp';
 import {
     Button,
     CollapsibleGroup,
+    ConfirmationDialog,
     Dropdown,
     DropdownItem,
     persistSerialPort,
     selectedDevice,
-    Toggle,
     truncateMiddle,
 } from 'pc-nrfconnect-shared';
 import { SerialPortOpenOptions } from 'serialport';
@@ -26,11 +26,13 @@ import {
     getModem,
     getSelectedSerialport,
     getSerialOptions,
+    getShowOverwriteDialog,
     SerialOptions,
     setAutoConnected,
     setModem,
     setSelectedSerialport,
     setSerialOptions,
+    setShowOverwriteDialog,
 } from '../../features/terminal/terminalSlice';
 import { convertToDropDownItems } from '../../utils/dataConstructors';
 
@@ -63,12 +65,11 @@ const SerialSettings = () => {
     const selectedSerialport = useSelector(getSelectedSerialport);
     const autoConnected = useSelector(getAutoConnected);
     const modem = useSelector(getModem);
+    const overwriteDialog = useSelector(getShowOverwriteDialog);
 
     const isConnected = modem !== undefined;
 
     const dispatch = useDispatch();
-
-    const [overwrite, setOverwrite] = useState(false);
 
     const comPortsDropdownItems = useMemo(
         () =>
@@ -114,8 +115,9 @@ const SerialSettings = () => {
         dispatch(setSerialOptions(options));
     };
 
-    const connectToSelectedSerialPort = async () => {
+    const connectToSelectedSerialPort = async (overwrite = false) => {
         if (selectedSerialport != null) {
+            dispatch(setShowOverwriteDialog(false));
             dispatch(
                 setModem(
                     await createModem(
@@ -125,21 +127,28 @@ const SerialSettings = () => {
                     )
                 )
             );
-            if (device?.serialNumber) {
-                persistSerialPort(
-                    device?.serialNumber,
-                    'serial-terminal',
-                    {
-                        ...serialOptions,
-                        path: selectedSerialport,
-                    } as SerialPortOpenOptions<AutoDetectTypes>,
-                    availablePorts.findIndex(
-                        port => port === selectedSerialport
-                    )
-                );
-            }
         }
     };
+
+    useEffect(() => {
+        if (device?.serialNumber && modem) {
+            persistSerialPort(
+                device?.serialNumber,
+                'serial-terminal',
+                {
+                    ...serialOptions,
+                    path: selectedSerialport,
+                } as SerialPortOpenOptions<AutoDetectTypes>,
+                availablePorts.findIndex(port => port === selectedSerialport)
+            );
+        }
+    }, [
+        modem,
+        availablePorts,
+        device?.serialNumber,
+        selectedSerialport,
+        serialOptions,
+    ]);
 
     useEffect(() => {
         if (device) {
@@ -187,7 +196,7 @@ const SerialSettings = () => {
             {modem == null ? (
                 <Button
                     className="btn-primary w-100 h-100"
-                    onClick={connectToSelectedSerialPort}
+                    onClick={() => connectToSelectedSerialPort(false)}
                     disabled={selectedSerialport == null}
                 >
                     Connect to port
@@ -202,11 +211,6 @@ const SerialSettings = () => {
                     Disconnect from port
                 </Button>
             )}
-            <Toggle
-                isToggled={overwrite}
-                onToggle={() => setOverwrite(!overwrite)}
-                label="overwrite settings"
-            />
             <Dropdown
                 label="Port"
                 onSelect={({ value }) => updateSerialPort(value, serialOptions)}
@@ -333,6 +337,15 @@ const SerialSettings = () => {
                     disabled={isConnected}
                 />
             </CollapsibleGroup>
+            <ConfirmationDialog
+                title="Conflicting Serial Settings"
+                isVisible={overwriteDialog}
+                children="The port is already open with different settings by another App. Do you want to connect and overwrite settings?"
+                onConfirm={() => connectToSelectedSerialPort(true)}
+                onCancel={() => {
+                    dispatch(setShowOverwriteDialog(false));
+                }}
+            />
         </>
     );
 };

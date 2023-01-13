@@ -28,6 +28,7 @@ interface TerminalState {
     lineEnding: LineEnding;
     lineMode: boolean;
     echoOnShell: boolean;
+    showOverwriteDialog: boolean;
 }
 
 const initialState: TerminalState = {
@@ -40,6 +41,7 @@ const initialState: TerminalState = {
     lineEnding: 'CRLF',
     lineMode: true,
     echoOnShell: true,
+    showOverwriteDialog: false,
 };
 
 const terminalSlice = createSlice({
@@ -83,6 +85,9 @@ const terminalSlice = createSlice({
         setEchoOnShell: (state, action: PayloadAction<boolean>) => {
             state.echoOnShell = action.payload;
         },
+        setShowOverwriteDialog: (state, action: PayloadAction<boolean>) => {
+            state.showOverwriteDialog = action.payload;
+        },
     },
 });
 
@@ -102,6 +107,8 @@ export const getLineEnding = (state: RootState) =>
 export const getLineMode = (state: RootState) => state.app.terminal.lineMode;
 export const getEchoOnShell = (state: RootState) =>
     state.app.terminal.echoOnShell;
+export const getShowOverwriteDialog = (state: RootState) =>
+    state.app.terminal.showOverwriteDialog;
 
 export const {
     setModem,
@@ -115,5 +122,6 @@ export const {
     setLineEnding,
     setLineMode,
     setEchoOnShell,
+    setShowOverwriteDialog,
 } = terminalSlice.actions;
 export default terminalSlice.reducer;
