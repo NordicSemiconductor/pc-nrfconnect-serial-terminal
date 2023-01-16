@@ -131,7 +131,10 @@ const SerialSettings = () => {
     };
 
     useEffect(() => {
-        if (device?.serialNumber && modem) {
+        const vComIndex = availablePorts.findIndex(
+            port => port === selectedSerialport
+        );
+        if (device?.serialNumber && modem && vComIndex >= 0) {
             persistSerialPort(
                 device?.serialNumber,
                 'serial-terminal',
@@ -139,7 +142,7 @@ const SerialSettings = () => {
                     ...serialOptions,
                     path: selectedSerialport,
                 } as SerialPortOpenOptions<AutoDetectTypes>,
-                availablePorts.findIndex(port => port === selectedSerialport)
+                vComIndex
             );
         }
     }, [
