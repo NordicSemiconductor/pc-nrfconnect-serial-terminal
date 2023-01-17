@@ -343,12 +343,14 @@ const SerialSettings = () => {
             <ConfirmationDialog
                 title="Conflicting Serial Settings"
                 isVisible={overwriteDialog}
-                children="The port is already open with different settings by another App. Do you want to connect and overwrite settings?"
                 onConfirm={() => connectToSelectedSerialPort(true)}
                 onCancel={() => {
                     dispatch(setShowOverwriteDialog(false));
                 }}
-            />
+            >
+                The port is already open with different settings by another App.
+                Do you want to connect and overwrite settings?
+            </ConfirmationDialog>
         </>
     );
 };
