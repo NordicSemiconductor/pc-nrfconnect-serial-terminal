@@ -5,25 +5,19 @@
  */
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import type {
-    AutoDetectTypes,
-    SetOptions,
-    UpdateOptions,
-} from '@serialport/bindings-cpp';
+import type { AutoDetectTypes } from '@serialport/bindings-cpp';
+import { SerialPort } from 'pc-nrfconnect-shared';
 import type { SerialPortOpenOptions } from 'serialport';
 
 import type { RootState } from '../../appReducer';
-import type { Modem } from './modem';
 
-export type SerialOptions = Partial<SerialPortOpenOptions<AutoDetectTypes>>;
 export type LineEnding = 'NONE' | 'LF' | 'CR' | 'CRLF';
 
 interface TerminalState {
     availableSerialPorts: string[];
-    selectedSerialport?: string;
-    modem?: Modem;
+    serialPort?: SerialPort;
     autoConnected: boolean;
-    serialOptions: SerialOptions;
+    serialOptions: SerialPortOpenOptions<AutoDetectTypes>;
     clearOnSend: boolean;
     lineEnding: LineEnding;
     lineMode: boolean;
@@ -33,10 +27,12 @@ interface TerminalState {
 
 const initialState: TerminalState = {
     availableSerialPorts: [],
-    selectedSerialport: undefined,
-    modem: undefined,
+    serialPort: undefined,
     autoConnected: false,
-    serialOptions: { baudRate: 115200 },
+    serialOptions: {
+        baudRate: 115200,
+        path: '',
+    },
     clearOnSend: true,
     lineEnding: 'CRLF',
     lineMode: true,
@@ -51,24 +47,35 @@ const terminalSlice = createSlice({
         setAvailableSerialPorts: (state, action: PayloadAction<string[]>) => {
             state.availableSerialPorts = action.payload;
         },
-        setSelectedSerialport: (
+        setSerialPort: (
             state,
-            action: PayloadAction<string | undefined>
+            action: PayloadAction<SerialPort | undefined>
         ) => {
-            state.selectedSerialport = action.payload;
+            state.serialPort?.close();
+            state.serialPort = action.payload;
         },
-        setModem: (state, action: PayloadAction<Modem | undefined>) => {
-            state.modem?.close();
-            state.modem = action.payload;
-        },
-        setUpdateOptions: (state, action: PayloadAction<UpdateOptions>) => {
+        setUpdateOptions: (
+            state,
+            action: PayloadAction<SerialPortOpenOptions<AutoDetectTypes>>
+        ) => {
             state.serialOptions = { ...state.serialOptions, ...action.payload };
         },
-        setSetOptions: (state, action: PayloadAction<SetOptions>) => {
+        setSetOptions: (
+            state,
+            action: PayloadAction<SerialPortOpenOptions<AutoDetectTypes>>
+        ) => {
             state.serialOptions = { ...state.serialOptions, ...action.payload };
         },
-        setSerialOptions: (state, action: PayloadAction<SerialOptions>) => {
-            state.serialOptions = action.payload;
+        setSerialOptions: (
+            state,
+            action: PayloadAction<
+                Partial<SerialPortOpenOptions<AutoDetectTypes>>
+            >
+        ) => {
+            state.serialOptions = {
+                ...state.serialOptions,
+                ...action.payload,
+            };
         },
         setAutoConnected: (state, action: PayloadAction<boolean>) => {
             state.autoConnected = action.payload;
@@ -91,9 +98,8 @@ const terminalSlice = createSlice({
     },
 });
 
-export const getModem = (state: RootState) => state.app.terminal.modem;
-export const getSelectedSerialport = (state: RootState) =>
-    state.app.terminal.selectedSerialport;
+export const getSerialPort = (state: RootState) =>
+    state.app.terminal.serialPort;
 export const getAutoConnected = (state: RootState) =>
     state.app.terminal.autoConnected;
 export const getAvailableSerialPorts = (state: RootState) =>
@@ -111,9 +117,8 @@ export const getShowOverwriteDialog = (state: RootState) =>
     state.app.terminal.showOverwriteDialog;
 
 export const {
-    setModem,
+    setSerialPort,
     setAvailableSerialPorts,
-    setSelectedSerialport,
     setSerialOptions,
     setUpdateOptions,
     setSetOptions,

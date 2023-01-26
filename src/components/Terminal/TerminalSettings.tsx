@@ -20,8 +20,8 @@ import {
     getEchoOnShell,
     getLineEnding,
     getLineMode,
-    getModem,
-    getSelectedSerialport,
+    getSerialOptions,
+    getSerialPort,
     LineEnding,
     setClearOnSend,
     setEchoOnShell,
@@ -32,9 +32,9 @@ import { convertToDropDownItems } from '../../utils/dataConstructors';
 
 const TerminalSettings = () => {
     const device = useSelector(selectedDevice);
-    const modem = useSelector(getModem);
+    const serialPort = useSelector(getSerialPort);
     const lastModemOpenState = useRef(false);
-    const selectedSerialport = useSelector(getSelectedSerialport);
+    const selectedSerialport = useSelector(getSerialOptions).path;
 
     const clearOnSend = useSelector(getClearOnSend);
     const lineEnding = useSelector(getLineEnding);
@@ -56,14 +56,14 @@ const TerminalSettings = () => {
     const lineModeItems = ['Line', 'Shell'];
 
     useEffect(() => {
-        if (!modem) {
+        if (!serialPort) {
             lastModemOpenState.current = false;
         }
-    }, [modem]);
+    }, [serialPort]);
 
     useEffect(() => {
-        if (modem) {
-            modem.isOpen().then(open => {
+        if (serialPort) {
+            serialPort.isOpen().then(open => {
                 if (lastModemOpenState.current !== open && device) {
                     const vComIndex = device.serialPorts?.findIndex(
                         dev => dev.comName === selectedSerialport
@@ -95,14 +95,14 @@ const TerminalSettings = () => {
         } else {
             lastModemOpenState.current = false;
         }
-    }, [device, dispatch, modem, selectedSerialport]);
+    }, [device, dispatch, serialPort, selectedSerialport]);
 
     useEffect(() => {
         if (!device) {
             return;
         }
 
-        !modem?.isOpen().then(open => {
+        !serialPort?.isOpen().then(open => {
             if (!open) return;
 
             const vComIndex = device.serialPorts?.findIndex(
@@ -127,7 +127,7 @@ const TerminalSettings = () => {
         lineEnding,
         lineMode,
         selectedSerialport,
-        modem,
+        serialPort,
     ]);
 
     return (

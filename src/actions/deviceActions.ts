@@ -4,26 +4,24 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-4-Clause
  */
 import {
+    createSerialPort,
     Device,
     getPersistedSerialPort,
     logger,
-    SerialSettings,
 } from 'pc-nrfconnect-shared';
 
-import { createModem } from '../features/terminal/modem';
 import {
     setAvailableSerialPorts,
-    setModem,
-    setSelectedSerialport,
     setSerialOptions,
+    setSerialPort,
 } from '../features/terminal/terminalSlice';
 import type { TAction } from '../thunk';
 
 export const closeDevice = (): TAction => dispatch => {
     logger.info('Closing device');
     dispatch(setAvailableSerialPorts([]));
-    dispatch(setSelectedSerialport(undefined));
-    dispatch(setModem(undefined));
+    dispatch(setSerialOptions({ path: '' }));
+    dispatch(setSerialPort(undefined));
 };
 
 export const deviceConnected =
@@ -52,8 +50,10 @@ export const openDevice =
         }
 
         if (globalAutoReconnect && ports) {
-            const serialSettings: SerialSettings | undefined =
-                getPersistedSerialPort(device.serialNumber, 'serial-terminal');
+            const serialSettings = getPersistedSerialPort(
+                device.serialNumber,
+                'serial-terminal'
+            );
 
             if (serialSettings && ports?.length > serialSettings.vComIndex) {
                 const storedOptions = serialSettings.serialPortOptions;
@@ -67,9 +67,13 @@ export const openDevice =
                     )}`
                 );
                 dispatch(setSerialOptions(storedOptions));
-                dispatch(setSelectedSerialport(storedOptions.path));
                 await dispatch(
-                    setModem(await createModem(storedOptions, false, dispatch))
+                    setSerialPort(
+                        await createSerialPort(storedOptions, {
+                            overwrite: false,
+                            settingsLocked: false,
+                        })
+                    )
                 );
             }
         }

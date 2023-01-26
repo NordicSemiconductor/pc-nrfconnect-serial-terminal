@@ -15,7 +15,7 @@ import { XTerm } from 'xterm-for-react';
 
 import {
     getEchoOnShell,
-    getModem,
+    getSerialPort,
 } from '../../features/terminal/terminalSlice';
 import useFitAddon from '../../hooks/useFitAddon';
 
@@ -25,16 +25,16 @@ import styles from './Terminal.module.scss';
 
 interface Props {
     commandCallback: (command: string) => string | undefined;
-    onModemData: (listener: (data: Buffer) => void) => () => void;
-    onModemSeparateWrite: (listener: (data: Buffer) => void) => () => void;
+    onData: (listener: (data: Uint8Array) => void) => () => void;
+    onDataWritten: (listener: (data: Uint8Array) => void) => () => void;
     clearOnSend: boolean;
     lineMode: boolean;
 }
 
 const Terminal: React.FC<Props> = ({
     commandCallback,
-    onModemData,
-    onModemSeparateWrite,
+    onData,
+    onDataWritten,
     clearOnSend,
     lineMode,
 }) => {
@@ -43,7 +43,7 @@ const Terminal: React.FC<Props> = ({
     const { width, height, ref: resizeRef } = useResizeDetector();
     const fitAddon = useFitAddon(height, width, lineMode);
     const echoOnShell = useSelector(getEchoOnShell);
-    const modem = useSelector(getModem);
+    const modem = useSelector(getSerialPort);
 
     const writeLineModeToXterm = (data: string) => {
         if (data.length === 1 && data.charCodeAt(0) === 12) return;
@@ -122,17 +122,17 @@ const Terminal: React.FC<Props> = ({
 
     useEffect(
         () =>
-            onModemData(data => {
+            onData(data => {
                 if (data.length > 0) {
                     xtermRef.current?.terminal.write(data);
                 }
             }),
-        [onModemData]
+        [onData]
     );
 
     useEffect(
         () =>
-            onModemSeparateWrite(data => {
+            onDataWritten(data => {
                 if (data.byteLength === 0) return;
 
                 if (!lineMode && !echoOnShell) {
@@ -141,7 +141,7 @@ const Terminal: React.FC<Props> = ({
                     writeLineModeToXterm(data.toString());
                 }
             }),
-        [lineMode, onModemSeparateWrite, echoOnShell]
+        [lineMode, onDataWritten, echoOnShell]
     );
 
     const terminalOptions = {
