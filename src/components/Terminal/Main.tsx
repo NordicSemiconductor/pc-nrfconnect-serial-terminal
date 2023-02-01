@@ -12,45 +12,40 @@ import {
     getClearOnSend,
     getLineEnding,
     getLineMode,
-    getModem,
+    getSerialPort,
 } from '../../features/terminal/terminalSlice';
 import Terminal from './Terminal';
 
 import './overlay.scss';
 
 const Main = ({ active }: PaneProps) => {
-    const modem = useSelector(getModem);
+    const serialPort = useSelector(getSerialPort);
     const lineEnding = useSelector(getLineEnding);
     const lineMode = useSelector(getLineMode);
     const clearOnSend = useSelector(getClearOnSend);
 
-    const onModemData = useCallback(
-        (listener: (data: Buffer) => void) => {
-            if (!modem) return () => {};
+    const onDataWritten = useCallback(
+        (listener: (data: Uint8Array) => void) => {
+            if (!serialPort) return () => {};
 
-            const cleanup = [modem.onResponse(data => data.forEach(listener))];
-
-            return () => cleanup.forEach(fn => fn());
+            return serialPort.onDataWritten(listener);
         },
-        [modem]
+        [serialPort]
     );
+    const onData = useCallback(
+        (listener: (data: Uint8Array) => void) => {
+            if (!serialPort) return () => {};
 
-    const onModemOpen = useCallback(
-        (listener: () => void) => {
-            if (!modem) return () => {};
-
-            const cleanup = [modem.onOpen(listener)];
-
-            return () => cleanup.forEach(fn => fn());
+            return serialPort.onData(listener);
         },
-        [modem]
+        [serialPort]
     );
 
     const commandCallback = useCallback(
         (command: string) => {
-            if (!modem) return 'Please connect a device';
+            if (!serialPort) return 'Please connect a device';
 
-            if (!modem.isOpen()) return 'Connection is not open';
+            if (!serialPort.isOpen()) return 'Connection is not open';
 
             if (lineMode) {
                 switch (lineEnding) {
@@ -66,9 +61,9 @@ const Main = ({ active }: PaneProps) => {
                 }
             }
 
-            if (!modem?.write(command)) return 'Modem busy or invalid command';
+            serialPort?.write(command);
         },
-        [modem, lineEnding, lineMode]
+        [serialPort, lineEnding, lineMode]
     );
 
     return (
@@ -77,8 +72,8 @@ const Main = ({ active }: PaneProps) => {
             {active && (
                 <Terminal
                     commandCallback={commandCallback}
-                    onModemData={onModemData}
-                    onModemOpen={onModemOpen}
+                    onData={onData}
+                    onDataWritten={onDataWritten}
                     clearOnSend={clearOnSend}
                     lineMode={lineMode}
                 />

@@ -4,22 +4,32 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-4-Clause
  */
 
-import React from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Dropdown, Group, truncateMiddle } from 'pc-nrfconnect-shared';
+import type { AutoDetectTypes } from '@serialport/bindings-cpp';
+import {
+    Button,
+    CollapsibleGroup,
+    ConfirmationDialog,
+    createSerialPort,
+    Dropdown,
+    DropdownItem,
+    persistSerialPort,
+    selectedDevice,
+    truncateMiddle,
+} from 'pc-nrfconnect-shared';
+import { SerialPortOpenOptions } from 'serialport';
 
-import { createModem } from '../../features/terminal/modem';
 import {
     getAutoConnected,
     getAvailableSerialPorts,
-    getModem,
-    getSelectedSerialport,
     getSerialOptions,
-    SerialOptions,
+    getSerialPort,
+    getShowOverwriteDialog,
     setAutoConnected,
-    setModem,
-    setSelectedSerialport,
     setSerialOptions,
+    setSerialPort,
+    setShowOverwriteDialog,
 } from '../../features/terminal/terminalSlice';
 import { convertToDropDownItems } from '../../utils/dataConstructors';
 
@@ -27,63 +37,113 @@ type Parity = 'none' | 'even' | 'mark' | 'odd' | 'space' | undefined;
 type DataBits = 8 | 7 | 6 | 5 | undefined;
 type StopBits = 1 | 2 | undefined;
 
+const getItem = (
+    itemList: DropdownItem[],
+    value: unknown,
+    notFound?: DropdownItem
+) => {
+    if (typeof value === 'boolean') value = value ? 'on' : 'off';
+
+    const result = itemList[itemList.findIndex(e => e.value === `${value}`)];
+
+    return result === undefined ? notFound ?? itemList[0] : result;
+};
+
+const convertOnOffItemToBoolean = (item: DropdownItem) =>
+    ['on', 'off'].indexOf(item.value) === -1 ? undefined : item.value === 'on';
+
+const convertItemToValue = (valueList: string[], item: DropdownItem) =>
+    valueList.indexOf(item.value) === -1 ? undefined : item.value;
+
 const SerialSettings = () => {
+    const device = useSelector(selectedDevice);
     const serialOptions = useSelector(getSerialOptions);
     const availablePorts = useSelector(getAvailableSerialPorts);
-    const selectedSerialport = useSelector(getSelectedSerialport);
     const autoConnected = useSelector(getAutoConnected);
-    const modem = useSelector(getModem);
+    const serialPort = useSelector(getSerialPort);
+    const overwriteDialog = useSelector(getShowOverwriteDialog);
+
+    const isConnected = serialPort !== undefined;
 
     const dispatch = useDispatch();
 
-    const comPortsDropdownItems =
-        availablePorts.length > 0
-            ? [
-                  { label: 'Not connected', value: 'Not connected' },
-                  ...availablePorts.map(portPath => ({
-                      label: truncateMiddle(portPath, 20, 8),
-                      value: portPath as string,
-                  })),
-              ]
-            : [{ label: 'Not connected', value: 'Not connected' }];
+    const comPortsDropdownItems = useMemo(
+        () =>
+            availablePorts.length > 0
+                ? [
+                      ...availablePorts.map(portPath => ({
+                          label: truncateMiddle(portPath, 20, 8),
+                          value: portPath as string,
+                      })),
+                  ]
+                : [{ label: 'Not connected', value: '' }],
+        [availablePorts]
+    );
 
-    const selectedComPortItem = selectedSerialport
-        ? comPortsDropdownItems[
-              comPortsDropdownItems.findIndex(
-                  e => e.value === selectedSerialport
-              )
-          ]
-        : comPortsDropdownItems[0];
+    const selectedComPortItem = useMemo(
+        () =>
+            serialOptions.path !== ''
+                ? getItem(comPortsDropdownItems, serialOptions.path)
+                : comPortsDropdownItems[0],
+        [comPortsDropdownItems, serialOptions]
+    );
 
-    const updateSerialPort = (
-        portPath: string | undefined,
-        options: SerialOptions
+    const updateSerialPort = async (
+        options: Partial<SerialPortOpenOptions<AutoDetectTypes>>
     ) => {
-        if (typeof portPath === 'undefined') {
-            dispatch(setSerialOptions(options));
+        options = { ...serialOptions, ...options };
+        // If a port is not selected : just update settings
+        if (options.path === '') {
+            if (serialPort !== undefined) {
+                dispatch(setSerialPort(undefined));
+            }
+            dispatch(setSerialOptions({ path: '' }));
             return;
         }
 
-        if (portPath !== 'Not connected' || options !== serialOptions) {
-            const action = () =>
-                dispatch(setModem(createModem(portPath as string, options)));
-
-            if (modem?.isOpen()) {
-                modem.close(action);
-            } else {
-                action();
-            }
-        } else {
-            modem?.close();
-            setModem(undefined);
+        // Port has been changed:
+        if (serialOptions.path !== options.path) {
+            await serialPort?.close();
         }
 
-        dispatch(setSelectedSerialport(portPath));
         dispatch(setSerialOptions(options));
     };
 
-    const { argv } = process;
+    const connectToSelectedSerialPort = async (overwrite = false) => {
+        if (serialOptions.path !== '') {
+            dispatch(setShowOverwriteDialog(false));
+            dispatch(
+                setSerialPort(
+                    await createSerialPort(serialOptions, {
+                        overwrite,
+                        settingsLocked: false,
+                    })
+                )
+            );
+        }
+    };
 
+    useEffect(() => {
+        const vComIndex = availablePorts.findIndex(
+            port => port === serialOptions.path
+        );
+        if (device?.serialNumber && serialPort && vComIndex >= 0) {
+            persistSerialPort(
+                device?.serialNumber,
+                'serial-terminal',
+                serialOptions,
+                vComIndex
+            );
+        }
+    }, [serialPort, availablePorts, device?.serialNumber, serialOptions]);
+
+    useEffect(() => {
+        if (device) {
+            dispatch(setSerialOptions({ path: selectedComPortItem.value }));
+        }
+    }, [device, dispatch, selectedComPortItem]);
+
+    const { argv } = process;
     const portNameIndex = argv.findIndex(arg => arg === '--comPort');
     const portName = portNameIndex > -1 ? argv[portNameIndex + 1] : undefined;
     const shouldAutoConnect = !autoConnected && portName;
@@ -91,12 +151,12 @@ const SerialSettings = () => {
     if (shouldAutoConnect && availablePorts.length > 0) {
         const portExists = availablePorts.indexOf(portName) !== -1;
 
-        if (portExists) updateSerialPort(portName, serialOptions);
+        if (portExists) updateSerialPort({ path: portName });
 
         dispatch(setAutoConnected(true));
     }
 
-    const boadrateItems = convertToDropDownItems(
+    const baudRateItems = convertToDropDownItems(
         [
             115200, 57600, 38400, 19200, 9600, 4800, 2400, 1800, 1200, 600, 300,
             200, 150, 134, 110, 75, 50,
@@ -104,218 +164,172 @@ const SerialSettings = () => {
         false
     );
 
+    const parityOptions = () => {
+        // https://serialport.io/docs/api-bindings-cpp#open
+        if (process.platform === 'win32') {
+            return ['none', 'even', 'mark', 'odd', 'space'];
+        }
+        return ['none', 'even', 'odd'];
+    };
+
     const dataBitsItems = convertToDropDownItems([8, 7, 6, 5], true);
     const stopBitsItems = convertToDropDownItems([1, 2], true);
-    const parityItems = convertToDropDownItems(
-        ['none', 'even', 'mark', 'odd', 'space'],
-        true
-    );
+    const parityItems = convertToDropDownItems(parityOptions(), true);
 
     const onOffItems = convertToDropDownItems(['on', 'off'], true);
 
     return (
-        <Group heading="Serial Settings">
-            <div className="body" style={{ marginBottom: '16px' }}>
-                <Dropdown
-                    onSelect={({ value }) =>
-                        updateSerialPort(value, serialOptions)
-                    }
-                    items={comPortsDropdownItems}
-                    selectedItem={selectedComPortItem}
-                    disabled={availablePorts.length === 0}
-                />
+        <>
+            {serialPort == null ? (
+                <Button
+                    className="btn-primary w-100 h-100"
+                    onClick={() => connectToSelectedSerialPort(false)}
+                    disabled={serialOptions.path === ''}
+                >
+                    Connect to port
+                </Button>
+            ) : (
+                <Button
+                    className="btn-secondary w-100 h-100"
+                    onClick={() => {
+                        dispatch(setSerialPort(undefined));
+                    }}
+                >
+                    Disconnect from port
+                </Button>
+            )}
+            <Dropdown
+                label="Port"
+                onSelect={({ value }) => updateSerialPort({ path: value })}
+                items={comPortsDropdownItems}
+                selectedItem={selectedComPortItem}
+                disabled={availablePorts.length === 0 || isConnected}
+            />
+
+            <CollapsibleGroup heading="Serial Settings">
                 <Dropdown
                     label="Baud Rate"
-                    onSelect={item =>
-                        updateSerialPort(selectedSerialport, {
-                            ...serialOptions,
+                    onSelect={item => {
+                        if (serialOptions.path !== '') {
+                            serialPort?.update({
+                                baudRate: Number(item.value),
+                            });
+                        }
+                        updateSerialPort({
                             baudRate: Number(item.value),
-                        })
-                    }
-                    items={boadrateItems}
-                    selectedItem={
-                        boadrateItems[
-                            boadrateItems.findIndex(
-                                e => e.value === `${serialOptions.baudRate}`
-                            )
-                        ]
-                    }
+                        });
+                    }}
+                    items={baudRateItems}
+                    selectedItem={getItem(
+                        baudRateItems,
+                        serialOptions.baudRate
+                    )}
                 />
                 <Dropdown
                     label="Data bits"
                     onSelect={item =>
-                        updateSerialPort(selectedSerialport, {
-                            ...serialOptions,
-                            dataBits: (['8', '7', '6', '5'].indexOf(
-                                item.value
-                            ) === -1
-                                ? undefined
-                                : Number(item.value)) as DataBits,
+                        updateSerialPort({
+                            dataBits: convertItemToValue(
+                                ['8', '7', '6', '5'],
+                                item
+                            ) as DataBits,
                         })
                     }
                     items={dataBitsItems}
-                    selectedItem={
-                        dataBitsItems[
-                            dataBitsItems.findIndex(
-                                e => e.value === `${serialOptions.dataBits}`
-                            )
-                        ]
-                    }
+                    selectedItem={getItem(
+                        dataBitsItems,
+                        serialOptions.dataBits
+                    )}
+                    disabled={isConnected}
                 />
                 <Dropdown
                     label="Stop bits"
                     onSelect={item =>
-                        updateSerialPort(selectedSerialport, {
-                            ...serialOptions,
-                            stopBits: (['1', '2'].indexOf(item.value) === -1
-                                ? undefined
-                                : Number(item.value)) as StopBits,
+                        updateSerialPort({
+                            stopBits: convertItemToValue(
+                                ['1', '2'],
+                                item
+                            ) as StopBits,
                         })
                     }
                     items={stopBitsItems}
-                    selectedItem={
-                        stopBitsItems[
-                            stopBitsItems.findIndex(
-                                e => e.value === `${serialOptions.stopBits}`
-                            )
-                        ]
-                    }
+                    selectedItem={getItem(
+                        stopBitsItems,
+                        serialOptions.stopBits
+                    )}
+                    disabled={isConnected}
                 />
                 <Dropdown
                     label="Parity"
                     onSelect={item =>
-                        updateSerialPort(selectedSerialport, {
-                            ...serialOptions,
-                            parity: ([
-                                'none',
-                                'even',
-                                'mark',
-                                'odd',
-                                'space',
-                            ].indexOf(item.value) === -1
-                                ? undefined
-                                : item.value) as Parity,
+                        updateSerialPort({
+                            parity: convertItemToValue(
+                                parityOptions(),
+                                item
+                            ) as Parity,
                         })
                     }
                     items={parityItems}
-                    selectedItem={
-                        parityItems[
-                            parityItems.findIndex(
-                                e => e.value === `${serialOptions.parity}`
-                            )
-                        ]
-                    }
+                    selectedItem={getItem(parityItems, serialOptions.parity)}
+                    disabled={isConnected}
                 />
-            </div>
-            <Dropdown
-                label="rts/cts"
-                onSelect={item =>
-                    updateSerialPort(selectedSerialport, {
-                        ...serialOptions,
-                        rtscts:
-                            ['on', 'off'].indexOf(item.value) === -1
-                                ? undefined
-                                : item.value === 'on',
-                    })
-                }
-                items={onOffItems}
-                selectedItem={
-                    onOffItems[
-                        onOffItems.findIndex(e => {
-                            if (typeof serialOptions.rtscts === 'undefined') {
-                                return e.value === 'auto';
-                            }
-
-                            return (
-                                e.value ===
-                                (serialOptions.rtscts === true ? 'on' : 'off')
-                            );
+                <Dropdown
+                    label="rts/cts"
+                    onSelect={item =>
+                        updateSerialPort({
+                            rtscts: convertOnOffItemToBoolean(item),
                         })
-                    ]
-                }
-            />
-            <Dropdown
-                label="xOn"
-                onSelect={item =>
-                    updateSerialPort(selectedSerialport, {
-                        ...serialOptions,
-                        xon:
-                            ['on', 'off'].indexOf(item.value) === -1
-                                ? undefined
-                                : item.value === 'on',
-                    })
-                }
-                items={onOffItems}
-                selectedItem={
-                    onOffItems[
-                        onOffItems.findIndex(e => {
-                            if (typeof serialOptions.xon === 'undefined') {
-                                return e.value === 'auto';
-                            }
-
-                            return (
-                                e.value ===
-                                (serialOptions.xon === true ? 'on' : 'off')
-                            );
+                    }
+                    items={onOffItems}
+                    selectedItem={getItem(onOffItems, serialOptions.rtscts)}
+                    disabled={isConnected}
+                />
+                <Dropdown
+                    label="xOn"
+                    onSelect={item =>
+                        updateSerialPort({
+                            xon: convertOnOffItemToBoolean(item),
                         })
-                    ]
-                }
-            />
-            <Dropdown
-                label="xOff"
-                onSelect={item =>
-                    updateSerialPort(selectedSerialport, {
-                        ...serialOptions,
-                        xoff:
-                            ['on', 'off'].indexOf(item.value) === -1
-                                ? undefined
-                                : item.value === 'on',
-                    })
-                }
-                items={onOffItems}
-                selectedItem={
-                    onOffItems[
-                        onOffItems.findIndex(e => {
-                            if (typeof serialOptions.xoff === 'undefined') {
-                                return e.value === 'auto';
-                            }
-
-                            return (
-                                e.value ===
-                                (serialOptions.xoff === true ? 'on' : 'off')
-                            );
+                    }
+                    items={onOffItems}
+                    selectedItem={getItem(onOffItems, serialOptions.xon)}
+                    disabled={isConnected}
+                />
+                <Dropdown
+                    label="xOff"
+                    onSelect={item =>
+                        updateSerialPort({
+                            xoff: convertOnOffItemToBoolean(item),
                         })
-                    ]
-                }
-            />
-            <Dropdown
-                label="xAny"
-                onSelect={item =>
-                    updateSerialPort(selectedSerialport, {
-                        ...serialOptions,
-                        xany:
-                            ['on', 'off'].indexOf(item.value) === -1
-                                ? undefined
-                                : item.value === 'on',
-                    })
-                }
-                items={onOffItems}
-                selectedItem={
-                    onOffItems[
-                        onOffItems.findIndex(e => {
-                            if (typeof serialOptions.xany === 'undefined') {
-                                return e.value === 'auto';
-                            }
-
-                            return (
-                                e.value ===
-                                (serialOptions.xany === true ? 'on' : 'off')
-                            );
+                    }
+                    items={onOffItems}
+                    selectedItem={getItem(onOffItems, serialOptions.xoff)}
+                    disabled={isConnected}
+                />
+                <Dropdown
+                    label="xAny"
+                    onSelect={item =>
+                        updateSerialPort({
+                            xany: convertOnOffItemToBoolean(item),
                         })
-                    ]
-                }
-            />
-        </Group>
+                    }
+                    items={onOffItems}
+                    selectedItem={getItem(onOffItems, serialOptions.xany)}
+                    disabled={isConnected}
+                />
+            </CollapsibleGroup>
+            <ConfirmationDialog
+                title="Conflicting Serial Settings"
+                isVisible={overwriteDialog}
+                onConfirm={() => connectToSelectedSerialPort(true)}
+                onCancel={() => {
+                    dispatch(setShowOverwriteDialog(false));
+                }}
+            >
+                The port is already open with different settings by another App.
+                Do you want to connect and overwrite settings?
+            </ConfirmationDialog>
+        </>
     );
 };
 

@@ -3,15 +3,25 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-4-Clause
  */
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Dropdown, Group, StateSelector, Toggle } from 'pc-nrfconnect-shared';
+import {
+    CollapsibleGroup,
+    Dropdown,
+    getPersistedTerminalSettings,
+    persistTerminalSettings,
+    selectedDevice,
+    StateSelector,
+    Toggle,
+} from 'pc-nrfconnect-shared';
 
 import {
     getClearOnSend,
     getEchoOnShell,
     getLineEnding,
     getLineMode,
+    getSerialOptions,
+    getSerialPort,
     LineEnding,
     setClearOnSend,
     setEchoOnShell,
@@ -21,6 +31,11 @@ import {
 import { convertToDropDownItems } from '../../utils/dataConstructors';
 
 const TerminalSettings = () => {
+    const device = useSelector(selectedDevice);
+    const serialPort = useSelector(getSerialPort);
+    const lastModemOpenState = useRef(false);
+    const selectedSerialport = useSelector(getSerialOptions).path;
+
     const clearOnSend = useSelector(getClearOnSend);
     const lineEnding = useSelector(getLineEnding);
     const echoOnShell = useSelector(getEchoOnShell);
@@ -40,11 +55,85 @@ const TerminalSettings = () => {
 
     const lineModeItems = ['Line', 'Shell'];
 
+    useEffect(() => {
+        if (!serialPort) {
+            lastModemOpenState.current = false;
+        }
+    }, [serialPort]);
+
+    useEffect(() => {
+        if (serialPort) {
+            serialPort.isOpen().then(open => {
+                if (lastModemOpenState.current !== open && device) {
+                    const vComIndex = device.serialPorts?.findIndex(
+                        dev => dev.comName === selectedSerialport
+                    );
+
+                    if (vComIndex === undefined || vComIndex === -1) {
+                        return;
+                    }
+
+                    const terminalSettings = getPersistedTerminalSettings(
+                        device.serialNumber,
+                        vComIndex
+                    );
+
+                    if (terminalSettings) {
+                        dispatch(setLineMode(terminalSettings.lineMode));
+                        dispatch(setEchoOnShell(terminalSettings.echoOnShell));
+                        dispatch(
+                            setLineEnding(
+                                terminalSettings.lineEnding as LineEnding
+                            )
+                        );
+                        dispatch(setClearOnSend(terminalSettings.clearOnSend));
+                    }
+                }
+
+                lastModemOpenState.current = open;
+            });
+        } else {
+            lastModemOpenState.current = false;
+        }
+    }, [device, dispatch, serialPort, selectedSerialport]);
+
+    useEffect(() => {
+        if (!device) {
+            return;
+        }
+
+        !serialPort?.isOpen().then(open => {
+            if (!open) return;
+
+            const vComIndex = device.serialPorts?.findIndex(
+                dev => dev.comName === selectedSerialport
+            );
+
+            if (vComIndex === undefined || vComIndex === -1) {
+                return;
+            }
+
+            persistTerminalSettings(device.serialNumber, vComIndex, {
+                lineMode,
+                echoOnShell,
+                lineEnding,
+                clearOnSend,
+            });
+        });
+    }, [
+        clearOnSend,
+        device,
+        echoOnShell,
+        lineEnding,
+        lineMode,
+        selectedSerialport,
+        serialPort,
+    ]);
+
     return (
-        <Group heading="Terminal Settings">
+        <CollapsibleGroup heading="Terminal Settings">
             <StateSelector
                 items={lineModeItems}
-                defaultIndex={0}
                 onSelect={value => dispatch(setLineMode(value === 0))}
                 selectedItem={lineModeItems[lineMode ? 0 : 1]}
             />
@@ -72,7 +161,7 @@ const TerminalSettings = () => {
                     label="Echo on shell"
                 />
             )}
-        </Group>
+        </CollapsibleGroup>
     );
 };
 

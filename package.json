@@ -5,12 +5,12 @@
     "displayName": "Serial Terminal",
     "repository": {
         "type": "git",
-        "url": "https://github.com/NordicPlayground/pc-nrfconnect-serial-terminal"
+        "url": "https://github.com/NordicSemiconductor/pc-nrfconnect-serial-terminal.git"
     },
     "author": "Nordic Semiconductor ASA",
     "license": "SEE LICENSE IN LICENSE",
     "engines": {
-        "nrfconnect": "^3.12.0"
+        "nrfconnect": "^4.0.0"
     },
     "main": "dist/bundle.js",
     "files": [
@@ -19,11 +19,11 @@
         "LICENSE"
     ],
     "scripts": {
-        "dev": "run-p --silent --continue-on-error --print-label dev:*",
-        "dev:main": "webpack watch --mode development",
-        "dev:terminal": "node esbuild",
-        "webpack": "webpack build --mode development",
-        "build": "webpack build",
+        "watch": "run-p --silent --continue-on-error watch:*",
+        "watch:build": "run-esbuild --watch",
+        "watch:types": "tsc --noEmit --pretty --watch --preserveWatchOutput",
+        "build:dev": "run-esbuild",
+        "build:prod": "run-esbuild --prod",
         "test": "jest",
         "check": "run-p --silent --continue-on-error --print-label check:*",
         "check:lint": "eslint --color .",
@@ -34,10 +34,8 @@
     },
     "devDependencies": {
         "ansi-escapes": "^4.3.2",
-        "esbuild-sass-plugin": "^2.3.1",
-        "jest-fetch-mock": "^3.0.3",
-        "pc-nrfconnect-shared": "git+https://github.com/NordicSemiconductor/pc-nrfconnect-shared.git#v6.8.0",
-        "serialport": "^9.0.6",
+        "pc-nrfconnect-shared": "git+https://github.com/NordicSemiconductor/pc-nrfconnect-shared.git#v6.18.4",
+        "serialport": "^10.5.0",
         "xterm-addon-fit": "^0.5.0",
         "xterm-for-react": "^1.0.4"
     },
@@ -45,9 +43,6 @@
         "esbuild": "^0.14.50",
         "npm": "^6.14.13"
     },
-    "bundledDependencies": [
-        "@nordicsemiconductor/nrf-monitor-lib-js"
-    ],
     "eslintConfig": {
         "extends": "./node_modules/pc-nrfconnect-shared/config/eslintrc"
     },
