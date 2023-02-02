@@ -48,6 +48,7 @@ export const openDevice =
             dispatch(
                 setAvailableSerialPorts(ports.map(port => port.comName ?? ''))
             );
+            dispatch(updateSerialOptions({ path: ports[0].comName ?? '' }));
         }
 
         if (globalAutoReconnect && ports) {
