@@ -48,11 +48,9 @@ const Terminal: React.FC<Props> = ({
     const writeLineModeToXterm = (data: string) => {
         if (data.length === 1 && data.charCodeAt(0) === 12) return;
 
-        if (new Date().getMonth() === 11) {
-            xtermRef.current?.terminal.writeln(`${data.trim()} 🎄`);
-        } else {
-            xtermRef.current?.terminal.writeln(`${data.trim()} >`);
-        }
+        xtermRef.current?.terminal.writeln(
+            `\x1b[32;3;1m> ${data.trim()}\x1b[32;0m`
+        );
     };
 
     const writeShellModeEchoOffToXterm = (character: string) => {
