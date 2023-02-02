@@ -18,8 +18,6 @@ import {
 } from '../../features/terminal/terminalSlice';
 import Terminal from './Terminal';
 
-import './overlay.scss';
-
 const Main = ({ active }: PaneProps) => {
     const dispatch = useDispatch();
     const serialPort = useSelector(getSerialPort);
