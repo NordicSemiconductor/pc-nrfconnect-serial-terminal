@@ -26,7 +26,9 @@ import { TDispatch } from '../thunk';
  * https://github.com/NordicSemiconductor/nrf-device-lister-js.
  */
 const deviceListing: DeviceTraits = {
+    nordicUsb: true,
     serialPorts: true,
+    jlink: true,
 };
 
 const mapState = () => ({
