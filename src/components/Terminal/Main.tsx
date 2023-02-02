@@ -4,22 +4,26 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-4-Clause
  */
 
-import React, { useCallback } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useCallback, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { PaneProps } from 'pc-nrfconnect-shared';
 
 import {
     getClearOnSend,
     getLineEnding,
     getLineMode,
+    getSerialOptions,
     getSerialPort,
+    setSerialOptions,
 } from '../../features/terminal/terminalSlice';
 import Terminal from './Terminal';
 
 import './overlay.scss';
 
 const Main = ({ active }: PaneProps) => {
+    const dispatch = useDispatch();
     const serialPort = useSelector(getSerialPort);
+    const serialOptions = useSelector(getSerialOptions);
     const lineEnding = useSelector(getLineEnding);
     const lineMode = useSelector(getLineMode);
     const clearOnSend = useSelector(getClearOnSend);
@@ -40,6 +44,28 @@ const Main = ({ active }: PaneProps) => {
         },
         [serialPort]
     );
+
+    useEffect(() => {
+        if (!serialPort) return;
+
+        const unsubscribeOnUpdate = serialPort.onUpdate(options => {
+            dispatch(
+                setSerialOptions({
+                    path: serialOptions.path,
+                    ...options,
+                })
+            );
+        });
+
+        const unsubscribeOnChange = serialPort.onChange(options => {
+            dispatch(setSerialOptions(options));
+        });
+
+        return () => {
+            unsubscribeOnUpdate();
+            unsubscribeOnChange();
+        };
+    }, [dispatch, serialOptions.path, serialPort]);
 
     const commandCallback = useCallback(
         (command: string) => {

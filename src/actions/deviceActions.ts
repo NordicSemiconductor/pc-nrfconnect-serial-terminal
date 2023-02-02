@@ -14,13 +14,14 @@ import {
     setAvailableSerialPorts,
     setSerialOptions,
     setSerialPort,
+    updateSerialOptions,
 } from '../features/terminal/terminalSlice';
 import type { TAction } from '../thunk';
 
 export const closeDevice = (): TAction => dispatch => {
     logger.info('Closing device');
     dispatch(setAvailableSerialPorts([]));
-    dispatch(setSerialOptions({ path: '' }));
+    dispatch(updateSerialOptions({ path: '' }));
     dispatch(setSerialPort(undefined));
 };
 

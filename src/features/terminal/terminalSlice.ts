@@ -16,7 +16,6 @@ export type LineEnding = 'NONE' | 'LF' | 'CR' | 'CRLF';
 interface TerminalState {
     availableSerialPorts: string[];
     serialPort?: SerialPort;
-    autoConnected: boolean;
     serialOptions: SerialPortOpenOptions<AutoDetectTypes>;
     clearOnSend: boolean;
     lineEnding: LineEnding;
@@ -28,7 +27,6 @@ interface TerminalState {
 const initialState: TerminalState = {
     availableSerialPorts: [],
     serialPort: undefined,
-    autoConnected: false,
     serialOptions: {
         baudRate: 115200,
         path: '',
@@ -39,6 +37,8 @@ const initialState: TerminalState = {
     echoOnShell: true,
     showOverwriteDialog: false,
 };
+
+const cleanUndefined = <T>(obj: T) => JSON.parse(JSON.stringify(obj));
 
 const terminalSlice = createSlice({
     name: 'modem',
@@ -54,31 +54,31 @@ const terminalSlice = createSlice({
             state.serialPort?.close();
             state.serialPort = action.payload;
         },
-        setUpdateOptions: (
-            state,
-            action: PayloadAction<SerialPortOpenOptions<AutoDetectTypes>>
-        ) => {
-            state.serialOptions = { ...state.serialOptions, ...action.payload };
-        },
-        setSetOptions: (
-            state,
-            action: PayloadAction<SerialPortOpenOptions<AutoDetectTypes>>
-        ) => {
-            state.serialOptions = { ...state.serialOptions, ...action.payload };
-        },
-        setSerialOptions: (
+        updateSerialOptions: (
             state,
             action: PayloadAction<
                 Partial<SerialPortOpenOptions<AutoDetectTypes>>
             >
         ) => {
-            state.serialOptions = {
+            state.serialOptions = cleanUndefined({
                 ...state.serialOptions,
                 ...action.payload,
-            };
+            });
         },
-        setAutoConnected: (state, action: PayloadAction<boolean>) => {
-            state.autoConnected = action.payload;
+        setSetOptions: (
+            state,
+            action: PayloadAction<SerialPortOpenOptions<AutoDetectTypes>>
+        ) => {
+            state.serialOptions = cleanUndefined({
+                ...state.serialOptions,
+                ...action.payload,
+            });
+        },
+        setSerialOptions: (
+            state,
+            action: PayloadAction<SerialPortOpenOptions<AutoDetectTypes>>
+        ) => {
+            state.serialOptions = cleanUndefined(action.payload);
         },
         setClearOnSend: (state, action: PayloadAction<boolean>) => {
             state.clearOnSend = action.payload;
@@ -100,8 +100,6 @@ const terminalSlice = createSlice({
 
 export const getSerialPort = (state: RootState) =>
     state.app.terminal.serialPort;
-export const getAutoConnected = (state: RootState) =>
-    state.app.terminal.autoConnected;
 export const getAvailableSerialPorts = (state: RootState) =>
     state.app.terminal.availableSerialPorts;
 export const getSerialOptions = (state: RootState) =>
@@ -120,9 +118,8 @@ export const {
     setSerialPort,
     setAvailableSerialPorts,
     setSerialOptions,
-    setUpdateOptions,
+    updateSerialOptions,
     setSetOptions,
-    setAutoConnected,
     setClearOnSend,
     setLineEnding,
     setLineMode,
