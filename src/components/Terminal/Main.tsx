@@ -69,7 +69,7 @@ const Main = ({ active }: PaneProps) => {
 
     const commandCallback = useCallback(
         (command: string) => {
-            if (!serialPort) return 'Please connect a device';
+            if (!serialPort) return 'Please connect a device\r\n';
 
             if (!serialPort.isOpen()) return 'Connection is not open';
 
