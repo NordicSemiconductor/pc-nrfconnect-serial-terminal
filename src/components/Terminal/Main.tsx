@@ -71,8 +71,6 @@ const Main = ({ active }: PaneProps) => {
         (command: string) => {
             if (!serialPort) return 'Please connect a device\r\n';
 
-            if (!serialPort.isOpen()) return 'Connection is not open';
-
             if (lineMode) {
                 switch (lineEnding) {
                     case 'CR':
@@ -92,20 +90,15 @@ const Main = ({ active }: PaneProps) => {
         [serialPort, lineEnding, lineMode]
     );
 
-    return (
-        // eslint-disable-next-line react/jsx-no-useless-fragment
-        <>
-            {active && (
-                <Terminal
-                    commandCallback={commandCallback}
-                    onData={onData}
-                    onDataWritten={onDataWritten}
-                    clearOnSend={clearOnSend}
-                    lineMode={lineMode}
-                />
-            )}
-        </>
-    );
+    return active ? (
+        <Terminal
+            commandCallback={commandCallback}
+            onData={onData}
+            onDataWritten={onDataWritten}
+            clearOnSend={clearOnSend}
+            lineMode={lineMode}
+        />
+    ) : null;
 };
 
 export default Main;
