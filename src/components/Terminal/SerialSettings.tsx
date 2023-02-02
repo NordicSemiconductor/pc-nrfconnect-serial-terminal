@@ -136,25 +136,9 @@ const SerialSettings = () => {
             port => port === serialOptions.path
         );
         if (device?.serialNumber && serialPort && vComIndex >= 0) {
-            persistSerialPort(
-                device?.serialNumber,
-                'serial-terminal',
-                serialOptions,
-                vComIndex
-            );
+            persistSerialPort(device?.serialNumber, serialOptions, vComIndex);
         }
     }, [serialPort, availablePorts, device?.serialNumber, serialOptions]);
-
-    // useEffect(() => {
-    //     if (device) {
-    //         dispatch(
-    //             updateSerialOptions({
-    //                 path: selectedComPortItem.value,
-    //                 baudRate: 115200, // TODO
-    //             })
-    //         );
-    //     }
-    // }, [device, dispatch, selectedComPortItem]);
 
     const baudRateItems = convertToDropDownItems(
         [

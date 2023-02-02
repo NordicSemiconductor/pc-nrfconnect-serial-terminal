@@ -51,10 +51,7 @@ export const openDevice =
         }
 
         if (globalAutoReconnect && ports) {
-            const serialSettings = getPersistedSerialPort(
-                device.serialNumber,
-                'serial-terminal'
-            );
+            const serialSettings = getPersistedSerialPort(device.serialNumber);
 
             if (serialSettings && ports?.length > serialSettings.vComIndex) {
                 const storedOptions = serialSettings.serialPortOptions;
