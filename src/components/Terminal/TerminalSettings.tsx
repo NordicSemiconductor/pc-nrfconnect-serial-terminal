@@ -156,9 +156,10 @@ const TerminalSettings = () => {
             )}
             {!lineMode && (
                 <Toggle
+                    title="This option should be on ff the device echo back any data sent. Otherwise this needs to be set to off"
                     isToggled={echoOnShell}
                     onToggle={value => dispatch(setEchoOnShell(value))}
-                    label="Echo on shell"
+                    label="Device controls echo"
                 />
             )}
         </CollapsibleGroup>
