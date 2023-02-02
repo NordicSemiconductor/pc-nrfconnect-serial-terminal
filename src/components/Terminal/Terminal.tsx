@@ -11,6 +11,7 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import { useSelector } from 'react-redux';
 import { useResizeDetector } from 'react-resize-detector';
 import ansiEscapes from 'ansi-escapes';
+import { clipboard } from 'electron';
 import { XTerm } from 'xterm-for-react';
 
 import {
@@ -40,6 +41,7 @@ const Terminal: React.FC<Props> = ({
 }) => {
     const [cmdLine, setCmdLine] = useState('');
     const xtermRef = useRef<XTerm | null>(null);
+    const lastPastTimestamp = useRef<number>(0);
     const { width, height, ref: resizeRef } = useResizeDetector();
     const fitAddon = useFitAddon(height, width, lineMode);
     const echoOnShell = useSelector(getEchoOnShell);
@@ -150,6 +152,45 @@ const Terminal: React.FC<Props> = ({
         },
         disableStdin: lineMode, // Line mode user needs to use the input field not the terminal
     };
+
+    useEffect(() => {
+        if (xtermRef.current != null) {
+            xtermRef.current?.terminal.attachCustomKeyEventHandler(event => {
+                const selection = xtermRef.current?.terminal.getSelection();
+                const hasSelection =
+                    selection !== undefined && selection.length > 0;
+                if (event.ctrlKey) {
+                    switch (event.code) {
+                        case 'KeyC':
+                            if (hasSelection) {
+                                clipboard.writeText(
+                                    selection.trim(),
+                                    'clipboard'
+                                );
+                                xtermRef.current?.terminal.clearSelection();
+                            }
+                            return !hasSelection;
+                        case 'KeyV':
+                            if (
+                                !lineMode &&
+                                event.timeStamp - lastPastTimestamp.current >
+                                    200
+                            ) {
+                                handleUserInputShellMode(
+                                    clipboard.readText('clipboard')
+                                );
+                                lastPastTimestamp.current = event.timeStamp;
+                            }
+                            return false;
+                        case 'KeyA':
+                            xtermRef.current?.terminal.selectAll();
+                            return false;
+                    }
+                }
+                return true;
+            });
+        }
+    }, [xtermRef, lineMode, handleUserInputShellMode, cmdLine]);
 
     return (
         <div ref={resizeRef} style={{ height: '100%' }}>
