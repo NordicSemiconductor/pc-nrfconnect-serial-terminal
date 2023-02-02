@@ -14,6 +14,7 @@ import {
     createSerialPort,
     Dropdown,
     DropdownItem,
+    logger,
     persistSerialPort,
     selectedDevice,
     truncateMiddle,
@@ -118,12 +119,13 @@ const SerialSettings = () => {
                 });
                 dispatch(setSerialPort(port));
             } catch (error) {
-                if (
-                    (error as Error).message.includes(
-                        'FAILED_DIFFERENT_SETTINGS'
-                    )
-                ) {
+                const msg = (error as Error).message;
+                if (msg.includes('FAILED_DIFFERENT_SETTINGS')) {
                     dispatch(setShowOverwriteDialog(true));
+                } else {
+                    logger.error(
+                        'Port could not be opened. Verify it is not used by some other applications'
+                    );
                 }
             }
         }
