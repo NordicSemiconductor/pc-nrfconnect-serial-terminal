@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Nordic Semiconductor ASA
+ * Copyright (c) 2023 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-4-Clause
  */
@@ -14,6 +14,7 @@ import {
     createSerialPort,
     Dropdown,
     DropdownItem,
+    logger,
     persistSerialPort,
     selectedDevice,
     truncateMiddle,
@@ -21,16 +22,15 @@ import {
 import { SerialPortOpenOptions } from 'serialport';
 
 import {
-    getAutoConnected,
     getAvailableSerialPorts,
     getSerialOptions,
     getSerialPort,
     getShowOverwriteDialog,
-    setAutoConnected,
-    setSerialOptions,
     setSerialPort,
     setShowOverwriteDialog,
+    updateSerialOptions,
 } from '../../features/terminal/terminalSlice';
+import useAutoReconnectCommandLine from '../../features/useAutoReconnectCommandLine';
 import { convertToDropDownItems } from '../../utils/dataConstructors';
 
 type Parity = 'none' | 'even' | 'mark' | 'odd' | 'space' | undefined;
@@ -43,6 +43,8 @@ const getItem = (
     notFound?: DropdownItem
 ) => {
     if (typeof value === 'boolean') value = value ? 'on' : 'off';
+
+    if (value === undefined) return notFound ?? itemList[0];
 
     const result = itemList[itemList.findIndex(e => e.value === `${value}`)];
 
@@ -59,7 +61,6 @@ const SerialSettings = () => {
     const device = useSelector(selectedDevice);
     const serialOptions = useSelector(getSerialOptions);
     const availablePorts = useSelector(getAvailableSerialPorts);
-    const autoConnected = useSelector(getAutoConnected);
     const serialPort = useSelector(getSerialPort);
     const overwriteDialog = useSelector(getShowOverwriteDialog);
 
@@ -91,13 +92,12 @@ const SerialSettings = () => {
     const updateSerialPort = async (
         options: Partial<SerialPortOpenOptions<AutoDetectTypes>>
     ) => {
-        options = { ...serialOptions, ...options };
         // If a port is not selected : just update settings
         if (options.path === '') {
             if (serialPort !== undefined) {
                 dispatch(setSerialPort(undefined));
             }
-            dispatch(setSerialOptions({ path: '' }));
+            dispatch(updateSerialOptions(options));
             return;
         }
 
@@ -106,20 +106,28 @@ const SerialSettings = () => {
             await serialPort?.close();
         }
 
-        dispatch(setSerialOptions(options));
+        dispatch(updateSerialOptions(options));
     };
 
     const connectToSelectedSerialPort = async (overwrite = false) => {
         if (serialOptions.path !== '') {
             dispatch(setShowOverwriteDialog(false));
-            dispatch(
-                setSerialPort(
-                    await createSerialPort(serialOptions, {
-                        overwrite,
-                        settingsLocked: false,
-                    })
-                )
-            );
+            try {
+                const port = await createSerialPort(serialOptions, {
+                    overwrite,
+                    settingsLocked: false,
+                });
+                dispatch(setSerialPort(port));
+            } catch (error) {
+                const msg = (error as Error).message;
+                if (msg.includes('FAILED_DIFFERENT_SETTINGS')) {
+                    dispatch(setShowOverwriteDialog(true));
+                } else {
+                    logger.error(
+                        'Port could not be opened. Verify it is not used by some other applications'
+                    );
+                }
+            }
         }
     };
 
@@ -128,33 +136,9 @@ const SerialSettings = () => {
             port => port === serialOptions.path
         );
         if (device?.serialNumber && serialPort && vComIndex >= 0) {
-            persistSerialPort(
-                device?.serialNumber,
-                'serial-terminal',
-                serialOptions,
-                vComIndex
-            );
+            persistSerialPort(device?.serialNumber, serialOptions, vComIndex);
         }
     }, [serialPort, availablePorts, device?.serialNumber, serialOptions]);
-
-    useEffect(() => {
-        if (device) {
-            dispatch(setSerialOptions({ path: selectedComPortItem.value }));
-        }
-    }, [device, dispatch, selectedComPortItem]);
-
-    const { argv } = process;
-    const portNameIndex = argv.findIndex(arg => arg === '--comPort');
-    const portName = portNameIndex > -1 ? argv[portNameIndex + 1] : undefined;
-    const shouldAutoConnect = !autoConnected && portName;
-
-    if (shouldAutoConnect && availablePorts.length > 0) {
-        const portExists = availablePorts.indexOf(portName) !== -1;
-
-        if (portExists) updateSerialPort({ path: portName });
-
-        dispatch(setAutoConnected(true));
-    }
 
     const baudRateItems = convertToDropDownItems(
         [
@@ -177,6 +161,8 @@ const SerialSettings = () => {
     const parityItems = convertToDropDownItems(parityOptions(), true);
 
     const onOffItems = convertToDropDownItems(['on', 'off'], true);
+
+    useAutoReconnectCommandLine(updateSerialPort);
 
     return (
         <>
@@ -224,6 +210,7 @@ const SerialSettings = () => {
                         baudRateItems,
                         serialOptions.baudRate
                     )}
+                    disabled={isConnected}
                 />
                 <Dropdown
                     label="Data bits"

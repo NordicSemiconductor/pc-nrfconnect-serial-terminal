@@ -31,25 +31,8 @@ const deviceListing: DeviceTraits = {
     jlink: true,
 };
 
-/**
- * Configures how devices should be set up (programmed) when selected.
- * The config format is described on
- * https://github.com/NordicSemiconductor/nrf-device-setup-js.
- *
- * Currently no setup is done. If you need one, set deviceSetup appropriately
- * and add it in mapState below.
- *
- * To refer to files provided by your app, use getAppFile exported by
- * pc-nrfconnect-shared
- */
-// const deviceSetup = {
-// dfu: {},
-// jprog: {},
-// };
-
 const mapState = () => ({
     deviceListing,
-    // deviceSetup,
 });
 
 /*
@@ -64,12 +47,6 @@ const mapDispatch = (dispatch: TDispatch): Partial<DeviceSelectorProps> => ({
         logger.info(`Selected device with s/n ${device.serialNumber}`);
         dispatch(openDevice(device));
     },
-    // releaseCurrentDevice: () => {
-    //     logger.info('Will set up selected device');
-    // },
-    // onDeviceIsReady: device => {
-    //     logger.info(`Device with s/n ${device.serialNumber} was set up with a firmware`);
-    // },
     onDeviceDeselected: () => {
         logger.info('Deselected device');
         dispatch(closeDevice());

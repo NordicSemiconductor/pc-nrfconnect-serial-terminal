@@ -14,13 +14,14 @@ import {
     setAvailableSerialPorts,
     setSerialOptions,
     setSerialPort,
+    updateSerialOptions,
 } from '../features/terminal/terminalSlice';
 import type { TAction } from '../thunk';
 
 export const closeDevice = (): TAction => dispatch => {
     logger.info('Closing device');
     dispatch(setAvailableSerialPorts([]));
-    dispatch(setSerialOptions({ path: '' }));
+    dispatch(updateSerialOptions({ path: '' }));
     dispatch(setSerialPort(undefined));
 };
 
@@ -47,13 +48,11 @@ export const openDevice =
             dispatch(
                 setAvailableSerialPorts(ports.map(port => port.comName ?? ''))
             );
+            dispatch(updateSerialOptions({ path: ports[0].comName ?? '' }));
         }
 
         if (globalAutoReconnect && ports) {
-            const serialSettings = getPersistedSerialPort(
-                device.serialNumber,
-                'serial-terminal'
-            );
+            const serialSettings = getPersistedSerialPort(device.serialNumber);
 
             if (serialSettings && ports?.length > serialSettings.vComIndex) {
                 const storedOptions = serialSettings.serialPortOptions;
