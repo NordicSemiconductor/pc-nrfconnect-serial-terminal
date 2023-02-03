@@ -14,6 +14,7 @@ import {
     createSerialPort,
     Dropdown,
     DropdownItem,
+    Group,
     logger,
     persistSerialPort,
     selectedDevice,
@@ -32,6 +33,8 @@ import {
 } from '../../features/terminal/terminalSlice';
 import useAutoReconnectCommandLine from '../../features/useAutoReconnectCommandLine';
 import { convertToDropDownItems } from '../../utils/dataConstructors';
+
+import './serialSettings.scss';
 
 type Parity = 'none' | 'even' | 'mark' | 'odd' | 'space' | undefined;
 type DataBits = 8 | 7 | 6 | 5 | undefined;
@@ -166,31 +169,31 @@ const SerialSettings = () => {
 
     return (
         <>
-            {serialPort == null ? (
-                <Button
-                    className="btn-primary w-100 h-100"
-                    onClick={() => connectToSelectedSerialPort(false)}
-                    disabled={serialOptions.path === ''}
-                >
-                    Connect to port
-                </Button>
-            ) : (
-                <Button
-                    className="btn-secondary w-100 h-100"
-                    onClick={() => {
-                        dispatch(setSerialPort(undefined));
-                    }}
-                >
-                    Disconnect from port
-                </Button>
-            )}
-            <Dropdown
-                label="Port"
-                onSelect={({ value }) => updateSerialPort({ path: value })}
-                items={comPortsDropdownItems}
-                selectedItem={selectedComPortItem}
-                disabled={availablePorts.length === 0 || isConnected}
-            />
+            <Group heading="Serial Port">
+                <Dropdown
+                    onSelect={({ value }) => updateSerialPort({ path: value })}
+                    items={comPortsDropdownItems}
+                    selectedItem={selectedComPortItem}
+                    disabled={availablePorts.length === 0 || isConnected}
+                />
+                {serialPort == null ? (
+                    <Button
+                        className="btn-secondary w-100 large connection-button"
+                        onClick={() => connectToSelectedSerialPort(false)}
+                    >
+                        Connect to port
+                    </Button>
+                ) : (
+                    <Button
+                        className="btn-secondary w-100 large connection-button"
+                        onClick={() => {
+                            dispatch(setSerialPort(undefined));
+                        }}
+                    >
+                        Disconnect from port
+                    </Button>
+                )}
+            </Group>
 
             <CollapsibleGroup heading="Serial Settings">
                 <Dropdown
