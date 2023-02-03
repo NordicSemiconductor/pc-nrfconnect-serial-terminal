@@ -43,7 +43,7 @@ const Terminal: React.FC<Props> = ({
     const { width, height, ref: resizeRef } = useResizeDetector();
     const fitAddon = useFitAddon(height, width, lineMode);
     const echoOnShell = useSelector(getEchoOnShell);
-    const modem = useSelector(getSerialPort);
+    const serialPort = useSelector(getSerialPort);
 
     const writeLineModeToXterm = (data: string) => {
         if (data.length === 1 && data.charCodeAt(0) === 12) return;
@@ -96,19 +96,19 @@ const Terminal: React.FC<Props> = ({
 
     // Prepare Terminal for new connection or mode
     useEffect(() => {
-        modem?.isOpen().then(open => {
+        serialPort?.isOpen().then(open => {
             if (open) {
                 clearTerminal();
             }
         }); // init shell mode
 
         // we need New Page (Ascii 12) so not to create an empty line on top of shell
-    }, [clearTerminal, modem]);
+    }, [clearTerminal, serialPort]);
 
     // Prepare Terminal for new connection or mode
     useEffect(() => {
         if (!lineMode) {
-            modem?.isOpen().then(open => {
+            serialPort?.isOpen().then(open => {
                 if (open && !lineMode) {
                     commandCallback(String.fromCharCode(12));
                 }
@@ -116,7 +116,7 @@ const Terminal: React.FC<Props> = ({
 
             // we need New Page (Ascii 12) so not to create an empty line on top of shell
         }
-    }, [commandCallback, lineMode, modem]);
+    }, [commandCallback, lineMode, serialPort]);
 
     useEffect(
         () =>
