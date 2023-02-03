@@ -5,13 +5,11 @@
  */
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
-import InputGroup from 'react-bootstrap/InputGroup';
 import { useSelector } from 'react-redux';
 import { useResizeDetector } from 'react-resize-detector';
 import ansiEscapes from 'ansi-escapes';
 import { clipboard } from 'electron';
+import { Button } from 'pc-nrfconnect-shared';
 import { XTerm } from 'xterm-for-react';
 
 import {
@@ -195,29 +193,29 @@ const Terminal: React.FC<Props> = ({
     return (
         <div ref={resizeRef} style={{ height: '100%' }}>
             {lineMode && (
-                <form onSubmit={() => handleUserInputLineMode(cmdLine)}>
-                    <Form.Group className="commandPrompt">
-                        <InputGroup>
-                            <Form.Control
-                                value={cmdLine}
-                                type="text"
-                                placeholder="Type and press enter to send"
-                                onChange={({ target }) => {
-                                    setCmdLine(target.value);
-                                }}
-                            />
-                            <InputGroup.Append>
-                                <Button
-                                    className="core-btn"
-                                    type="submit"
-                                    disabled={cmdLine.length === 0}
-                                >
-                                    Send
-                                </Button>
-                            </InputGroup.Append>
-                        </InputGroup>
-                    </Form.Group>
-                </form>
+                <div className="commandPrompt">
+                    <div className="input-group">
+                        <input
+                            value={cmdLine}
+                            type="text"
+                            placeholder="Type and press enter to send"
+                            onChange={({ target }) => {
+                                setCmdLine(target.value);
+                            }}
+                            onKeyDown={event => {
+                                if (event.key === 'Enter') {
+                                    handleUserInputLineMode(cmdLine);
+                                }
+                            }}
+                        />
+                    </div>
+                    <Button
+                        onClick={() => handleUserInputLineMode(cmdLine)}
+                        disabled={cmdLine.length === 0}
+                    >
+                        Send
+                    </Button>
+                </div>
             )}
             <div
                 style={
@@ -237,11 +235,6 @@ const Terminal: React.FC<Props> = ({
                 />
                 {lineMode && (
                     <Button
-                        style={{
-                            position: 'absolute',
-                            bottom: '0',
-                            right: '0',
-                        }}
                         className="clear-console"
                         onClick={() => clearTerminal()}
                     >
