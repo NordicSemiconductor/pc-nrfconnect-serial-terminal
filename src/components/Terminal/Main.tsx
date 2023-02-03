@@ -15,6 +15,8 @@ import {
     getSerialOptions,
     getSerialPort,
     setSerialOptions,
+    setSerialPort,
+    updateSerialOptions,
 } from '../../features/terminal/terminalSlice';
 import Terminal from './Terminal';
 
@@ -59,9 +61,15 @@ const Main = ({ active }: PaneProps) => {
             dispatch(setSerialOptions(options));
         });
 
+        const unsubscribeOnClosed = serialPort.onClosed(() => {
+            dispatch(updateSerialOptions({ path: '' }));
+            dispatch(setSerialPort(undefined));
+        });
+
         return () => {
             unsubscribeOnUpdate();
             unsubscribeOnChange();
+            unsubscribeOnClosed();
         };
     }, [dispatch, serialOptions.path, serialPort]);
 

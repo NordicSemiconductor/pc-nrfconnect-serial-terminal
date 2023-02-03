@@ -8,6 +8,14 @@
 
 @import './Terminal.module.scss';
 
+
+.clear-console {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    color: white !important;
+}
+
 .terminal-window {
     height: 100%;
 }
@@ -59,8 +67,9 @@
 
 
 
-.form-group.commandPrompt {
+.commandPrompt {
     margin-bottom: 4px;
+    display: flex;
 
     .input-group {
         &::before {
@@ -69,9 +78,11 @@
             color: $terminal-foreground;
             padding: 6px 0 6px 6px;
             font-size: 110%;
+            width: 15px;
         }
 
-        .form-control {
+        input {
+            width: calc(100% - 15px);
             padding-left: 5px;
             border-radius: 0;
             margin-right: 0;
@@ -82,28 +93,32 @@
             &:focus {
                 border-color: inherit;
                 box-shadow: none;
+                outline: none !important;
             }
 
             &::placeholder{
                 color: $gray-200;
             }
         }
+    }
 
-        button {
-            border: none;
-            background-color: $gray-700;
+    button {
+        width: 56px;
+        border: none;
+        background-color: $gray-700;
+        color: white;
+        height: 34px;
 
-            &:disabled {
-                opacity: 1 !important;
-            }
+        &:disabled {
+            opacity: 1 !important;
+        }
 
-            &:hover {
-                background-color: $gray-700 !important;
-            }
-            
-            &:active {
-                background-color: $gray-700 !important;
-            }
+        &:hover {
+            background-color: $gray-700 !important;
+        }
+        
+        &:active {
+            background-color: $gray-700 !important;
         }
     }
 }

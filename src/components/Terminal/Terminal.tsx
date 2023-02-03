@@ -5,13 +5,11 @@
  */
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
-import InputGroup from 'react-bootstrap/InputGroup';
 import { useSelector } from 'react-redux';
 import { useResizeDetector } from 'react-resize-detector';
 import ansiEscapes from 'ansi-escapes';
 import { clipboard } from 'electron';
+import { Button } from 'pc-nrfconnect-shared';
 import { XTerm } from 'xterm-for-react';
 
 import {
@@ -45,7 +43,7 @@ const Terminal: React.FC<Props> = ({
     const { width, height, ref: resizeRef } = useResizeDetector();
     const fitAddon = useFitAddon(height, width, lineMode);
     const echoOnShell = useSelector(getEchoOnShell);
-    const modem = useSelector(getSerialPort);
+    const serialPort = useSelector(getSerialPort);
 
     const writeLineModeToXterm = (data: string) => {
         if (data.length === 1 && data.charCodeAt(0) === 12) return;
@@ -98,19 +96,19 @@ const Terminal: React.FC<Props> = ({
 
     // Prepare Terminal for new connection or mode
     useEffect(() => {
-        modem?.isOpen().then(open => {
+        serialPort?.isOpen().then(open => {
             if (open) {
                 clearTerminal();
             }
         }); // init shell mode
 
         // we need New Page (Ascii 12) so not to create an empty line on top of shell
-    }, [clearTerminal, modem]);
+    }, [clearTerminal, serialPort]);
 
     // Prepare Terminal for new connection or mode
     useEffect(() => {
         if (!lineMode) {
-            modem?.isOpen().then(open => {
+            serialPort?.isOpen().then(open => {
                 if (open && !lineMode) {
                     commandCallback(String.fromCharCode(12));
                 }
@@ -118,7 +116,7 @@ const Terminal: React.FC<Props> = ({
 
             // we need New Page (Ascii 12) so not to create an empty line on top of shell
         }
-    }, [commandCallback, lineMode, modem]);
+    }, [commandCallback, lineMode, serialPort]);
 
     useEffect(
         () =>
@@ -195,29 +193,26 @@ const Terminal: React.FC<Props> = ({
     return (
         <div ref={resizeRef} style={{ height: '100%' }}>
             {lineMode && (
-                <form onSubmit={() => handleUserInputLineMode(cmdLine)}>
-                    <Form.Group className="commandPrompt">
-                        <InputGroup>
-                            <Form.Control
-                                value={cmdLine}
-                                type="text"
-                                placeholder="Type and press enter to send"
-                                onChange={({ target }) => {
-                                    setCmdLine(target.value);
-                                }}
-                            />
-                            <InputGroup.Append>
-                                <Button
-                                    className="core-btn"
-                                    type="submit"
-                                    disabled={cmdLine.length === 0}
-                                >
-                                    Send
-                                </Button>
-                            </InputGroup.Append>
-                        </InputGroup>
-                    </Form.Group>
-                </form>
+                <div className="commandPrompt">
+                    <div className="input-group">
+                        <input
+                            value={cmdLine}
+                            type="text"
+                            placeholder="Type and press enter to send"
+                            onChange={({ target }) => {
+                                setCmdLine(target.value);
+                            }}
+                            onKeyDown={event => {
+                                if (event.key === 'Enter') {
+                                    handleUserInputLineMode(cmdLine);
+                                }
+                            }}
+                        />
+                    </div>
+                    <Button onClick={() => handleUserInputLineMode(cmdLine)}>
+                        Send
+                    </Button>
+                </div>
             )}
             <div
                 style={
@@ -237,11 +232,6 @@ const Terminal: React.FC<Props> = ({
                 />
                 {lineMode && (
                     <Button
-                        style={{
-                            position: 'absolute',
-                            bottom: '0',
-                            right: '0',
-                        }}
                         className="clear-console"
                         onClick={() => clearTerminal()}
                     >
