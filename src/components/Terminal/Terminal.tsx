@@ -209,10 +209,7 @@ const Terminal: React.FC<Props> = ({
                             }}
                         />
                     </div>
-                    <Button
-                        onClick={() => handleUserInputLineMode(cmdLine)}
-                        disabled={cmdLine.length === 0}
-                    >
+                    <Button onClick={() => handleUserInputLineMode(cmdLine)}>
                         Send
                     </Button>
                 </div>
