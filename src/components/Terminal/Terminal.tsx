@@ -48,7 +48,7 @@ const Terminal: React.FC<Props> = ({
         if (data.length === 1 && data.charCodeAt(0) === 12) return;
 
         xtermRef.current?.terminal.writeln(
-            `\x1b[32;3;1m> ${data.trim()}\x1b[32;0m`
+            `\x1b[32;1m> ${data.trim()}\x1b[32;0m`
         );
     };
 
