@@ -7,21 +7,4 @@
 
 .connection-button {
     margin-top: 8px;
-    height: 32px !important;
-
-    &:hover {
-        color: $gray-700 !important;
-        background-color: $white !important;
-        border-color: $gray-700 !important;
-    }
-
-    &:focus {
-        color: inherit !important;
-        background-color: $white !important;
-        border-color: inherit !important;
-    }
-
-    &:active {
-        background-color: $gray-100 !important;
-    }
 }
