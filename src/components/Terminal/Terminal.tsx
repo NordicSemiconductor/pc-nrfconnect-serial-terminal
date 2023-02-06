@@ -39,7 +39,6 @@ const Terminal: React.FC<Props> = ({
 }) => {
     const [cmdLine, setCmdLine] = useState('');
     const xtermRef = useRef<XTerm | null>(null);
-    const lastPastTimestamp = useRef<number>(0);
     const { width, height, ref: resizeRef } = useResizeDetector();
     const fitAddon = useFitAddon(height, width, lineMode);
     const echoOnShell = useSelector(getEchoOnShell);
@@ -157,7 +156,12 @@ const Terminal: React.FC<Props> = ({
                 const selection = xtermRef.current?.terminal.getSelection();
                 const hasSelection =
                     selection !== undefined && selection.length > 0;
-                if (event.ctrlKey) {
+                const { platform } = process;
+                const isMac = platform === 'darwin';
+                if (
+                    ((!isMac && event.ctrlKey) || (isMac && event.metaKey)) &&
+                    !event.repeat
+                ) {
                     switch (event.code) {
                         case 'KeyC':
                             if (hasSelection) {
@@ -169,15 +173,10 @@ const Terminal: React.FC<Props> = ({
                             }
                             return !hasSelection;
                         case 'KeyV':
-                            if (
-                                !lineMode &&
-                                event.timeStamp - lastPastTimestamp.current >
-                                    200
-                            ) {
+                            if (!lineMode) {
                                 handleUserInputShellMode(
                                     clipboard.readText('clipboard')
                                 );
-                                lastPastTimestamp.current = event.timeStamp;
                             }
                             return false;
                         case 'KeyA':

@@ -34,7 +34,7 @@
     },
     "devDependencies": {
         "ansi-escapes": "^4.3.2",
-        "pc-nrfconnect-shared": "git+https://github.com/NordicSemiconductor/pc-nrfconnect-shared.git#v6.18.9",
+        "pc-nrfconnect-shared": "git+https://github.com/NordicSemiconductor/pc-nrfconnect-shared.git#v6.18.13",
         "serialport": "^10.5.0",
         "xterm-addon-fit": "^0.5.0",
         "xterm-for-react": "^1.0.4"
