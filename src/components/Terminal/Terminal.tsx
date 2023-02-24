@@ -160,7 +160,8 @@ const Terminal: React.FC<Props> = ({
                 const isMac = platform === 'darwin';
                 if (
                     ((!isMac && event.ctrlKey) || (isMac && event.metaKey)) &&
-                    !event.repeat
+                    !event.repeat &&
+                    event.type === 'keydown'
                 ) {
                     switch (event.code) {
                         case 'KeyC':
