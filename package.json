@@ -40,7 +40,7 @@
         "xterm-for-react": "^1.0.4"
     },
     "dependencies": {
-        "esbuild": "^0.14.50",
+        "esbuild": "^0.16.17",
         "npm": "^9.5.0"
     },
     "eslintConfig": {
