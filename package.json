@@ -34,14 +34,14 @@
     },
     "devDependencies": {
         "ansi-escapes": "^4.3.2",
-        "pc-nrfconnect-shared": "git+https://github.com/NordicSemiconductor/pc-nrfconnect-shared.git#v6.18.13",
+        "pc-nrfconnect-shared": "git+https://github.com/NordicSemiconductor/pc-nrfconnect-shared.git#feat/npm-18",
         "serialport": "^10.5.0",
         "xterm-addon-fit": "^0.5.0",
         "xterm-for-react": "^1.0.4"
     },
     "dependencies": {
         "esbuild": "^0.14.50",
-        "npm": "^6.14.13"
+        "npm": "^9.5.0"
     },
     "eslintConfig": {
         "extends": "./node_modules/pc-nrfconnect-shared/config/eslintrc"
