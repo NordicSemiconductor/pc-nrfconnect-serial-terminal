@@ -16,7 +16,8 @@
     "files": [
         "dist/",
         "resources/*",
-        "LICENSE"
+        "LICENSE",
+        "Changelog.md"
     ],
     "scripts": {
         "watch": "run-p --silent --continue-on-error watch:*",
