@@ -41,7 +41,7 @@ export const openDevice =
     (device: Device): TAction =>
     async (dispatch, getState) => {
         // Reset serial port settings
-        const globalAutoReconnect = getState().device.autoReconnect;
+        const globalAutoReconnect = getState().deviceAutoSelect.autoReselect;
         const ports = device.serialPorts;
 
         if (ports && ports?.length > 0) {

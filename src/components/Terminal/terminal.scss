@@ -8,7 +8,6 @@
 
 @import './Terminal.module.scss';
 
-
 .clear-console {
     position: absolute;
     bottom: 0;
@@ -24,6 +23,7 @@
     height: 100%;
     box-sizing: border-box;
     padding: 8px;
+    z-index: 0;
 }
 
 .clear-console {
@@ -32,11 +32,12 @@
     border-radius: 3px 0 0 0;
     text-transform: uppercase;
     font-size: 80%;
+    z-index: 1;
 
     &:hover {
         background-color: $gray-500 !important;
     }
-    
+
     &:active {
         background-color: $gray-600 !important;
     }
@@ -65,15 +66,13 @@
     @include terminalScrollbar();
 }
 
-
-
 .commandPrompt {
     margin-bottom: 4px;
     display: flex;
 
     .input-group {
         &::before {
-            content: ">";
+            content: '>';
             background-color: $terminal-background;
             color: $terminal-foreground;
             padding: 6px 0 6px 6px;
@@ -86,7 +85,7 @@
             padding-left: 5px;
             border-radius: 0;
             margin-right: 0;
-            background-color: $terminal-background ;
+            background-color: $terminal-background;
             border: none;
             color: $terminal-foreground;
 
@@ -96,7 +95,7 @@
                 outline: none !important;
             }
 
-            &::placeholder{
+            &::placeholder {
                 color: $gray-200;
             }
         }
@@ -116,7 +115,7 @@
         &:hover {
             background-color: $gray-700 !important;
         }
-        
+
         &:active {
             background-color: $gray-700 !important;
         }

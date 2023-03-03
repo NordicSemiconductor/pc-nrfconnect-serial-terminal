@@ -1,3 +1,13 @@
+## 1.0.2 - 2023-03-03
+
+### Added
+
+-   Reconnecting status in device selector.
+
+### Fixed
+
+-   Clear console click area
+
 ## 1.0.1 - 2023-02-24
 
 ### Fixed
