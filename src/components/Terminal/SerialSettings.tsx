@@ -179,7 +179,8 @@ const SerialSettings = () => {
                 {serialPort == null ? (
                     <Button
                         large
-                        className="btn-secondary w-100 connection-button"
+                        variant="secondary"
+                        className="w-100 connection-button"
                         onClick={() => connectToSelectedSerialPort(false)}
                         disabled={availablePorts.length === 0}
                     >
@@ -188,7 +189,8 @@ const SerialSettings = () => {
                 ) : (
                     <Button
                         large
-                        className="btn-secondary w-100 connection-button"
+                        variant="secondary"
+                        className="w-100 connection-button"
                         onClick={() => {
                             dispatch(setSerialPort(undefined));
                         }}
