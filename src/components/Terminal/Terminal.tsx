@@ -209,7 +209,10 @@ const Terminal: React.FC<Props> = ({
                             }}
                         />
                     </div>
-                    <Button onClick={() => handleUserInputLineMode(cmdLine)}>
+                    <Button
+                        variant="custom"
+                        onClick={() => handleUserInputLineMode(cmdLine)}
+                    >
                         Send
                     </Button>
                 </div>
@@ -232,6 +235,7 @@ const Terminal: React.FC<Props> = ({
                 />
                 {lineMode && (
                     <Button
+                        variant="custom"
                         className="clear-console"
                         onClick={() => clearTerminal()}
                     >
