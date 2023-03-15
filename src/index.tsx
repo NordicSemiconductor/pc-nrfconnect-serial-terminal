@@ -28,7 +28,6 @@ export default () => (
                 SidePanel: TerminalSidePanel,
             },
         ]}
-        documentation={DocumentationSections}
         autoReselectByDefault
     />
 );
