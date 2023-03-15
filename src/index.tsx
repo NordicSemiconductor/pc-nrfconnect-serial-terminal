@@ -9,7 +9,6 @@ import { App } from 'pc-nrfconnect-shared';
 
 import appReducer from './appReducer';
 import DeviceSelector from './components/DeviceSelector';
-import DocumentationSections from './components/DocumentationSection';
 import Terminal from './components/Terminal/Main';
 import TerminalSidePanel from './components/Terminal/SidePanel';
 
@@ -28,7 +27,6 @@ export default () => (
                 SidePanel: TerminalSidePanel,
             },
         ]}
-        documentation={DocumentationSections}
         autoReselectByDefault
     />
 );

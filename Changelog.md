@@ -8,6 +8,10 @@
 
 -   Clear console click area
 
+### Changed
+
+-   Removed documentation card
+
 ## 1.0.1 - 2023-02-24
 
 ### Fixed
