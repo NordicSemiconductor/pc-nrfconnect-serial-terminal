@@ -10,11 +10,13 @@ import type { AutoDetectTypes } from '@serialport/bindings-cpp';
 import {
     Button,
     CollapsibleGroup,
+    ConflictingSettingsDialog,
     createSerialPort,
     Dropdown,
     DropdownItem,
     Group,
     logger,
+    SerialPort,
     truncateMiddle,
 } from 'pc-nrfconnect-shared';
 import { SerialPortOpenOptions } from 'serialport';
@@ -23,13 +25,13 @@ import {
     getAvailableSerialPorts,
     getSerialOptions,
     getSerialPort,
+    getShowOverwriteDialog,
     setSerialPort,
     setShowOverwriteDialog,
     updateSerialOptions,
 } from '../../features/terminal/terminalSlice';
 import useAutoReconnectCommandLine from '../../features/useAutoReconnectCommandLine';
 import { convertToDropDownItems } from '../../utils/dataConstructors';
-import ConflictingSettings from './ConflictingSettings';
 
 import './serialSettings.scss';
 
@@ -61,6 +63,7 @@ const SerialSettings = () => {
     const serialOptions = useSelector(getSerialOptions);
     const availablePorts = useSelector(getAvailableSerialPorts);
     const serialPort = useSelector(getSerialPort);
+    const showConflictingSettingsDialog = useSelector(getShowOverwriteDialog);
 
     const isConnected = serialPort !== undefined;
 
@@ -299,7 +302,18 @@ const SerialSettings = () => {
                     disabled={isConnected}
                 />
             </CollapsibleGroup>
-            <ConflictingSettings />
+            <ConflictingSettingsDialog
+                isVisible={showConflictingSettingsDialog}
+                localSettings={serialOptions}
+                onCancel={() => dispatch(setShowOverwriteDialog(false))}
+                onOverwrite={() => {
+                    dispatch(setShowOverwriteDialog(false));
+                    connectToSelectedSerialPort(true);
+                }}
+                setSerialPortCallback={(newSerialPort: SerialPort) => {
+                    dispatch(setSerialPort(newSerialPort));
+                }}
+            />
         </>
     );
 };
