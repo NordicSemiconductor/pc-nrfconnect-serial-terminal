@@ -36,26 +36,26 @@ export const openDevice =
     (device: Device): TAction =>
     async (dispatch, getState) => {
         // Reset serial port settings
-        const globalAutoReconnect = getState().deviceAutoSelect.autoReselect;
+        const autoReselect = getState().deviceAutoSelect.autoReselect;
         const ports = device.serialPorts;
-
         if (ports && ports?.length > 0) {
             dispatch(
                 setAvailableSerialPorts(ports.map(port => port.comName ?? ''))
             );
             dispatch(updateSerialOptions({ path: ports[0].comName ?? '' }));
         }
-
-        const storedOptions = device.persistedSerialPortOptions;
-        if (globalAutoReconnect && ports && storedOptions) {
-            dispatch(setSerialOptions(storedOptions));
-            await dispatch(
-                setSerialPort(
-                    await createSerialPort(storedOptions, {
-                        overwrite: false,
-                        settingsLocked: false,
-                    })
-                )
-            );
+        if (autoReselect && ports) {
+            const serialSettings = device.persistedSerialPortOptions;
+            if (serialSettings) {
+                await dispatch(setSerialOptions(serialSettings));
+                dispatch(
+                    setSerialPort(
+                        await createSerialPort(serialSettings, {
+                            overwrite: false,
+                            settingsLocked: false,
+                        })
+                    )
+                );
+            }
         }
     };

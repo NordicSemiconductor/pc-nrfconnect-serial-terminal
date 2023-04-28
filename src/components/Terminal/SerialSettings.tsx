@@ -4,19 +4,17 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-4-Clause
  */
 
-import React, { useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AutoDetectTypes } from '@serialport/bindings-cpp';
 import {
     Button,
     CollapsibleGroup,
-    ConfirmationDialog,
     createSerialPort,
     Dropdown,
     DropdownItem,
     Group,
     logger,
-    selectedDevice,
     truncateMiddle,
 } from 'pc-nrfconnect-shared';
 import { SerialPortOpenOptions } from 'serialport';
@@ -25,13 +23,13 @@ import {
     getAvailableSerialPorts,
     getSerialOptions,
     getSerialPort,
-    getShowOverwriteDialog,
     setSerialPort,
     setShowOverwriteDialog,
     updateSerialOptions,
 } from '../../features/terminal/terminalSlice';
 import useAutoReconnectCommandLine from '../../features/useAutoReconnectCommandLine';
 import { convertToDropDownItems } from '../../utils/dataConstructors';
+import ConflictingSettings from './ConflictingSettings';
 
 import './serialSettings.scss';
 
@@ -60,11 +58,9 @@ const convertItemToValue = (valueList: string[], item: DropdownItem) =>
     valueList.indexOf(item.value) === -1 ? undefined : item.value;
 
 const SerialSettings = () => {
-    const device = useSelector(selectedDevice);
     const serialOptions = useSelector(getSerialOptions);
     const availablePorts = useSelector(getAvailableSerialPorts);
     const serialPort = useSelector(getSerialPort);
-    const overwriteDialog = useSelector(getShowOverwriteDialog);
 
     const isConnected = serialPort !== undefined;
 
@@ -133,15 +129,6 @@ const SerialSettings = () => {
         }
     };
 
-    useEffect(() => {
-        const vComIndex = availablePorts.findIndex(
-            port => port === serialOptions.path
-        );
-        if (device?.serialNumber && serialPort && vComIndex >= 0) {
-            // persistSerialPort(device?.serialNumber, serialOptions, vComIndex);
-        }
-    }, [serialPort, availablePorts, device?.serialNumber, serialOptions]);
-
     const baudRateItems = convertToDropDownItems(
         [
             115200, 57600, 38400, 19200, 9600, 4800, 2400, 1800, 1200, 600, 300,
@@ -199,7 +186,6 @@ const SerialSettings = () => {
                     </Button>
                 )}
             </Group>
-
             <CollapsibleGroup heading="Serial Settings">
                 <Dropdown
                     label="Baud Rate"
@@ -313,17 +299,7 @@ const SerialSettings = () => {
                     disabled={isConnected}
                 />
             </CollapsibleGroup>
-            <ConfirmationDialog
-                title="Conflicting Serial Settings"
-                isVisible={overwriteDialog}
-                onConfirm={() => connectToSelectedSerialPort(true)}
-                onCancel={() => {
-                    dispatch(setShowOverwriteDialog(false));
-                }}
-            >
-                The port is already open with different settings by another App.
-                Do you want to connect and overwrite settings?
-            </ConfirmationDialog>
+            <ConflictingSettings />
         </>
     );
 };
