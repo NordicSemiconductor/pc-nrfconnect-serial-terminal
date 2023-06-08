@@ -16,7 +16,6 @@ import {
     DropdownItem,
     Group,
     logger,
-    persistSerialPort,
     selectedDevice,
     truncateMiddle,
 } from 'pc-nrfconnect-shared';
@@ -139,7 +138,7 @@ const SerialSettings = () => {
             port => port === serialOptions.path
         );
         if (device?.serialNumber && serialPort && vComIndex >= 0) {
-            persistSerialPort(device?.serialNumber, serialOptions, vComIndex);
+            // persistSerialPort(device?.serialNumber, serialOptions, vComIndex);
         }
     }, [serialPort, availablePorts, device?.serialNumber, serialOptions]);
 
