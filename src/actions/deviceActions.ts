@@ -3,12 +3,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-4-Clause
  */
-import {
-    createSerialPort,
-    Device,
-    getPersistedSerialPort,
-    logger,
-} from 'pc-nrfconnect-shared';
+import { createSerialPort, Device, logger } from 'pc-nrfconnect-shared';
 
 import {
     setAvailableSerialPorts,
@@ -51,29 +46,16 @@ export const openDevice =
             dispatch(updateSerialOptions({ path: ports[0].comName ?? '' }));
         }
 
-        if (globalAutoReconnect && ports) {
-            const serialSettings = getPersistedSerialPort(device.serialNumber);
-
-            if (serialSettings && ports?.length > serialSettings.vComIndex) {
-                const storedOptions = serialSettings.serialPortOptions;
-                storedOptions.path =
-                    ports[serialSettings.vComIndex].comName ??
-                    storedOptions.path;
-
-                logger.info(
-                    `Got the options for app: ${JSON.stringify(
-                        serialSettings.serialPortOptions
-                    )}`
-                );
-                dispatch(setSerialOptions(storedOptions));
-                await dispatch(
-                    setSerialPort(
-                        await createSerialPort(storedOptions, {
-                            overwrite: false,
-                            settingsLocked: false,
-                        })
-                    )
-                );
-            }
+        const storedOptions = device.persistedSerialPortOptions;
+        if (globalAutoReconnect && ports && storedOptions) {
+            dispatch(setSerialOptions(storedOptions));
+            await dispatch(
+                setSerialPort(
+                    await createSerialPort(storedOptions, {
+                        overwrite: false,
+                        settingsLocked: false,
+                    })
+                )
+            );
         }
     };
