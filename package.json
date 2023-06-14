@@ -25,7 +25,7 @@
         "watch:types": "tsc --noEmit --pretty --watch --preserveWatchOutput",
         "build:dev": "run-esbuild",
         "build:prod": "run-esbuild --prod",
-        "test": "jest",
+        "test": "jest --passWithNoTests",
         "check": "run-p --silent --continue-on-error --print-label check:*",
         "check:lint": "eslint --color .",
         "check:types": "check-for-typescript tsc --noEmit --pretty",
@@ -35,7 +35,7 @@
     },
     "devDependencies": {
         "ansi-escapes": "^4.3.2",
-        "pc-nrfconnect-shared": "github:NordicSemiconductor/pc-nrfconnect-shared#v55",
+        "pc-nrfconnect-shared": "github:NordicSemiconductor/pc-nrfconnect-shared#v58",
         "serialport": "^10.5.0",
         "xterm-addon-fit": "^0.5.0",
         "xterm-for-react": "^1.0.4"

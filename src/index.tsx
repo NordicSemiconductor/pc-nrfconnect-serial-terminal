@@ -19,7 +19,6 @@ export default () => (
         reportUsageData
         appReducer={appReducer}
         deviceSelect={<DeviceSelector />}
-        sidePanel={<div />}
         panes={[
             {
                 name: 'Terminal',
