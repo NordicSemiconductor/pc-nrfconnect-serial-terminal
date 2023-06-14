@@ -26,6 +26,7 @@ import {
     getSerialOptions,
     getSerialPort,
     getShowOverwriteDialog,
+    setSerialOptions,
     setSerialPort,
     setShowOverwriteDialog,
     updateSerialOptions,
@@ -312,6 +313,9 @@ const SerialSettings = () => {
                 }}
                 setSerialPortCallback={(newSerialPort: SerialPort) => {
                     dispatch(setSerialPort(newSerialPort));
+                    newSerialPort.getOptions()?.then(options => {
+                        dispatch(setSerialOptions(options));
+                    });
                 }}
             />
         </>
