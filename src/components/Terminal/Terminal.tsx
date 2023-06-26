@@ -30,6 +30,11 @@ interface Props {
     lineMode: boolean;
 }
 
+const clearTerminal = (xTerm?: XTerm | null) => {
+    xTerm?.terminal.write(ansiEscapes.eraseLine + ansiEscapes.cursorTo(0));
+    xTerm?.terminal.clear();
+};
+
 const Terminal: React.FC<Props> = ({
     commandCallback,
     onData,
@@ -86,23 +91,16 @@ const Terminal: React.FC<Props> = ({
         [commandCallback]
     );
 
-    const clearTerminal = useCallback(() => {
-        xtermRef.current?.terminal.write(
-            ansiEscapes.eraseLine + ansiEscapes.cursorTo(0)
-        );
-        xtermRef.current?.terminal.clear();
-    }, [xtermRef]);
-
     // Prepare Terminal for new connection or mode
     useEffect(() => {
         serialPort?.isOpen().then(open => {
             if (open) {
-                clearTerminal();
+                clearTerminal(xtermRef.current);
             }
         }); // init shell mode
 
         // we need New Page (Ascii 12) so not to create an empty line on top of shell
-    }, [clearTerminal, serialPort]);
+    }, [serialPort]);
 
     // Prepare Terminal for new connection or mode
     useEffect(() => {
@@ -237,7 +235,7 @@ const Terminal: React.FC<Props> = ({
                     <Button
                         variant="custom"
                         className="clear-console"
-                        onClick={() => clearTerminal()}
+                        onClick={() => clearTerminal(xtermRef.current)}
                     >
                         clear console
                     </Button>
