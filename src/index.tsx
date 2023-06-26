@@ -19,11 +19,11 @@ export default () => (
         reportUsageData
         appReducer={appReducer}
         deviceSelect={<DeviceSelector />}
+        sidePanel={<TerminalSidePanel />}
         panes={[
             {
                 name: 'Terminal',
                 Main: Terminal,
-                SidePanel: TerminalSidePanel,
             },
         ]}
         autoReselectByDefault
