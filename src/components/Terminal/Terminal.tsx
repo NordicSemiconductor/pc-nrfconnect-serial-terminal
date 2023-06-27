@@ -44,6 +44,7 @@ const Terminal: React.FC<Props> = ({
 }) => {
     const [cmdLine, setCmdLine] = useState('');
     const xtermRef = useRef<XTerm | null>(null);
+    const lineModeInputRef = useRef<HTMLInputElement | null>(null);
     const { width, height, ref: resizeRef } = useResizeDetector();
     const fitAddon = useFitAddon(height, width, lineMode);
     const echoOnShell = useSelector(getEchoOnShell);
@@ -114,6 +115,21 @@ const Terminal: React.FC<Props> = ({
             // we need New Page (Ascii 12) so not to create an empty line on top of shell
         }
     }, [commandCallback, lineMode, serialPort]);
+
+    useEffect(() => {
+        const action = () => {
+            if (lineMode) {
+                lineModeInputRef.current?.focus();
+            } else {
+                xtermRef.current?.terminal.focus();
+            }
+        };
+        window.addEventListener('focus', action);
+        // Specify how to clean up after this effect:
+        return () => {
+            window.removeEventListener('focus', action);
+        };
+    }, [lineMode]);
 
     useEffect(
         () =>
@@ -194,6 +210,7 @@ const Terminal: React.FC<Props> = ({
                 <div className="commandPrompt">
                     <div className="input-group">
                         <input
+                            ref={lineModeInputRef}
                             value={cmdLine}
                             type="text"
                             placeholder="Type and press enter to send"
