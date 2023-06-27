@@ -105,15 +105,16 @@ const Terminal: React.FC<Props> = ({
 
     // Prepare Terminal for new connection or mode
     useEffect(() => {
-        if (!lineMode) {
-            serialPort?.isOpen().then(open => {
-                if (open && !lineMode) {
-                    commandCallback(String.fromCharCode(12));
+        serialPort?.isOpen().then(open => {
+            if (open) {
+                clearTerminal(xtermRef.current);
+                if (!lineMode) {
+                    commandCallback(`${String.fromCharCode(12)}`);
                 }
-            }); // init shell mode
+            }
+        }); // init shell mode
 
-            // we need New Page (Ascii 12) so not to create an empty line on top of shell
-        }
+        // we need New Page (Ascii 12) so not to create an empty line on top of shell
     }, [commandCallback, lineMode, serialPort]);
 
     useEffect(() => {

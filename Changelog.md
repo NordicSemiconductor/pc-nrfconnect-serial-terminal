@@ -10,6 +10,8 @@
 
 -   Clear console click area
 -   Terminal content was lost when switching tabs
+-   Switching between Line mode and Shell mode resulted in typed text to be
+    invisible in some cases
 
 ### Changed
 
