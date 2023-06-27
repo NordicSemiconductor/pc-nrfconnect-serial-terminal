@@ -107,7 +107,7 @@ const Terminal: React.FC<Props> = ({
     useEffect(() => {
         serialPort?.isOpen().then(open => {
             if (open) {
-                clearTerminal();
+                clearTerminal(xtermRef.current);
                 if (!lineMode) {
                     commandCallback(`${String.fromCharCode(12)}`);
                 }
@@ -115,7 +115,7 @@ const Terminal: React.FC<Props> = ({
         }); // init shell mode
 
         // we need New Page (Ascii 12) so not to create an empty line on top of shell
-    }, [clearTerminal, commandCallback, lineMode, serialPort]);
+    }, [commandCallback, lineMode, serialPort]);
 
     useEffect(() => {
         const action = () => {
