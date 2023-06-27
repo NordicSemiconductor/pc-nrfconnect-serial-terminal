@@ -112,11 +112,16 @@ const SerialSettings = () => {
         dispatch(updateSerialOptions(options));
     };
 
-    const connectToSelectedSerialPort = async (overwrite = false) => {
-        if (serialOptions.path !== '') {
+    const connectToSelectedSerialPort = async (
+        overwrite = false,
+        options: Partial<SerialPortOpenOptions<AutoDetectTypes>> = {}
+    ) => {
+        const completeOptions = { ...serialOptions, ...options };
+
+        if (completeOptions.path !== '') {
             dispatch(setShowOverwriteDialog(false));
             try {
-                const port = await createSerialPort(serialOptions, {
+                const port = await createSerialPort(completeOptions, {
                     overwrite,
                     settingsLocked: false,
                 });
@@ -162,7 +167,12 @@ const SerialSettings = () => {
         }
     }, [dispatch, serialOptions, serialPort]);
 
-    useAutoReconnectCommandLine(updateSerialPort);
+    useAutoReconnectCommandLine(options => {
+        updateSerialPort(options);
+        if (serialPort === undefined) {
+            connectToSelectedSerialPort(false, options);
+        }
+    });
 
     return (
         <>
