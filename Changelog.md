@@ -7,6 +7,7 @@
 ### Fixed
 
 -   Clear console click area
+-   Terminal content was lost when switching tabs
 
 ### Changed
 

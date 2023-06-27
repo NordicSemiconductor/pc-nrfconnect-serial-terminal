@@ -6,7 +6,6 @@
 
 import React, { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { PaneProps } from 'pc-nrfconnect-shared';
 
 import {
     getClearOnSend,
@@ -20,7 +19,7 @@ import {
 } from '../../features/terminal/terminalSlice';
 import Terminal from './Terminal';
 
-const Main = ({ active }: PaneProps) => {
+const Main = () => {
     const dispatch = useDispatch();
     const serialPort = useSelector(getSerialPort);
     const serialOptions = useSelector(getSerialOptions);
@@ -96,7 +95,7 @@ const Main = ({ active }: PaneProps) => {
         [serialPort, lineEnding, lineMode]
     );
 
-    return active ? (
+    return (
         <Terminal
             commandCallback={commandCallback}
             onData={onData}
@@ -104,7 +103,7 @@ const Main = ({ active }: PaneProps) => {
             clearOnSend={clearOnSend}
             lineMode={lineMode}
         />
-    ) : null;
+    );
 };
 
 export default Main;
