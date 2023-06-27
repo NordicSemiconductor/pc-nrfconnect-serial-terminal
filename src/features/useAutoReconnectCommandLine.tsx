@@ -7,12 +7,10 @@
 import { useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import type { AutoDetectTypes } from '@serialport/bindings-cpp';
+import { selectedDevice } from 'pc-nrfconnect-shared';
 import { SerialPortOpenOptions } from 'serialport';
 
-import {
-    getAvailableSerialPorts,
-    getSerialPort,
-} from './terminal/terminalSlice';
+import { getSerialPort } from './terminal/terminalSlice';
 
 export default (
     doConnectToSerialPort: (
@@ -24,18 +22,26 @@ export default (
     const { argv } = process;
     const portNameIndex = argv.findIndex(arg => arg === '--comPort');
     const portName = portNameIndex > -1 ? argv[portNameIndex + 1] : undefined;
-    const availablePorts = useSelector(getAvailableSerialPorts);
+    const device = useSelector(selectedDevice);
 
     const serialPort = useSelector(getSerialPort);
 
     useEffect(() => {
         if (
             portName === undefined ||
-            serialPort === undefined ||
+            serialPort !== undefined ||
             alreadyTriedToAutoSelect.current
         ) {
+            alreadyTriedToAutoSelect.current = true;
             return;
         }
+
+        if (device === undefined) {
+            return;
+        }
+
+        const availablePorts =
+            device?.serialPorts?.map(port => port.comName ?? '') ?? [];
 
         alreadyTriedToAutoSelect.current = true;
 
@@ -46,5 +52,5 @@ export default (
         }
 
         doConnectToSerialPort({ path: portName });
-    }, [availablePorts, doConnectToSerialPort, portName, serialPort]);
+    }, [device, doConnectToSerialPort, portName, serialPort]);
 };
