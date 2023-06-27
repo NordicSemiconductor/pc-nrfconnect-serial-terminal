@@ -5,6 +5,7 @@
 -   Reconnecting status in device selector.
 -   When focusing back to the app, the focuses will go to the xTerm or line
     input filed so user can start typing immediately
+-   link to info center application documentation
 
 ### Fixed
 
