@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-4-Clause
  */
 
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AutoDetectTypes } from '@serialport/bindings-cpp';
 import {
@@ -16,6 +16,7 @@ import {
     DropdownItem,
     Group,
     logger,
+    persistSerialPortOptions,
     SerialPort,
     truncateMiddle,
 } from 'pc-nrfconnect-shared';
@@ -154,6 +155,12 @@ const SerialSettings = () => {
     const parityItems = convertToDropDownItems(parityOptions(), true);
 
     const onOffItems = convertToDropDownItems(['on', 'off'], true);
+
+    useEffect(() => {
+        if (serialPort !== undefined) {
+            dispatch(persistSerialPortOptions(serialOptions));
+        }
+    }, [dispatch, serialOptions, serialPort]);
 
     useAutoReconnectCommandLine(updateSerialPort);
 
