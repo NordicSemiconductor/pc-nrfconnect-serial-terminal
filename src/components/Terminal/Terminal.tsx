@@ -28,6 +28,7 @@ interface Props {
     onDataWritten: (listener: (data: Uint8Array) => void) => () => void;
     clearOnSend: boolean;
     lineMode: boolean;
+    active: boolean;
 }
 
 const clearTerminal = (xTerm?: XTerm | null) => {
@@ -41,6 +42,7 @@ const Terminal: React.FC<Props> = ({
     onDataWritten,
     clearOnSend,
     lineMode,
+    active,
 }) => {
     const [cmdLine, setCmdLine] = useState('');
     const xtermRef = useRef<XTerm | null>(null);
@@ -116,6 +118,16 @@ const Terminal: React.FC<Props> = ({
 
         // we need New Page (Ascii 12) so not to create an empty line on top of shell
     }, [commandCallback, lineMode, serialPort]);
+
+    useEffect(() => {
+        if (active) {
+            if (lineMode) {
+                lineModeInputRef.current?.focus();
+            } else {
+                xtermRef.current?.terminal.focus();
+            }
+        }
+    }, [active, lineMode]);
 
     useEffect(() => {
         const action = () => {
