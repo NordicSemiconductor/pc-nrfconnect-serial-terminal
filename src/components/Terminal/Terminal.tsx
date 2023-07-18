@@ -9,7 +9,6 @@ import { useSelector } from 'react-redux';
 import { useResizeDetector } from 'react-resize-detector';
 import ansiEscapes from 'ansi-escapes';
 import { clipboard } from 'electron';
-import { Button } from 'pc-nrfconnect-shared';
 import { XTerm } from 'xterm-for-react';
 
 import {
@@ -237,12 +236,12 @@ const Terminal: React.FC<Props> = ({
                             }}
                         />
                     </div>
-                    <Button
-                        variant="custom"
+                    <button
+                        type="button"
                         onClick={() => handleUserInputLineMode(cmdLine)}
                     >
                         Send
-                    </Button>
+                    </button>
                 </div>
             )}
             <div
@@ -262,13 +261,13 @@ const Terminal: React.FC<Props> = ({
                     options={terminalOptions}
                 />
                 {lineMode && (
-                    <Button
-                        variant="custom"
+                    <button
+                        type="button"
                         className="clear-console"
                         onClick={() => clearTerminal(xtermRef.current)}
                     >
                         clear console
-                    </Button>
+                    </button>
                 )}
             </div>
         </div>
