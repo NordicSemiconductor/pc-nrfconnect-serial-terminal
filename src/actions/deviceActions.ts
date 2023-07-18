@@ -20,18 +20,6 @@ export const closeDevice = (): TAction => dispatch => {
     dispatch(setSerialPort(undefined));
 };
 
-export const deviceConnected =
-    (device: Device): TAction =>
-    () => {
-        logger.info(`Device Connected SN:${device.serialNumber}`);
-    };
-
-export const deviceDisconnected =
-    (device: Device): TAction =>
-    () => {
-        logger.info(`Device Disconnected SN:${device.serialNumber}`);
-    };
-
 export const openDevice =
     (device: Device): TAction =>
     async (dispatch, getState) => {
