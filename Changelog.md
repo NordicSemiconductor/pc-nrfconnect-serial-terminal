@@ -15,6 +15,7 @@
 -   Switching between Line mode and Shell mode resulted in typed text to be
     invisible in some cases.
 -   `Restart application with verbose logging` button did not restart app.
+-   linux: `Ctrl+C` now copies text from xterm as expected.
 
 ### Changed
 

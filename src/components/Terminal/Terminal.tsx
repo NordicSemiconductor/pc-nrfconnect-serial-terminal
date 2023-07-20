@@ -197,6 +197,7 @@ const Terminal: React.FC<Props> = ({
                                     'clipboard'
                                 );
                                 xtermRef.current?.terminal.clearSelection();
+                                event.preventDefault();
                             }
                             return !hasSelection;
                         case 'KeyV':
@@ -204,10 +205,12 @@ const Terminal: React.FC<Props> = ({
                                 handleUserInputShellMode(
                                     clipboard.readText('clipboard')
                                 );
+                                event.preventDefault();
                             }
                             return false;
                         case 'KeyA':
                             xtermRef.current?.terminal.selectAll();
+                            event.preventDefault();
                             return false;
                     }
                 }
