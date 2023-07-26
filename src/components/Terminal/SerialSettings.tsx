@@ -35,8 +35,6 @@ import {
 import useAutoReconnectCommandLine from '../../features/useAutoReconnectCommandLine';
 import { convertToDropDownItems } from '../../utils/dataConstructors';
 
-import './serialSettings.scss';
-
 type Parity = 'none' | 'even' | 'mark' | 'odd' | 'space' | undefined;
 type DataBits = 8 | 7 | 6 | 5 | undefined;
 type StopBits = 1 | 2 | undefined;
@@ -187,7 +185,7 @@ const SerialSettings = () => {
                     <Button
                         large
                         variant="secondary"
-                        className="w-100 connection-button"
+                        className="tw-w-full"
                         onClick={() => connectToSelectedSerialPort(false)}
                         disabled={availablePorts.length === 0}
                     >
@@ -197,7 +195,7 @@ const SerialSettings = () => {
                     <Button
                         large
                         variant="secondary"
-                        className="w-100 connection-button"
+                        className="tw-w-full"
                         onClick={() => {
                             dispatch(setSerialPort(undefined));
                         }}
