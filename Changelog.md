@@ -17,10 +17,6 @@
 -   `Restart application with verbose logging` button did not restart app.
 -   Linux: `Ctrl+C` now copies text from xterm as expected.
 
-### Changed
-
--   Removed documentation card.
-
 ## 1.0.1 - 2023-02-24
 
 ### Fixed
