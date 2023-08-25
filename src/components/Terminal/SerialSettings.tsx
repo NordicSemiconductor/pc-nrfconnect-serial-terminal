@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-4-Clause
  */
 
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     Button,
@@ -15,6 +15,7 @@ import {
     DropdownItem,
     Group,
     logger,
+    NumberInlineInput,
     persistSerialPortOptions,
     SerialPort,
     truncateMiddle,
@@ -59,6 +60,7 @@ const convertItemToValue = (valueList: string[], item: DropdownItem) =>
     valueList.indexOf(item.value) === -1 ? undefined : item.value;
 
 export default () => {
+    const [isCustomBaudRate, setIsCustomBaudRate] = useState(false);
     const serialOptions = useSelector(getSerialOptions);
     const availablePorts = useSelector(getAvailableSerialPorts);
     const serialPort = useSelector(getSerialPort);
@@ -72,11 +74,11 @@ export default () => {
         () =>
             availablePorts.length > 0
                 ? [
-                      ...availablePorts.map(portPath => ({
-                          label: truncateMiddle(portPath, 20, 8),
-                          value: portPath as string,
-                      })),
-                  ]
+                    ...availablePorts.map(portPath => ({
+                        label: truncateMiddle(portPath, 20, 8),
+                        value: portPath as string,
+                    })),
+                ]
                 : [{ label: 'Not connected', value: '' }],
         [availablePorts]
     );
@@ -201,22 +203,59 @@ export default () => {
                 <Dropdown
                     label="Baud Rate"
                     onSelect={item => {
+                        if (item.value === 'custom') {
+                            setIsCustomBaudRate(true);
+                            return;
+                        }
+
+                        setIsCustomBaudRate(false);
+
                         if (serialOptions.path !== '') {
                             serialPort?.update({
                                 baudRate: Number(item.value),
                             });
                         }
+
                         updateSerialPort({
                             baudRate: Number(item.value),
                         });
                     }}
-                    items={baudRateItems}
-                    selectedItem={getItem(
-                        baudRateItems,
-                        serialOptions.baudRate
-                    )}
+                    items={[
+                        ...baudRateItems,
+                        { label: 'Custom', value: 'custom' },
+                    ]}
+                    selectedItem={
+                        isCustomBaudRate
+                            ? { label: 'Custom', value: 'custom' }
+                            : getItem(baudRateItems, serialOptions.baudRate)
+                    }
                     disabled={isConnected}
                 />
+                {isCustomBaudRate && (
+                    <div className="tw-mb-1 tw-flex tw-flex-row tw-justify-between">
+                        <span>Custom Baud Rate</span>
+                        <NumberInlineInput
+                            disabled={isConnected}
+                            range={{
+                                min: 1,
+                                max: 2000000,
+                                decimals: 0,
+                                step: 1,
+                            }}
+                            value={serialOptions.baudRate}
+                            onChange={baud => {
+                                if (serialOptions.path !== '') {
+                                    serialPort?.update({
+                                        baudRate: Number(baud),
+                                    });
+                                }
+                                updateSerialPort({
+                                    baudRate: Number(baud),
+                                });
+                            }}
+                        />
+                    </div>
+                )}
                 <Dropdown
                     label="Data bits"
                     onSelect={item =>
