@@ -1,9 +1,9 @@
-## 1.1.1 - UNRELEASED
+## 1.1.1 - 2023-09-04
 
 ### Fixed
 
--   Opening the serial terminal app from another app after serial port settings
-    were changed, now connects as expected.
+-   Opening the serial terminal app from another app could previously fail to
+    connect and would require a manual reconnect
 
 ## 1.1.0 - 2023-07-27
 
