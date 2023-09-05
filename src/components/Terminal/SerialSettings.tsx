@@ -32,7 +32,6 @@ import {
     setShowOverwriteDialog,
     updateSerialOptions,
 } from '../../features/terminal/terminalSlice';
-import useAutoReconnectCommandLine from '../../features/useAutoReconnectCommandLine';
 import { convertToDropDownItems } from '../../utils/dataConstructors';
 
 type Parity = 'none' | 'even' | 'mark' | 'odd' | 'space' | undefined;
@@ -164,13 +163,6 @@ const SerialSettings = () => {
             dispatch(persistSerialPortOptions(serialOptions));
         }
     }, [dispatch, serialOptions, serialPort]);
-
-    useAutoReconnectCommandLine(options => {
-        updateSerialPort(options);
-        if (serialPort === undefined) {
-            connectToSelectedSerialPort(false, options);
-        }
-    });
 
     return (
         <>

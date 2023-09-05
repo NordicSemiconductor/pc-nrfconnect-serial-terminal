@@ -1,3 +1,10 @@
+## 1.1.1 - 2023-09-05
+
+### Fixed
+
+-   Opening the serial terminal app from another app could previously fail to
+    connect and would require a manual reconnect
+
 ## 1.1.0 - 2023-07-27
 
 ### Added

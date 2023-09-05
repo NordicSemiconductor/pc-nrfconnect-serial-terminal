@@ -3,7 +3,12 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-4-Clause
  */
-import { createSerialPort, Device, logger } from 'pc-nrfconnect-shared';
+import {
+    createSerialPort,
+    Device,
+    getSerialPortOptions,
+    logger,
+} from 'pc-nrfconnect-shared';
 
 import {
     setAvailableSerialPorts,
@@ -20,6 +25,8 @@ export const closeDevice = (): TAction => dispatch => {
     dispatch(setSerialPort(undefined));
 };
 
+let cliAutoConnectDone = false;
+
 export const openDevice =
     (device: Device): TAction =>
     async (dispatch, getState) => {
@@ -32,6 +39,40 @@ export const openDevice =
             );
             dispatch(updateSerialOptions({ path: ports[0].comName ?? '' }));
         }
+
+        const { argv } = process;
+        const portNameIndex = argv.findIndex(arg => arg === '--comPort');
+        const cliAutoPortName =
+            portNameIndex > -1 ? argv[portNameIndex + 1] : undefined;
+
+        if (!cliAutoConnectDone && cliAutoPortName) {
+            cliAutoConnectDone = true;
+
+            const portExists =
+                ports && ports.find(port => port.comName === cliAutoPortName);
+
+            if (!portExists) {
+                return;
+            }
+
+            const options =
+                (await getSerialPortOptions(cliAutoPortName)) ??
+                device.persistedSerialPortOptions;
+
+            dispatch(
+                setSerialPort(
+                    await createSerialPort(
+                        { path: cliAutoPortName, baudRate: 115200, ...options },
+                        {
+                            overwrite: false,
+                            settingsLocked: false,
+                        }
+                    )
+                )
+            );
+            return;
+        }
+
         if (autoReselect && ports) {
             const serialSettings = device.persistedSerialPortOptions;
             if (serialSettings) {
