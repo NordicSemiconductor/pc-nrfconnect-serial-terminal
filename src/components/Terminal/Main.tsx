@@ -6,7 +6,7 @@
 
 import React, { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { PaneProps } from 'pc-nrfconnect-shared';
+import { PaneProps } from '@nordicsemiconductor/pc-nrfconnect-shared';
 
 import {
     getClearOnSend,

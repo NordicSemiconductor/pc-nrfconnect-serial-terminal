@@ -6,7 +6,6 @@
 
 import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import type { AutoDetectTypes } from '@serialport/bindings-cpp';
 import {
     Button,
     CollapsibleGroup,
@@ -19,7 +18,8 @@ import {
     persistSerialPortOptions,
     SerialPort,
     truncateMiddle,
-} from 'pc-nrfconnect-shared';
+} from '@nordicsemiconductor/pc-nrfconnect-shared';
+import type { AutoDetectTypes } from '@serialport/bindings-cpp';
 import { SerialPortOpenOptions } from 'serialport';
 
 import {
@@ -175,7 +175,7 @@ const SerialSettings = () => {
                 />
                 {serialPort == null ? (
                     <Button
-                        large
+                        size="lg"
                         variant="secondary"
                         className="tw-w-full"
                         onClick={() => connectToSelectedSerialPort(false)}
@@ -185,7 +185,7 @@ const SerialSettings = () => {
                     </Button>
                 ) : (
                     <Button
-                        large
+                        size="lg"
                         variant="secondary"
                         className="tw-w-full"
                         onClick={() => {
@@ -320,8 +320,10 @@ const SerialSettings = () => {
                 }}
                 setSerialPortCallback={(newSerialPort: SerialPort) => {
                     dispatch(setSerialPort(newSerialPort));
-                    newSerialPort.getOptions()?.then(options => {
-                        dispatch(setSerialOptions(options));
+                    newSerialPort.getOptions().then(options => {
+                        if (options) {
+                            dispatch(setSerialOptions(options));
+                        }
                     });
                 }}
             />

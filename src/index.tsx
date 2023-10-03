@@ -5,7 +5,7 @@
  */
 
 import React from 'react';
-import { App } from 'pc-nrfconnect-shared';
+import { App, render } from '@nordicsemiconductor/pc-nrfconnect-shared';
 
 import appReducer from './appReducer';
 import DeviceSelector from './components/DeviceSelector';
@@ -15,7 +15,7 @@ import TerminalSidePanel from './components/Terminal/SidePanel';
 
 import './index.scss';
 
-export default () => (
+render(
     <App
         reportUsageData
         appReducer={appReducer}

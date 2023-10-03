@@ -5,10 +5,11 @@
  */
 import {
     createSerialPort,
+    describeError,
     Device,
     getSerialPortOptions,
     logger,
-} from 'pc-nrfconnect-shared';
+} from '@nordicsemiconductor/pc-nrfconnect-shared';
 
 import {
     setAvailableSerialPorts,
@@ -59,17 +60,25 @@ export const openDevice =
                 (await getSerialPortOptions(cliAutoPortName)) ??
                 device.persistedSerialPortOptions;
 
-            dispatch(
-                setSerialPort(
-                    await createSerialPort(
-                        { path: cliAutoPortName, baudRate: 115200, ...options },
-                        {
-                            overwrite: false,
-                            settingsLocked: false,
-                        }
+            try {
+                dispatch(
+                    setSerialPort(
+                        await createSerialPort(
+                            {
+                                path: cliAutoPortName,
+                                baudRate: 115200,
+                                ...options,
+                            },
+                            {
+                                overwrite: false,
+                                settingsLocked: false,
+                            }
+                        )
                     )
-                )
-            );
+                );
+            } catch (e) {
+                logger.error(describeError(e));
+            }
             return;
         }
 

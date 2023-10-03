@@ -5,7 +5,7 @@
  */
 
 import React from 'react';
-import { SidePanel } from 'pc-nrfconnect-shared';
+import { SidePanel } from '@nordicsemiconductor/pc-nrfconnect-shared';
 
 import SerialSettings from './SerialSettings';
 import TerminalSettings from './TerminalSettings';
