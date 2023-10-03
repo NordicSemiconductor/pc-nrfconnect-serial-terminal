@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-4-Clause
  */
 import {
+    AppThunk,
     createSerialPort,
     describeError,
     Device,
@@ -11,15 +12,15 @@ import {
     logger,
 } from '@nordicsemiconductor/pc-nrfconnect-shared';
 
+import { RootState } from '../appReducer';
 import {
     setAvailableSerialPorts,
     setSerialOptions,
     setSerialPort,
     updateSerialOptions,
 } from '../features/terminal/terminalSlice';
-import type { TAction } from '../thunk';
 
-export const closeDevice = (): TAction => dispatch => {
+export const closeDevice = (): AppThunk<RootState> => dispatch => {
     logger.info('Closing device');
     dispatch(setAvailableSerialPorts([]));
     dispatch(updateSerialOptions({ path: '' }));
@@ -29,7 +30,7 @@ export const closeDevice = (): TAction => dispatch => {
 let cliAutoConnectDone = false;
 
 export const openDevice =
-    (device: Device): TAction =>
+    (device: Device): AppThunk<RootState> =>
     async (dispatch, getState) => {
         // Reset serial port settings
         const autoReselect = getState().deviceAutoSelect.autoReselect;

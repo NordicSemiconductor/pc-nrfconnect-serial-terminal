@@ -58,7 +58,7 @@ const convertOnOffItemToBoolean = (item: DropdownItem) =>
 const convertItemToValue = (valueList: string[], item: DropdownItem) =>
     valueList.indexOf(item.value) === -1 ? undefined : item.value;
 
-const SerialSettings = () => {
+export default () => {
     const serialOptions = useSelector(getSerialOptions);
     const availablePorts = useSelector(getAvailableSerialPorts);
     const serialPort = useSelector(getSerialPort);
@@ -330,5 +330,3 @@ const SerialSettings = () => {
         </>
     );
 };
-
-export default SerialSettings;

@@ -13,8 +13,6 @@ import DocumentationSections from './components/DocumentationSection';
 import Terminal from './components/Terminal/Main';
 import TerminalSidePanel from './components/Terminal/SidePanel';
 
-import './index.scss';
-
 render(
     <App
         reportUsageData
