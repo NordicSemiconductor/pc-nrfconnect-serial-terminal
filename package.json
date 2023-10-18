@@ -45,12 +45,11 @@
         "@nordicsemiconductor/pc-nrfconnect-shared": "^116.0.0",
         "ansi-escapes": "^4.3.2",
         "serialport": "^10.5.0",
-        "xterm-addon-fit": "^0.5.0",
-        "xterm-for-react": "^1.0.4"
+        "xterm-addon-fit": "^0.8.0",
+        "xterm-for-react": "github:NordicPlayground/xterm-for-react"
     },
     "eslintConfig": {
         "extends": "./node_modules/@nordicsemiconductor/pc-nrfconnect-shared/config/eslintrc"
     },
-    "prettier": "@nordicsemiconductor/pc-nrfconnect-shared/config/prettier.config.js",
-    "dependencies": {}
+    "prettier": "@nordicsemiconductor/pc-nrfconnect-shared/config/prettier.config.js"
 }
