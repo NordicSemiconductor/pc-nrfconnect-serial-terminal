@@ -1,6 +1,6 @@
 {
     "name": "pc-nrfconnect-serial-terminal",
-    "version": "1.1.1",
+    "version": "2.0.0",
     "description": "Terminal emulator for serial port connections",
     "displayName": "Serial Terminal",
     "repository": {
@@ -10,7 +10,15 @@
     "author": "Nordic Semiconductor ASA",
     "license": "SEE LICENSE IN LICENSE",
     "engines": {
-        "nrfconnect": "^4.0.0"
+        "nrfconnect": "^4.2.0"
+    },
+    "nrfConnectForDesktop": {
+        "nrfutil": {
+            "device": [
+                "1.4.5"
+            ]
+        },
+        "html": "dist/index.html"
     },
     "main": "dist/bundle.js",
     "files": [
@@ -34,14 +42,14 @@
         "prepare": "husky install"
     },
     "devDependencies": {
+        "@nordicsemiconductor/pc-nrfconnect-shared": "^120.0.0",
         "ansi-escapes": "^4.3.2",
-        "pc-nrfconnect-shared": "github:NordicSemiconductor/pc-nrfconnect-shared#v75",
         "serialport": "^10.5.0",
-        "xterm-addon-fit": "^0.5.0",
-        "xterm-for-react": "^1.0.4"
+        "xterm-addon-fit": "^0.8.0",
+        "xterm-for-react": "github:NordicPlayground/xterm-for-react"
     },
     "eslintConfig": {
-        "extends": "./node_modules/pc-nrfconnect-shared/config/eslintrc"
+        "extends": "./node_modules/@nordicsemiconductor/pc-nrfconnect-shared/config/eslintrc"
     },
-    "prettier": "./node_modules/pc-nrfconnect-shared/config/prettier.config.js"
+    "prettier": "@nordicsemiconductor/pc-nrfconnect-shared/config/prettier.config.js"
 }

@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-4-Clause
  */
 
-import { DropdownItem } from 'pc-nrfconnect-shared';
+import { DropdownItem } from '@nordicsemiconductor/pc-nrfconnect-shared';
 
 export const convertToDropDownItems: <T>(
     data: T[],

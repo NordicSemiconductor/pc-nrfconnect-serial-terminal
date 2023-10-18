@@ -35,14 +35,14 @@ const clearTerminal = (xTerm?: XTerm | null) => {
     xTerm?.terminal.clear();
 };
 
-const Terminal: React.FC<Props> = ({
+export default ({
     commandCallback,
     onData,
     onDataWritten,
     clearOnSend,
     lineMode,
     active,
-}) => {
+}: Props) => {
     const [cmdLine, setCmdLine] = useState('');
     const xtermRef = useRef<XTerm | null>(null);
     const lineModeInputRef = useRef<HTMLInputElement | null>(null);
@@ -276,5 +276,3 @@ const Terminal: React.FC<Props> = ({
         </div>
     );
 };
-
-export default Terminal;

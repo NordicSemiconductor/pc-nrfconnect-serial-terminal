@@ -3,6 +3,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-4-Clause
  */
+
 import React, { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -13,7 +14,7 @@ import {
     selectedDevice,
     StateSelector,
     Toggle,
-} from 'pc-nrfconnect-shared';
+} from '@nordicsemiconductor/pc-nrfconnect-shared';
 
 import {
     getClearOnSend,
@@ -30,7 +31,7 @@ import {
 } from '../../features/terminal/terminalSlice';
 import { convertToDropDownItems } from '../../utils/dataConstructors';
 
-const TerminalSettings = () => {
+export default () => {
     const device = useSelector(selectedDevice);
     const serialPort = useSelector(getSerialPort);
     const lastModemOpenState = useRef(false);
@@ -165,5 +166,3 @@ const TerminalSettings = () => {
         </CollapsibleGroup>
     );
 };
-
-export default TerminalSettings;

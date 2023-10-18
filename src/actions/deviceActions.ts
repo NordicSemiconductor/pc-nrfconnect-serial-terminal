@@ -4,21 +4,23 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-4-Clause
  */
 import {
+    AppThunk,
     createSerialPort,
+    describeError,
     Device,
     getSerialPortOptions,
     logger,
-} from 'pc-nrfconnect-shared';
+} from '@nordicsemiconductor/pc-nrfconnect-shared';
 
+import { RootState } from '../appReducer';
 import {
     setAvailableSerialPorts,
     setSerialOptions,
     setSerialPort,
     updateSerialOptions,
 } from '../features/terminal/terminalSlice';
-import type { TAction } from '../thunk';
 
-export const closeDevice = (): TAction => dispatch => {
+export const closeDevice = (): AppThunk<RootState> => dispatch => {
     logger.info('Closing device');
     dispatch(setAvailableSerialPorts([]));
     dispatch(updateSerialOptions({ path: '' }));
@@ -28,7 +30,7 @@ export const closeDevice = (): TAction => dispatch => {
 let cliAutoConnectDone = false;
 
 export const openDevice =
-    (device: Device): TAction =>
+    (device: Device): AppThunk<RootState> =>
     async (dispatch, getState) => {
         // Reset serial port settings
         const autoReselect = getState().deviceAutoSelect.autoReselect;
@@ -59,17 +61,25 @@ export const openDevice =
                 (await getSerialPortOptions(cliAutoPortName)) ??
                 device.persistedSerialPortOptions;
 
-            dispatch(
-                setSerialPort(
-                    await createSerialPort(
-                        { path: cliAutoPortName, baudRate: 115200, ...options },
-                        {
-                            overwrite: false,
-                            settingsLocked: false,
-                        }
+            try {
+                dispatch(
+                    setSerialPort(
+                        await createSerialPort(
+                            {
+                                path: cliAutoPortName,
+                                baudRate: 115200,
+                                ...options,
+                            },
+                            {
+                                overwrite: false,
+                                settingsLocked: false,
+                            }
+                        )
                     )
-                )
-            );
+                );
+            } catch (e) {
+                logger.error(describeError(e));
+            }
             return;
         }
 
