@@ -1,0 +1,15 @@
+/*
+ * Copyright (c) 2023 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-4-Clause
+ */
+
+@import '@nordicsemiconductor/pc-nrfconnect-shared/styles';
+
+.content {
+    &[data-height='true'] {
+        overflow-y: scroll; // Make Scroll Fixed Height Scrollable
+
+        @include scrollbars($gray-700);
+    }
+}
