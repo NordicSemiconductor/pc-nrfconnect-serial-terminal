@@ -4,12 +4,13 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-4-Clause
  */
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     CollapsibleGroup,
     Dropdown,
     getPersistedTerminalSettings,
+    NumberInlineInput,
     persistTerminalSettings,
     selectedDevice,
     StateSelector,
@@ -21,6 +22,7 @@ import {
     getEchoOnShell,
     getLineEnding,
     getLineMode,
+    getScrollback,
     getSerialOptions,
     getSerialPort,
     LineEnding,
@@ -28,6 +30,7 @@ import {
     setEchoOnShell,
     setLineEnding,
     setLineMode,
+    setScrollback as setActiveScrollback,
 } from '../../features/terminal/terminalSlice';
 import { convertToDropDownItems } from '../../utils/dataConstructors';
 
@@ -37,6 +40,9 @@ export default () => {
     const lastModemOpenState = useRef(false);
     const selectedSerialport = useSelector(getSerialOptions).path;
 
+    const activeScrollback = useSelector(getScrollback);
+    const [scrollback, setScrollback] = useState(activeScrollback);
+
     const clearOnSend = useSelector(getClearOnSend);
     const lineEnding = useSelector(getLineEnding);
     const echoOnShell = useSelector(getEchoOnShell);
@@ -44,6 +50,8 @@ export default () => {
     const lineMode = useSelector(getLineMode);
 
     const dispatch = useDispatch();
+
+    const isConnected = serialPort !== undefined;
 
     const lineEndings = convertToDropDownItems<string>(
         ['NONE', 'LF', 'CR', 'CRLF'],
@@ -133,6 +141,20 @@ export default () => {
 
     return (
         <CollapsibleGroup heading="Terminal Settings">
+            <div title="Set the number of lines that can scrolled back in one session.">
+                <NumberInlineInput
+                    disabled={isConnected}
+                    value={scrollback}
+                    onChange={setScrollback}
+                    onChangeComplete={() => {
+                        if (scrollback !== activeScrollback) {
+                            dispatch(setActiveScrollback(scrollback));
+                        }
+                    }}
+                    range={{ min: 1, max: 2 ** 64 - 1, decimals: 0 }}
+                />
+                <span>Scrollback history</span>
+            </div>
             <StateSelector
                 items={lineModeItems}
                 onSelect={value => dispatch(setLineMode(value === 0))}

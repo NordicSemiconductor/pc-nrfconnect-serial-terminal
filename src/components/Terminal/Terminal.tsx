@@ -13,6 +13,7 @@ import { XTerm } from 'xterm-for-react';
 
 import {
     getEchoOnShell,
+    getScrollback,
     getSerialPort,
 } from '../../features/terminal/terminalSlice';
 import useFitAddon from '../../hooks/useFitAddon';
@@ -50,6 +51,7 @@ export default ({
     const fitAddon = useFitAddon(height, width, lineMode);
     const echoOnShell = useSelector(getEchoOnShell);
     const serialPort = useSelector(getSerialPort);
+    const scrollback = useSelector(getScrollback);
 
     const writeLineModeToXterm = (data: string) => {
         if (data.length === 1 && data.charCodeAt(0) === 12) return;
@@ -174,7 +176,15 @@ export default ({
             background: styles.terminalBackground,
         },
         disableStdin: lineMode, // Line mode user needs to use the input field not the terminal
+        scrollback,
     };
+
+    if (
+        xtermRef.current &&
+        xtermRef.current?.terminal.options.scrollback !== scrollback
+    ) {
+        xtermRef.current.terminal.options.scrollback = scrollback;
+    }
 
     useEffect(() => {
         if (xtermRef.current != null) {
