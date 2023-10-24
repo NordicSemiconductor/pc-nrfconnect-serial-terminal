@@ -160,7 +160,7 @@ const SerialSettings = () => {
                 />
                 {serialPort == null ? (
                     <Button
-                        large
+                        size="lg"
                         variant="secondary"
                         className="tw-w-full"
                         onClick={() => connectToSelectedSerialPort(false)}
@@ -170,7 +170,7 @@ const SerialSettings = () => {
                     </Button>
                 ) : (
                     <Button
-                        large
+                        size="lg"
                         variant="secondary"
                         className="tw-w-full"
                         onClick={() => {
@@ -183,10 +183,7 @@ const SerialSettings = () => {
                 )}
             </Group>
             <CollapsibleGroup heading="Serial Settings">
-                <Baudrate
-                    isConnected={isConnected}
-                    updateSerialPort={updateSerialPort}
-                />
+                <Baudrate updateSerialPort={updateSerialPort} />
                 <Dropdown
                     label="Data bits"
                     onSelect={item =>

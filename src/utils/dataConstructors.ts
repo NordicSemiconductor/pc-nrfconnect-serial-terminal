@@ -4,8 +4,10 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-4-Clause
  */
 
-import { DropdownItem } from '@nordicsemiconductor/pc-nrfconnect-shared';
-import { NumberDropdownItem } from '@nordicsemiconductor/pc-nrfconnect-shared/typings/generated/src/InlineInput/NumberInputWithDropdown';
+import {
+    DropdownItem,
+    NumberDropdownItem,
+} from '@nordicsemiconductor/pc-nrfconnect-shared';
 
 export const getSelectedDropdownItem = (
     itemList: DropdownItem[],

@@ -32,7 +32,6 @@ export default ({ updateSerialPort }: BaudRateProperties) => {
 
     return (
         <NumberInputWithDropdown
-            id="some-id-yeh"
             label="Baud Rate"
             items={baudRateItems}
             onChange={baud => {
@@ -41,12 +40,12 @@ export default ({ updateSerialPort }: BaudRateProperties) => {
                         baudRate: Number(baud),
                     });
                 }
-                console.log('Trying to set baudrate to', baud);
                 updateSerialPort({
                     baudRate: Number(baud),
                 });
             }}
             value={serialOptions.baudRate}
+            range={{ min: 1, max: 1_000_000, step: 1 }}
         />
     );
 };
