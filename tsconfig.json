@@ -1,6 +1,3 @@
 {
-    "extends": "./node_modules/@nordicsemiconductor/pc-nrfconnect-shared/config/tsconfig.json",
-    "compilerOptions": {
-        "skipLibCheck": true
-    }
+    "extends": "@nordicsemiconductor/pc-nrfconnect-shared/config/tsconfig.json"
 }

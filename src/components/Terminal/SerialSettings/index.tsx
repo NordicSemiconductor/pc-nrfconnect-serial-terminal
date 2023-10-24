@@ -31,26 +31,16 @@ import {
     setSerialPort,
     setShowOverwriteDialog,
     updateSerialOptions,
-} from '../../features/terminal/terminalSlice';
-import { convertToDropDownItems } from '../../utils/dataConstructors';
+} from '../../../features/terminal/terminalSlice';
+import {
+    convertToDropDownItems,
+    getSelectedDropdownItem,
+} from '../../../utils/dataConstructors';
+import Baudrate from './Baudrate';
 
 type Parity = 'none' | 'even' | 'mark' | 'odd' | 'space' | undefined;
 type DataBits = 8 | 7 | 6 | 5 | undefined;
 type StopBits = 1 | 2 | undefined;
-
-const getItem = (
-    itemList: DropdownItem[],
-    value: unknown,
-    notFound?: DropdownItem
-) => {
-    if (typeof value === 'boolean') value = value ? 'on' : 'off';
-
-    if (value === undefined) return notFound ?? itemList[0];
-
-    const result = itemList[itemList.findIndex(e => e.value === `${value}`)];
-
-    return result === undefined ? notFound ?? itemList[0] : result;
-};
 
 const convertOnOffItemToBoolean = (item: DropdownItem) =>
     ['on', 'off'].indexOf(item.value) === -1 ? undefined : item.value === 'on';
@@ -58,7 +48,7 @@ const convertOnOffItemToBoolean = (item: DropdownItem) =>
 const convertItemToValue = (valueList: string[], item: DropdownItem) =>
     valueList.indexOf(item.value) === -1 ? undefined : item.value;
 
-export default () => {
+const SerialSettings = () => {
     const serialOptions = useSelector(getSerialOptions);
     const availablePorts = useSelector(getAvailableSerialPorts);
     const serialPort = useSelector(getSerialPort);
@@ -84,7 +74,10 @@ export default () => {
     const selectedComPortItem = useMemo(
         () =>
             serialOptions.path !== ''
-                ? getItem(comPortsDropdownItems, serialOptions.path)
+                ? getSelectedDropdownItem(
+                      comPortsDropdownItems,
+                      serialOptions.path
+                  )
                 : comPortsDropdownItems[0],
         [comPortsDropdownItems, serialOptions]
     );
@@ -135,14 +128,6 @@ export default () => {
             }
         }
     };
-
-    const baudRateItems = convertToDropDownItems(
-        [
-            115200, 57600, 38400, 19200, 9600, 4800, 2400, 1800, 1200, 600, 300,
-            200, 150, 134, 110, 75, 50,
-        ],
-        false
-    );
 
     const parityOptions = () => {
         // https://serialport.io/docs/api-bindings-cpp#open
@@ -198,25 +183,7 @@ export default () => {
                 )}
             </Group>
             <CollapsibleGroup heading="Serial Settings">
-                <Dropdown
-                    label="Baud Rate"
-                    onSelect={item => {
-                        if (serialOptions.path !== '') {
-                            serialPort?.update({
-                                baudRate: Number(item.value),
-                            });
-                        }
-                        updateSerialPort({
-                            baudRate: Number(item.value),
-                        });
-                    }}
-                    items={baudRateItems}
-                    selectedItem={getItem(
-                        baudRateItems,
-                        serialOptions.baudRate
-                    )}
-                    disabled={isConnected}
-                />
+                <Baudrate updateSerialPort={updateSerialPort} />
                 <Dropdown
                     label="Data bits"
                     onSelect={item =>
@@ -228,7 +195,7 @@ export default () => {
                         })
                     }
                     items={dataBitsItems}
-                    selectedItem={getItem(
+                    selectedItem={getSelectedDropdownItem(
                         dataBitsItems,
                         serialOptions.dataBits
                     )}
@@ -245,7 +212,7 @@ export default () => {
                         })
                     }
                     items={stopBitsItems}
-                    selectedItem={getItem(
+                    selectedItem={getSelectedDropdownItem(
                         stopBitsItems,
                         serialOptions.stopBits
                     )}
@@ -262,7 +229,10 @@ export default () => {
                         })
                     }
                     items={parityItems}
-                    selectedItem={getItem(parityItems, serialOptions.parity)}
+                    selectedItem={getSelectedDropdownItem(
+                        parityItems,
+                        serialOptions.parity
+                    )}
                     disabled={isConnected}
                 />
                 <Dropdown
@@ -273,7 +243,10 @@ export default () => {
                         })
                     }
                     items={onOffItems}
-                    selectedItem={getItem(onOffItems, serialOptions.rtscts)}
+                    selectedItem={getSelectedDropdownItem(
+                        onOffItems,
+                        serialOptions.rtscts
+                    )}
                     disabled={isConnected}
                 />
                 <Dropdown
@@ -284,7 +257,10 @@ export default () => {
                         })
                     }
                     items={onOffItems}
-                    selectedItem={getItem(onOffItems, serialOptions.xon)}
+                    selectedItem={getSelectedDropdownItem(
+                        onOffItems,
+                        serialOptions.xon
+                    )}
                     disabled={isConnected}
                 />
                 <Dropdown
@@ -295,7 +271,10 @@ export default () => {
                         })
                     }
                     items={onOffItems}
-                    selectedItem={getItem(onOffItems, serialOptions.xoff)}
+                    selectedItem={getSelectedDropdownItem(
+                        onOffItems,
+                        serialOptions.xoff
+                    )}
                     disabled={isConnected}
                 />
                 <Dropdown
@@ -306,7 +285,10 @@ export default () => {
                         })
                     }
                     items={onOffItems}
-                    selectedItem={getItem(onOffItems, serialOptions.xany)}
+                    selectedItem={getSelectedDropdownItem(
+                        onOffItems,
+                        serialOptions.xany
+                    )}
                     disabled={isConnected}
                 />
             </CollapsibleGroup>
@@ -320,7 +302,7 @@ export default () => {
                 }}
                 setSerialPortCallback={(newSerialPort: SerialPort) => {
                     dispatch(setSerialPort(newSerialPort));
-                    newSerialPort.getOptions().then(options => {
+                    newSerialPort.getOptions()?.then(options => {
                         if (options) {
                             dispatch(setSerialOptions(options));
                         }
@@ -330,3 +312,5 @@ export default () => {
         </>
     );
 };
+
+export default SerialSettings;

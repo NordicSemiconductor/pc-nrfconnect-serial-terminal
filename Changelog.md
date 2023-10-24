@@ -1,5 +1,9 @@
 ## 2.0.0 - UNRELEASED
 
+### Added
+
+-   Custom baud rate support.
+
 ### Changed
 
 -   From **nrf-device-lib-js** to **nrfutil device**, as a backend for
