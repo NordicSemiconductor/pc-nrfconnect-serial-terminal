@@ -140,8 +140,12 @@ export default () => {
     ]);
 
     return (
-        <CollapsibleGroup heading="Terminal Settings">
-            <div title="Set the number of lines that can scrolled back in one session.">
+        <CollapsibleGroup heading="Terminal Settings" defaultCollapsed={false}>
+            <div
+                title="Set the number of lines it is possible to scroll in the Terminal"
+                className="tw-flex tw-justify-between"
+            >
+                Scrollback
                 <NumberInlineInput
                     disabled={isConnected}
                     value={scrollback}
@@ -151,9 +155,8 @@ export default () => {
                             dispatch(setActiveScrollback(scrollback));
                         }
                     }}
-                    range={{ min: 1, max: 2 ** 64 - 1, decimals: 0 }}
+                    range={{ min: 1, max: 2 ** 64 - 1 }}
                 />
-                <span>Scrollback history</span>
             </div>
             <StateSelector
                 items={lineModeItems}
