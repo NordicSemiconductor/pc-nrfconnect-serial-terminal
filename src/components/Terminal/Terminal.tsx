@@ -11,6 +11,7 @@ import ansiEscapes from 'ansi-escapes';
 import { clipboard } from 'electron';
 import { XTerm } from 'xterm-for-react';
 
+import { writeHistoryLine } from '../../features/history/fileHandler';
 import {
     getEchoOnShell,
     getScrollback,
@@ -73,7 +74,10 @@ export default ({
         (data: string) => {
             if (clearOnSend) setCmdLine('');
 
-            const ret = commandCallback(data.trim());
+            const trimmedData = data.trim();
+            writeHistoryLine(trimmedData);
+
+            const ret = commandCallback(trimmedData);
             if (ret) {
                 xtermRef.current?.terminal.write(ret);
             }
@@ -81,12 +85,45 @@ export default ({
         [commandCallback, clearOnSend]
     );
 
+    const getLastLineShellMode = (): string | undefined => {
+        // If the active buffer is larger than the number of rows in the viewport,
+        // it means that the user has the options to scroll, and it means that
+        // the last line must be at buffer.length - 1.
+        // Otherwise, just grab the cursorY, since it must be the last line, since
+        // the user cannot have scrolled.
+
+        const numberOfRowsInViewport = xtermRef.current?.terminal.rows;
+        const activeBuffer = xtermRef.current?.terminal.buffer.active;
+
+        if (numberOfRowsInViewport == null || activeBuffer == null) {
+            return;
+        }
+
+        let lastLineIndex = 0;
+
+        if (activeBuffer.length > numberOfRowsInViewport) {
+            lastLineIndex = activeBuffer.length - 1;
+        } else {
+            lastLineIndex = activeBuffer.cursorY;
+        }
+
+        return activeBuffer.getLine(lastLineIndex)?.translateToString();
+    };
+
     // In Shell mode we need to only write to the serial port
     // Shell mode will guarantee that data is echoed back and hence
     // all we need to do is write the data back to the terminal and let
     // the shell mode device do all the auto complete etc...
     const handleUserInputShellMode = useCallback(
         (character: string) => {
+            if (character === '\n' || character === '\r') {
+                const lastLine = getLastLineShellMode();
+                if (lastLine) {
+                    console.log('Wrote last line: ', lastLine);
+                    writeHistoryLine(lastLine);
+                }
+            }
+
             const ret = commandCallback(character);
             if (ret) {
                 xtermRef.current?.terminal.write(ret);
