@@ -147,7 +147,6 @@ export default () => {
             >
                 Scrollback
                 <NumberInlineInput
-                    disabled={isConnected}
                     value={scrollback}
                     onChange={setScrollback}
                     onChangeComplete={() => {
