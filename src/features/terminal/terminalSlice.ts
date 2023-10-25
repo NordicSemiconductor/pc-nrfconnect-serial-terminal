@@ -22,6 +22,7 @@ interface TerminalState {
     lineMode: boolean;
     echoOnShell: boolean;
     showOverwriteDialog: boolean;
+    scrollback: number;
 }
 
 const initialState: TerminalState = {
@@ -36,6 +37,7 @@ const initialState: TerminalState = {
     lineMode: true,
     echoOnShell: true,
     showOverwriteDialog: false,
+    scrollback: 1000, // Default by Xterm.js
 };
 
 const cleanUndefined = <T>(obj: T) => JSON.parse(JSON.stringify(obj));
@@ -95,6 +97,12 @@ const terminalSlice = createSlice({
         setShowOverwriteDialog: (state, action: PayloadAction<boolean>) => {
             state.showOverwriteDialog = action.payload;
         },
+        setScrollback: (
+            state,
+            { payload: scrollback }: PayloadAction<number>
+        ) => {
+            state.scrollback = scrollback;
+        },
     },
 });
 
@@ -113,6 +121,8 @@ export const getEchoOnShell = (state: RootState) =>
     state.app.terminal.echoOnShell;
 export const getShowOverwriteDialog = (state: RootState) =>
     state.app.terminal.showOverwriteDialog;
+export const getScrollback = (state: RootState) =>
+    state.app.terminal.scrollback;
 
 export const {
     setSerialPort,
@@ -125,5 +135,6 @@ export const {
     setLineMode,
     setEchoOnShell,
     setShowOverwriteDialog,
+    setScrollback,
 } = terminalSlice.actions;
 export default terminalSlice.reducer;
