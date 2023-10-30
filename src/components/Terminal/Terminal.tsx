@@ -1,17 +1,17 @@
 /*
- * Copyright (c) 2015 Nordic Semiconductor ASA
+ * Copyright (c) 2023 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-4-Clause
  */
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useResizeDetector } from 'react-resize-detector';
 import ansiEscapes from 'ansi-escapes';
 import { clipboard } from 'electron';
 import { XTerm } from 'xterm-for-react';
 
-import { writeHistoryLine } from '../../features/history/fileHandler';
+import { writeHistoryLine } from '../../features/history/effects';
 import {
     getEchoOnShell,
     getScrollback,
@@ -53,6 +53,7 @@ export default ({
     const echoOnShell = useSelector(getEchoOnShell);
     const serialPort = useSelector(getSerialPort);
     const scrollback = useSelector(getScrollback);
+    const dispatch = useDispatch();
 
     const writeLineModeToXterm = (data: string) => {
         if (data.length === 1 && data.charCodeAt(0) === 12) return;
@@ -75,14 +76,14 @@ export default ({
             if (clearOnSend) setCmdLine('');
 
             const trimmedData = data.trim();
-            writeHistoryLine(trimmedData);
+            dispatch(writeHistoryLine(trimmedData));
 
             const ret = commandCallback(trimmedData);
             if (ret) {
                 xtermRef.current?.terminal.write(ret);
             }
         },
-        [commandCallback, clearOnSend]
+        [clearOnSend, dispatch, commandCallback]
     );
 
     const getLastLineShellMode = (): string | undefined => {
@@ -119,8 +120,7 @@ export default ({
             if (character === '\n' || character === '\r') {
                 const lastLine = getLastLineShellMode();
                 if (lastLine) {
-                    console.log('Wrote last line: ', lastLine);
-                    writeHistoryLine(lastLine);
+                    dispatch(writeHistoryLine(lastLine));
                 }
             }
 
@@ -129,7 +129,7 @@ export default ({
                 xtermRef.current?.terminal.write(ret);
             }
         },
-        [commandCallback]
+        [commandCallback, dispatch]
     );
 
     // Prepare Terminal for new connection or mode

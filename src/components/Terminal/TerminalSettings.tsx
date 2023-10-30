@@ -4,19 +4,37 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-4-Clause
  */
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { ProgressBar } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import {
+    Button,
     CollapsibleGroup,
     Dropdown,
     getPersistedTerminalSettings,
     NumberInlineInput,
+    NumberInputSliderWithUnit,
     persistTerminalSettings,
     selectedDevice,
     StateSelector,
     Toggle,
 } from '@nordicsemiconductor/pc-nrfconnect-shared';
+import { openFile } from '@nordicsemiconductor/pc-nrfconnect-shared/src/utils/open';
 
+import {
+    getPathToHistoryFile,
+    MAXIMUM_MAX_NUMBER_OF_LINES,
+    MINIMUM_MAX_NUMER_OF_LINES,
+} from '../../app/store';
+import {
+    initializeHistoryBuffer,
+    setNewMaximumNumberOfLinesInHistory,
+    trimHistoryFile,
+} from '../../features/history/effects';
+import {
+    getMaximumNumberOfLinesInHistory,
+    getNumberOfLinesInHistory,
+} from '../../features/history/historySlice';
 import {
     getClearOnSend,
     getEchoOnShell,
@@ -50,8 +68,6 @@ export default () => {
     const lineMode = useSelector(getLineMode);
 
     const dispatch = useDispatch();
-
-    const isConnected = serialPort !== undefined;
 
     const lineEndings = convertToDropDownItems<string>(
         ['NONE', 'LF', 'CR', 'CRLF'],
@@ -141,22 +157,6 @@ export default () => {
 
     return (
         <CollapsibleGroup heading="Terminal Settings" defaultCollapsed={false}>
-            <div
-                title="Set the number of lines it is possible to scroll in the Terminal"
-                className="tw-flex tw-justify-between"
-            >
-                Scrollback
-                <NumberInlineInput
-                    value={scrollback}
-                    onChange={setScrollback}
-                    onChangeComplete={() => {
-                        if (scrollback !== activeScrollback) {
-                            dispatch(setActiveScrollback(scrollback));
-                        }
-                    }}
-                    range={{ min: 1, max: 2 ** 64 - 1 }}
-                />
-            </div>
             <StateSelector
                 items={lineModeItems}
                 onSelect={value => dispatch(setLineMode(value === 0))}
@@ -187,6 +187,127 @@ export default () => {
                     label="Device controls echo"
                 />
             )}
+            <div
+                title="Set the number of lines it is possible to scroll in the Terminal"
+                className="tw-flex tw-justify-between tw-pt-1"
+            >
+                Scrollback
+                <NumberInlineInput
+                    value={scrollback}
+                    onChange={setScrollback}
+                    onChangeComplete={() => {
+                        if (scrollback !== activeScrollback) {
+                            dispatch(setActiveScrollback(scrollback));
+                        }
+                    }}
+                    range={{ min: 1, max: 2 ** 64 - 1 }}
+                />
+            </div>
+            <HistoryFileSettings />
         </CollapsibleGroup>
+    );
+};
+
+const HistoryFileSettings = () => {
+    const dispatch = useDispatch();
+
+    const pathToHistoryFile = useSelector(getPathToHistoryFile);
+    const numberOfLinesInHistory = useSelector(getNumberOfLinesInHistory);
+    const maximumNumberOfLinesInHistory = useSelector(
+        getMaximumNumberOfLinesInHistory
+    );
+
+    const [newMaximumNumberOfLines, setNewMaximumNumberOfLines] = useState(
+        maximumNumberOfLinesInHistory
+    );
+    const [numberOfLinesToKeep, setNumberOfLinesToKeep] = useState(
+        numberOfLinesInHistory
+    );
+    const historyUsagePercentage =
+        (numberOfLinesInHistory / maximumNumberOfLinesInHistory) * 100;
+
+    useEffect(() => {
+        dispatch(initializeHistoryBuffer);
+    }, [dispatch]);
+
+    useLayoutEffect(() => {
+        setNumberOfLinesToKeep(numberOfLinesInHistory);
+    }, [numberOfLinesInHistory]);
+
+    return (
+        <>
+            <span className="tw-font-bold">File usage</span>
+            {historyUsagePercentage < 75 && (
+                <ProgressBar
+                    label={`${historyUsagePercentage}%`}
+                    now={historyUsagePercentage}
+                    variant="success"
+                />
+            )}
+            {historyUsagePercentage >= 75 && historyUsagePercentage < 90 && (
+                <ProgressBar
+                    label={`${historyUsagePercentage}%`}
+                    now={historyUsagePercentage}
+                    variant="warning"
+                />
+            )}
+            {historyUsagePercentage >= 90 && (
+                <ProgressBar
+                    label={`${historyUsagePercentage}%`}
+                    now={historyUsagePercentage}
+                    variant="danger"
+                />
+            )}
+
+            <div
+                title="Set the maximum number of lines to store in the history file"
+                className="tw-flex tw-justify-between"
+            >
+                Max lines in history file{' '}
+                <NumberInlineInput
+                    value={newMaximumNumberOfLines}
+                    onChange={setNewMaximumNumberOfLines}
+                    onChangeComplete={size =>
+                        dispatch(setNewMaximumNumberOfLinesInHistory(size))
+                    }
+                    range={{
+                        min: MINIMUM_MAX_NUMER_OF_LINES,
+                        max: MAXIMUM_MAX_NUMBER_OF_LINES,
+                    }}
+                />
+            </div>
+
+            <Button
+                variant="secondary"
+                className="tw-w-full"
+                onClick={() => openFile(pathToHistoryFile)}
+            >
+                Open History File
+            </Button>
+
+            {numberOfLinesInHistory > 0 ? (
+                <>
+                    <span className="tw-font-bold">Clean History File</span>
+                    <div title="Clean the history file, select how much of the content should be kept in the file, denoted in % (percentage)">
+                        <NumberInputSliderWithUnit
+                            label="Keep"
+                            value={numberOfLinesToKeep}
+                            onChange={setNumberOfLinesToKeep}
+                            range={{ min: 0, max: numberOfLinesInHistory }}
+                            unit="lines"
+                        />
+                        <Button
+                            variant="secondary"
+                            className="tw-w-full"
+                            onClick={() =>
+                                dispatch(trimHistoryFile(numberOfLinesToKeep))
+                            }
+                        >
+                            Clean up History File
+                        </Button>
+                    </div>
+                </>
+            ) : null}
+        </>
     );
 };
