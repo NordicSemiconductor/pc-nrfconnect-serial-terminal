@@ -43,6 +43,8 @@ export default () => {
     const [numberOfLinesToKeep, setNumberOfLinesToKeep] = useState(
         numberOfLinesInHistory
     );
+    const [percentageOfFileToKeep, setPercetageOfFileToKeep] = useState(100);
+
     const historyUsagePercentage =
         (numberOfLinesInHistory / maximumNumberOfLinesInHistory) * 100;
 
@@ -111,17 +113,28 @@ export default () => {
                     <div title="Clean the history file, select how much of the content should be kept in the file, denoted in % (percentage)">
                         <NumberInputSliderWithUnit
                             label="Keep"
-                            value={numberOfLinesToKeep}
-                            onChange={setNumberOfLinesToKeep}
-                            range={{ min: 0, max: numberOfLinesInHistory }}
-                            unit="lines"
+                            value={percentageOfFileToKeep}
+                            onChange={setPercetageOfFileToKeep}
+                            range={{ min: 0, max: 100 }}
+                            unit={`% (${Math.ceil(
+                                numberOfLinesToKeep *
+                                    (percentageOfFileToKeep / 100)
+                            )} lines) of the content`}
                         />
                         <Button
                             variant="secondary"
                             className="tw-w-full"
-                            onClick={() =>
-                                dispatch(trimHistoryFile(numberOfLinesToKeep))
-                            }
+                            onClick={() => {
+                                dispatch(
+                                    trimHistoryFile(
+                                        Math.ceil(
+                                            numberOfLinesToKeep *
+                                                (percentageOfFileToKeep / 100)
+                                        )
+                                    )
+                                );
+                                setPercetageOfFileToKeep(100);
+                            }}
                         >
                             Clean up History File
                         </Button>
