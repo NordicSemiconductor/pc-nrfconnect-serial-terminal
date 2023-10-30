@@ -11,7 +11,12 @@ import ansiEscapes from 'ansi-escapes';
 import { clipboard } from 'electron';
 import { XTerm } from 'xterm-for-react';
 
-import { writeHistoryLine } from '../../features/history/effects';
+import {
+    resetHistoryScroll,
+    scrollBack,
+    scrollForward,
+    writeHistoryLine,
+} from '../../features/history/effects';
 import {
     getEchoOnShell,
     getScrollback,
@@ -46,6 +51,9 @@ export default ({
     active,
 }: Props) => {
     const [cmdLine, setCmdLine] = useState('');
+    const [historyLine, setHistoryLine] = useState<string | undefined>(
+        undefined
+    );
     const xtermRef = useRef<XTerm | null>(null);
     const lineModeInputRef = useRef<HTMLInputElement | null>(null);
     const { width, height, ref: resizeRef } = useResizeDetector();
@@ -273,15 +281,36 @@ export default ({
                     <div className="input-group">
                         <input
                             ref={lineModeInputRef}
-                            value={cmdLine}
+                            value={historyLine != null ? historyLine : cmdLine}
                             type="text"
                             placeholder="Type and press enter to send"
                             onChange={({ target }) => {
+                                resetHistoryScroll();
+                                setHistoryLine(undefined);
                                 setCmdLine(target.value);
                             }}
                             onKeyDown={event => {
                                 if (event.key === 'Enter') {
                                     handleUserInputLineMode(cmdLine);
+                                }
+                                if (event.key === 'ArrowUp') {
+                                    // This is needed to prevent the cursor to go to start
+                                    event.preventDefault();
+
+                                    const history = scrollBack(cmdLine);
+                                    if (history != null) {
+                                        setHistoryLine(history);
+                                    }
+                                }
+                                if (event.key === 'ArrowDown') {
+                                    const history = scrollForward(cmdLine);
+                                    setHistoryLine(history);
+                                }
+
+                                if (event.ctrlKey && event.key === 'u') {
+                                    resetHistoryScroll();
+                                    setCmdLine('');
+                                    setHistoryLine(undefined);
                                 }
                             }}
                         />

@@ -65,6 +65,7 @@ const HistoryBufferWrapper = async (pathToHistory: string) => {
     // but this should not be an issue. In other words, the map is going to contain more data than then
     // the history, if and only if, the history is truncated/trimmed.
     const historyMap = new Map<string, number>();
+    let currentLineIndex = history.length;
 
     return {
         pushLineToHistory: (line: string) => {
@@ -108,7 +109,76 @@ const HistoryBufferWrapper = async (pathToHistory: string) => {
             historyMap.clear();
             createMap();
         },
+
+        resetScrollIndex: () => {
+            currentLineIndex = history.length;
+        },
+
+        scrollBackSearch: (input: string) => {
+            if (currentLineIndex === history.length) {
+                currentLineIndex -= 1;
+            }
+            let nextLine = getCommandFromHistoryEntry(
+                history.at(currentLineIndex)
+            );
+
+            while (nextLine != null && !nextLine.startsWith(input)) {
+                currentLineIndex -= 1;
+
+                if (currentLineIndex === -1) {
+                    currentLineIndex = history.length;
+                    return undefined;
+                }
+
+                nextLine = getCommandFromHistoryEntry(
+                    history.at(currentLineIndex)
+                );
+            }
+
+            return nextLine;
+        },
+
+        scrollForwardSearch: (input: string) => {
+            let nextLine = getCommandFromHistoryEntry(
+                history.at(currentLineIndex)
+            );
+
+            while (nextLine != null && !nextLine.startsWith(input)) {
+                if (currentLineIndex === history.length) {
+                    return undefined;
+                }
+
+                currentLineIndex += 1;
+                nextLine = getCommandFromHistoryEntry(
+                    history.at(currentLineIndex)
+                );
+            }
+
+            return nextLine;
+        },
+
+        scrollBackOnce: () => {
+            if (currentLineIndex === 0) {
+                return;
+            }
+            currentLineIndex -= 1;
+            return getCommandFromHistoryEntry(history.at(currentLineIndex));
+        },
+        scrollForwardOnce: () => {
+            if (currentLineIndex === history.length) {
+                return;
+            }
+            currentLineIndex += 1;
+            return getCommandFromHistoryEntry(history.at(currentLineIndex));
+        },
     };
 };
 
 export default HistoryBufferWrapper;
+
+const getCommandFromHistoryEntry = (entry?: string) => {
+    if (entry == null) {
+        return undefined;
+    }
+    return entry.slice(entry.indexOf(': ') + 2).trim();
+};

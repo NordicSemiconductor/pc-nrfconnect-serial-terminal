@@ -239,3 +239,31 @@ const writeHistory =
 
         dispatch(setNumberOfLinesInHistory(history.length));
     };
+
+export const resetHistoryScroll = () => historyBuffer?.resetScrollIndex();
+
+export const scrollBack = (input: string) => {
+    if (historyBuffer == null) {
+        logger.error(HISTORY_BUFFER_NOT_INITIALIZED_MESSAGE);
+        return;
+    }
+
+    if (input.trim() === '') {
+        return historyBuffer.scrollBackOnce();
+    }
+
+    return historyBuffer.scrollBackSearch(input);
+};
+
+export const scrollForward = (input: string) => {
+    if (historyBuffer == null) {
+        logger.error(HISTORY_BUFFER_NOT_INITIALIZED_MESSAGE);
+        return;
+    }
+
+    if (input.trim() === '') {
+        return historyBuffer.scrollForwardOnce();
+    }
+
+    return historyBuffer.scrollForwardSearch(input);
+};
