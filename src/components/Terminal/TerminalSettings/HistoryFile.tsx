@@ -48,6 +48,13 @@ export default () => {
     const historyUsagePercentage =
         (numberOfLinesInHistory / maximumNumberOfLinesInHistory) * 100;
 
+    const setPercentageAndLinesToKeep = (percentage: number) => {
+        setPercetageOfFileToKeep(percentage);
+        setNumberOfLinesToKeep(
+            Math.ceil(numberOfLinesInHistory * (percentage / 100))
+        );
+    };
+
     useEffect(() => {
         dispatch(initializeHistoryBuffer);
     }, [dispatch]);
@@ -114,29 +121,25 @@ export default () => {
                         <NumberInputSliderWithUnit
                             label="Keep"
                             value={percentageOfFileToKeep}
-                            onChange={setPercetageOfFileToKeep}
+                            onChange={setPercentageAndLinesToKeep}
                             range={{ min: 0, max: 100 }}
-                            unit={`% (${Math.ceil(
-                                numberOfLinesToKeep *
-                                    (percentageOfFileToKeep / 100)
-                            )} lines) of the content`}
+                            unit="% of the content"
                         />
                         <Button
                             variant="secondary"
                             className="tw-w-full"
                             onClick={() => {
-                                dispatch(
-                                    trimHistoryFile(
-                                        Math.ceil(
-                                            numberOfLinesToKeep *
-                                                (percentageOfFileToKeep / 100)
-                                        )
-                                    )
-                                );
-                                setPercetageOfFileToKeep(100);
+                                dispatch(trimHistoryFile(numberOfLinesToKeep));
+                                setPercentageAndLinesToKeep(100);
                             }}
+                            disabled={
+                                numberOfLinesInHistory - numberOfLinesToKeep ===
+                                0
+                            }
                         >
-                            Clean up History File
+                            Delete{' '}
+                            {numberOfLinesInHistory - numberOfLinesToKeep} lines
+                            from file
                         </Button>
                     </div>
                 </>
