@@ -15,14 +15,12 @@ import {
 import type { RootState } from '../../appReducer';
 
 interface HistoryFileState {
-    numberOfLinesAboveMaxBeforeTruncate: number;
     numberOfLinesInHistory: number;
     maximumNumberOfLinesInHistory: number;
     pathToHistoryFile: string;
 }
 
 const initialState = (): HistoryFileState => ({
-    numberOfLinesAboveMaxBeforeTruncate: 10,
     numberOfLinesInHistory: 0,
     maximumNumberOfLinesInHistory:
         getPersistedMaximumNumberOfLinesInHistoryFile(),
@@ -68,8 +66,6 @@ export const getMaximumNumberOfLinesInHistory = (state: RootState) =>
     state.app.historyFile.maximumNumberOfLinesInHistory;
 export const getPathToHistoryFile = (state: RootState) =>
     state.app.historyFile.pathToHistoryFile;
-export const getNumberOfLinesAboveMaximumBeforeTruncate = (state: RootState) =>
-    state.app.historyFile.numberOfLinesAboveMaxBeforeTruncate;
 
 export const {
     setNumberOfLinesInHistory,
