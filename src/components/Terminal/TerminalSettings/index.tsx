@@ -33,6 +33,7 @@ import {
     setScrollback as setActiveScrollback,
 } from '../../../features/terminal/terminalSlice';
 import { convertToDropDownItems } from '../../../utils/dataConstructors';
+import ExportLog from './ExportLog';
 import HistoryFile from './HistoryFile';
 
 export default () => {
@@ -139,7 +140,7 @@ export default () => {
     ]);
 
     return (
-        <CollapsibleGroup heading="Terminal Settings" defaultCollapsed={false}>
+        <CollapsibleGroup heading="Terminal Settings">
             <StateSelector
                 items={lineModeItems}
                 onSelect={value => dispatch(setLineMode(value === 0))}
@@ -187,6 +188,7 @@ export default () => {
                 />
             </div>
             <HistoryFile />
+            <ExportLog />
         </CollapsibleGroup>
     );
 };

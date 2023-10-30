@@ -13,6 +13,9 @@ import type { RootState } from '../../appReducer';
 
 export type LineEnding = 'NONE' | 'LF' | 'CR' | 'CRLF';
 
+interface WriteToFileAction {
+    filePath: string;
+}
 interface TerminalState {
     availableSerialPorts: string[];
     serialPort?: SerialPort;
@@ -23,6 +26,7 @@ interface TerminalState {
     echoOnShell: boolean;
     showOverwriteDialog: boolean;
     scrollback: number;
+    writeLogToFile?: WriteToFileAction;
 }
 
 const initialState: TerminalState = {
@@ -103,6 +107,15 @@ const terminalSlice = createSlice({
         ) => {
             state.scrollback = scrollback;
         },
+        setWriteLogToFile: (
+            state,
+            { payload: options }: PayloadAction<WriteToFileAction>
+        ) => {
+            state.writeLogToFile = options;
+        },
+        clearWriteLogToFile: state => {
+            state.writeLogToFile = undefined;
+        },
     },
 });
 
@@ -123,6 +136,8 @@ export const getShowOverwriteDialog = (state: RootState) =>
     state.app.terminal.showOverwriteDialog;
 export const getScrollback = (state: RootState) =>
     state.app.terminal.scrollback;
+export const getWriteLogToFile = (state: RootState) =>
+    state.app.terminal.writeLogToFile;
 
 export const {
     setSerialPort,
@@ -136,5 +151,7 @@ export const {
     setEchoOnShell,
     setShowOverwriteDialog,
     setScrollback,
+    setWriteLogToFile,
+    clearWriteLogToFile,
 } = terminalSlice.actions;
 export default terminalSlice.reducer;
