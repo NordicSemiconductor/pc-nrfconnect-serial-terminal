@@ -65,13 +65,12 @@ export default () => {
 
     return (
         <>
-            <span className="tw-font-bold">File usage</span>
+            File usage
             <ProgressBar
                 label={`${historyUsagePercentage}%`}
                 now={historyUsagePercentage}
                 variant={progressBarVariant(historyUsagePercentage)}
             />
-
             <div
                 title="Set the maximum number of lines to store in the history file"
                 className="tw-flex tw-justify-between"
@@ -89,7 +88,6 @@ export default () => {
                     }}
                 />
             </div>
-
             <Button
                 variant="secondary"
                 className="tw-w-full"
@@ -97,37 +95,6 @@ export default () => {
             >
                 Open History File
             </Button>
-
-            {numberOfLinesInHistory > 0 ? (
-                <>
-                    <span className="tw-font-bold">Clean History File</span>
-                    <div title="Clean the history file, select how much of the content should be kept in the file, denoted in % (percentage)">
-                        <NumberInputSliderWithUnit
-                            label="Keep"
-                            value={percentageOfFileToKeep}
-                            onChange={setPercentageAndLinesToKeep}
-                            range={{ min: 0, max: 100 }}
-                            unit="% of the content"
-                        />
-                        <Button
-                            variant="secondary"
-                            className="tw-w-full"
-                            onClick={() => {
-                                dispatch(trimHistoryFile(numberOfLinesToKeep));
-                                setPercentageAndLinesToKeep(100);
-                            }}
-                            disabled={
-                                numberOfLinesInHistory - numberOfLinesToKeep ===
-                                0
-                            }
-                        >
-                            Delete{' '}
-                            {numberOfLinesInHistory - numberOfLinesToKeep} lines
-                            from file
-                        </Button>
-                    </div>
-                </>
-            ) : null}
         </>
     );
 };
