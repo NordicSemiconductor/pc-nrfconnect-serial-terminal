@@ -168,7 +168,9 @@ export const trimHistoryFile =
             numberOfLinesToKeep > maximumNumberOfLines ||
             numberOfLinesToKeep < 0
         ) {
-            logger.error(`Lines to keep can never be negative 🤪`);
+            logger.error(
+                `Invalid number of lines to keep: ${numberOfLinesToKeep}, must be between [0, ${maximumNumberOfLines}]`
+            );
             return;
         }
 
@@ -177,7 +179,7 @@ export const trimHistoryFile =
         try {
             dispatch(writeHistory(historyBuffer.getHistory()));
         } catch (error) {
-            logger.error('Failed truncating the history file');
+            logger.error('Failed truncating the history file', error);
         }
     };
 
@@ -210,7 +212,7 @@ const writeHistory =
                 await rename(pathToHistoryFile, pathToTemporaryFile);
         } catch (error) {
             logger.error(
-                'Cannot protect the history file before overwrite, aborting overwrite. Please make sure that the file is not locked.'
+                `Could not make necessary changes to the history file, ${pathToHistoryFile}. Verify that the file is not locked, usually by another app.`
             );
             return;
         }
@@ -220,7 +222,7 @@ const writeHistory =
             await rm(pathToTemporaryFile);
         } catch (error) {
             logger.error(
-                'Could not write the history buffer to the history file',
+                'Could not write the (in-memory) history buffer to the (persistent) history file',
                 pathToHistoryFile
             );
             rename(pathToTemporaryFile, pathToHistoryFile);
