@@ -66,27 +66,11 @@ export default () => {
     return (
         <>
             <span className="tw-font-bold">File usage</span>
-            {historyUsagePercentage < 75 && (
-                <ProgressBar
-                    label={`${historyUsagePercentage}%`}
-                    now={historyUsagePercentage}
-                    variant="success"
-                />
-            )}
-            {historyUsagePercentage >= 75 && historyUsagePercentage < 90 && (
-                <ProgressBar
-                    label={`${historyUsagePercentage}%`}
-                    now={historyUsagePercentage}
-                    variant="warning"
-                />
-            )}
-            {historyUsagePercentage >= 90 && (
-                <ProgressBar
-                    label={`${historyUsagePercentage}%`}
-                    now={historyUsagePercentage}
-                    variant="danger"
-                />
-            )}
+            <ProgressBar
+                label={`${historyUsagePercentage}%`}
+                now={historyUsagePercentage}
+                variant={progressBarVariant(historyUsagePercentage)}
+            />
 
             <div
                 title="Set the maximum number of lines to store in the history file"
@@ -146,4 +130,12 @@ export default () => {
             ) : null}
         </>
     );
+};
+
+const progressBarVariant = (percentage: number) => {
+    if (percentage < 75) return 'success';
+    if (percentage >= 75 && percentage < 90) return 'warning';
+    if (percentage >= 90) return 'danger';
+
+    return null as never;
 };
