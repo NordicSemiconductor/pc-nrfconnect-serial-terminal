@@ -5,7 +5,11 @@
  */
 
 import { getCurrentWindow } from '@electron/remote';
-import { AppThunk, logger } from '@nordicsemiconductor/pc-nrfconnect-shared';
+import {
+    AppDispatch,
+    AppThunk,
+    logger,
+} from '@nordicsemiconductor/pc-nrfconnect-shared';
 import { rename, rm, stat, writeFile } from 'fs/promises';
 import { dirname, join } from 'path';
 
@@ -13,7 +17,6 @@ import {
     MAXIMUM_MAX_NUMBER_OF_LINES,
     MINIMUM_MAX_NUMER_OF_LINES,
 } from '../../app/store';
-import { TDispatch } from '../../app/thunk';
 import { RootState } from '../../appReducer';
 import HistoryBufferWrapper from './historyBuffer';
 import {
@@ -87,7 +90,7 @@ const validateNumberOfLinesInHistory: AppThunk<RootState, boolean> = (
 };
 
 export const setNewMaximumNumberOfLinesInHistory =
-    (newMaxSize: number) => (dispatch: TDispatch) => {
+    (newMaxSize: number) => (dispatch: AppDispatch) => {
         if (historyBuffer == null) {
             logger.error(
                 'History Buffer is not initialized, this means that the app is not working as it should, and you should try to restart it. If the issue persists, please create a ticket on https://devzone.nordicsemi.com/'
