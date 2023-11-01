@@ -55,13 +55,21 @@ export const initializeHistoryBuffer: AppThunk<RootState> = async (
         }
     }
 
-    getCurrentWindow().on('focus', () => {
+    getCurrentWindow().on('focus', async () => {
         if (historyBuffer) {
             logger.debug(
                 `The app will need to read the content of ${pathToHistoryFile}, becuase it may not be in-sync with the (in-memory) history buffer.`
             );
-            historyBuffer.refreshHistoryFromFile(pathToHistoryFile);
+            const numberOfLines = await historyBuffer.refreshHistoryFromFile(
+                pathToHistoryFile
+            );
+
+            if (numberOfLines == null) {
+                return;
+            }
+
             historyBuffer.redoHistoryMap();
+            dispatch(setNumberOfLinesInHistory(numberOfLines));
         }
     });
 };

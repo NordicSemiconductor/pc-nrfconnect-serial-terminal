@@ -102,6 +102,7 @@ const HistoryBufferWrapper = async (pathToHistory: string) => {
                 return;
             }
             history = [...newHistory];
+            return history.length;
         },
         redoHistoryMap: () => {
             historyMap.clear();
