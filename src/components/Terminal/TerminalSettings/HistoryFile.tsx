@@ -3,13 +3,12 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-4-Clause
  */
-import React, { useEffect, useLayoutEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ProgressBar } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     Button,
     NumberInlineInput,
-    NumberInputSliderWithUnit,
 } from '@nordicsemiconductor/pc-nrfconnect-shared';
 import { openFile } from '@nordicsemiconductor/pc-nrfconnect-shared/src/utils/open';
 
@@ -21,7 +20,6 @@ import {
 import {
     initializeHistoryBuffer,
     setNewMaximumNumberOfLinesInHistory,
-    trimHistoryFile,
 } from '../../../features/history/effects';
 import {
     getMaximumNumberOfLinesInHistory,
@@ -40,34 +38,19 @@ export default () => {
     const [newMaximumNumberOfLines, setNewMaximumNumberOfLines] = useState(
         maximumNumberOfLinesInHistory
     );
-    const [numberOfLinesToKeep, setNumberOfLinesToKeep] = useState(
-        numberOfLinesInHistory
-    );
-    const [percentageOfFileToKeep, setPercetageOfFileToKeep] = useState(100);
 
     const historyUsagePercentage =
         (numberOfLinesInHistory / maximumNumberOfLinesInHistory) * 100;
-
-    const setPercentageAndLinesToKeep = (percentage: number) => {
-        setPercetageOfFileToKeep(percentage);
-        setNumberOfLinesToKeep(
-            Math.ceil(numberOfLinesInHistory * (percentage / 100))
-        );
-    };
 
     useEffect(() => {
         dispatch(initializeHistoryBuffer);
     }, [dispatch]);
 
-    useLayoutEffect(() => {
-        setNumberOfLinesToKeep(numberOfLinesInHistory);
-    }, [numberOfLinesInHistory]);
-
     return (
         <>
-            File usage
+            File usage ({historyUsagePercentage.toFixed(0)}%)
             <ProgressBar
-                label={`${historyUsagePercentage}%`}
+                label={`${historyUsagePercentage.toFixed(0)}%`}
                 now={historyUsagePercentage}
                 variant={progressBarVariant(historyUsagePercentage)}
             />
