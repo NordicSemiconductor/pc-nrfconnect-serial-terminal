@@ -1,16 +1,17 @@
 /*
- * Copyright (c) 2015 Nordic Semiconductor ASA
+ * Copyright (c) 2023 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-4-Clause
  */
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useResizeDetector } from 'react-resize-detector';
 import ansiEscapes from 'ansi-escapes';
 import { clipboard } from 'electron';
 import { XTerm } from 'xterm-for-react';
 
+import { writeHistoryLine } from '../../features/history/effects';
 import {
     getEchoOnShell,
     getScrollback,
@@ -52,6 +53,7 @@ export default ({
     const echoOnShell = useSelector(getEchoOnShell);
     const serialPort = useSelector(getSerialPort);
     const scrollback = useSelector(getScrollback);
+    const dispatch = useDispatch();
 
     const writeLineModeToXterm = (data: string) => {
         if (data.length === 1 && data.charCodeAt(0) === 12) return;
@@ -73,13 +75,41 @@ export default ({
         (data: string) => {
             if (clearOnSend) setCmdLine('');
 
-            const ret = commandCallback(data.trim());
+            const trimmedData = data.trim();
+            dispatch(writeHistoryLine(trimmedData));
+
+            const ret = commandCallback(trimmedData);
             if (ret) {
                 xtermRef.current?.terminal.write(ret);
             }
         },
-        [commandCallback, clearOnSend]
+        [clearOnSend, dispatch, commandCallback]
     );
+
+    const getLastLineShellMode = (): string | undefined => {
+        // If the active buffer is larger than the number of rows in the viewport,
+        // it means that the user has the options to scroll, and it means that
+        // the last line must be at buffer.length - 1.
+        // Otherwise, just grab the cursorY, since it must be the last line, since
+        // the user cannot have scrolled.
+
+        const numberOfRowsInViewport = xtermRef.current?.terminal.rows;
+        const activeBuffer = xtermRef.current?.terminal.buffer.active;
+
+        if (numberOfRowsInViewport == null || activeBuffer == null) {
+            return;
+        }
+
+        let lastLineIndex = 0;
+
+        if (activeBuffer.length > numberOfRowsInViewport) {
+            lastLineIndex = activeBuffer.length - 1;
+        } else {
+            lastLineIndex = activeBuffer.cursorY;
+        }
+
+        return activeBuffer.getLine(lastLineIndex)?.translateToString();
+    };
 
     // In Shell mode we need to only write to the serial port
     // Shell mode will guarantee that data is echoed back and hence
@@ -87,12 +117,19 @@ export default ({
     // the shell mode device do all the auto complete etc...
     const handleUserInputShellMode = useCallback(
         (character: string) => {
+            if (character === '\n' || character === '\r') {
+                const lastLine = getLastLineShellMode();
+                if (lastLine) {
+                    dispatch(writeHistoryLine(lastLine));
+                }
+            }
+
             const ret = commandCallback(character);
             if (ret) {
                 xtermRef.current?.terminal.write(ret);
             }
         },
-        [commandCallback]
+        [commandCallback, dispatch]
     );
 
     // Prepare Terminal for new connection or mode

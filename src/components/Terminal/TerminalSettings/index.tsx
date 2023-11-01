@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Nordic Semiconductor ASA
+ * Copyright (c) 2023 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-4-Clause
  */
@@ -31,8 +31,9 @@ import {
     setLineEnding,
     setLineMode,
     setScrollback as setActiveScrollback,
-} from '../../features/terminal/terminalSlice';
-import { convertToDropDownItems } from '../../utils/dataConstructors';
+} from '../../../features/terminal/terminalSlice';
+import { convertToDropDownItems } from '../../../utils/dataConstructors';
+import HistoryFile from './HistoryFile';
 
 export default () => {
     const device = useSelector(selectedDevice);
@@ -50,8 +51,6 @@ export default () => {
     const lineMode = useSelector(getLineMode);
 
     const dispatch = useDispatch();
-
-    const isConnected = serialPort !== undefined;
 
     const lineEndings = convertToDropDownItems<string>(
         ['NONE', 'LF', 'CR', 'CRLF'],
@@ -141,22 +140,6 @@ export default () => {
 
     return (
         <CollapsibleGroup heading="Terminal Settings" defaultCollapsed={false}>
-            <div
-                title="Set the number of lines it is possible to scroll in the Terminal"
-                className="tw-flex tw-justify-between"
-            >
-                Scrollback
-                <NumberInlineInput
-                    value={scrollback}
-                    onChange={setScrollback}
-                    onChangeComplete={() => {
-                        if (scrollback !== activeScrollback) {
-                            dispatch(setActiveScrollback(scrollback));
-                        }
-                    }}
-                    range={{ min: 1, max: 2 ** 64 - 1 }}
-                />
-            </div>
             <StateSelector
                 items={lineModeItems}
                 onSelect={value => dispatch(setLineMode(value === 0))}
@@ -187,6 +170,23 @@ export default () => {
                     label="Device controls echo"
                 />
             )}
+            <div
+                title="Set the number of lines it is possible to scroll in the Terminal"
+                className="tw-flex tw-justify-between tw-pt-1"
+            >
+                Scrollback
+                <NumberInlineInput
+                    value={scrollback}
+                    onChange={setScrollback}
+                    onChangeComplete={() => {
+                        if (scrollback !== activeScrollback) {
+                            dispatch(setActiveScrollback(scrollback));
+                        }
+                    }}
+                    range={{ min: 1, max: 2 ** 64 - 1 }}
+                />
+            </div>
+            <HistoryFile />
         </CollapsibleGroup>
     );
 };
