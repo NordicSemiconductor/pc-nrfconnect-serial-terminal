@@ -66,6 +66,7 @@ const HistoryBufferWrapper = async (pathToHistory: string) => {
     // the history, if and only if, the history is truncated/trimmed.
     const historyMap = new Map<string, number>();
     let currentLineIndex = history.length;
+    let lastSearchHit: string | undefined;
 
     return {
         pushLineToHistory: (line: string) => {
@@ -112,48 +113,66 @@ const HistoryBufferWrapper = async (pathToHistory: string) => {
 
         resetScrollIndex: () => {
             currentLineIndex = history.length;
+            lastSearchHit = undefined;
         },
 
         scrollBackSearch: (input: string) => {
-            if (currentLineIndex === history.length) {
-                currentLineIndex -= 1;
+            if (currentLineIndex === 0) {
+                return undefined;
             }
+
+            currentLineIndex -= 1;
             let nextLine = getCommandFromHistoryEntry(
                 history.at(currentLineIndex)
             );
 
-            while (nextLine != null && !nextLine.startsWith(input)) {
-                currentLineIndex -= 1;
-
-                if (currentLineIndex === -1) {
-                    currentLineIndex = history.length;
+            while (
+                (nextLine != null && !nextLine.startsWith(input)) ||
+                nextLine === input ||
+                nextLine === lastSearchHit
+            ) {
+                if (currentLineIndex === 0) {
                     return undefined;
                 }
 
+                currentLineIndex -= 1;
                 nextLine = getCommandFromHistoryEntry(
                     history.at(currentLineIndex)
                 );
             }
 
+            lastSearchHit = nextLine;
             return nextLine;
         },
 
         scrollForwardSearch: (input: string) => {
+            if (currentLineIndex === history.length) {
+                return undefined;
+            }
+
+            currentLineIndex += 1;
             let nextLine = getCommandFromHistoryEntry(
                 history.at(currentLineIndex)
             );
 
-            while (nextLine != null && !nextLine.startsWith(input)) {
+            while (
+                (nextLine != null && !nextLine.startsWith(input)) ||
+                nextLine === input ||
+                nextLine === lastSearchHit
+            ) {
+                currentLineIndex += 1;
+
                 if (currentLineIndex === history.length) {
+                    lastSearchHit = undefined;
                     return undefined;
                 }
 
-                currentLineIndex += 1;
                 nextLine = getCommandFromHistoryEntry(
                     history.at(currentLineIndex)
                 );
             }
 
+            lastSearchHit = nextLine;
             return nextLine;
         },
 

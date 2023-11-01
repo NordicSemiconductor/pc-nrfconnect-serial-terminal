@@ -291,7 +291,13 @@ export default ({
                             }}
                             onKeyDown={event => {
                                 if (event.key === 'Enter') {
-                                    handleUserInputLineMode(cmdLine);
+                                    if (historyLine) {
+                                        handleUserInputLineMode(historyLine);
+                                        setHistoryLine(undefined);
+                                        resetHistoryScroll();
+                                    } else {
+                                        handleUserInputLineMode(cmdLine);
+                                    }
                                 }
                                 if (event.key === 'ArrowUp') {
                                     // This is needed to prevent the cursor to go to start
