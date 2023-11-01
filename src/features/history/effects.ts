@@ -29,6 +29,9 @@ import {
 
 let historyBuffer: Awaited<ReturnType<typeof HistoryBufferWrapper>>;
 
+const HISTORY_BUFFER_NOT_INITIALIZED_MESSAGE =
+    'History Buffer is not initialized. Try to restart the app, or create a ticket on https://devzone.nordicsemi.com/ if the issue persists.';
+
 export const initializeHistoryBuffer: AppThunk<RootState> = async (
     dispatch,
     getState
@@ -68,9 +71,7 @@ const validateNumberOfLinesInHistory: AppThunk<RootState, boolean> = (
     getState
 ) => {
     if (historyBuffer == null) {
-        logger.error(
-            'History Buffer is not initialized, this means that the app is not working as it should, and you should try to restart it. If the issue persists, please create a ticket on https://devzone.nordicsemi.com/'
-        );
+        logger.error(HISTORY_BUFFER_NOT_INITIALIZED_MESSAGE);
         return false;
     }
     const maximumNumberOfLinesInHistory = getMaximumNumberOfLinesInHistory(
@@ -92,9 +93,7 @@ const validateNumberOfLinesInHistory: AppThunk<RootState, boolean> = (
 export const setNewMaximumNumberOfLinesInHistory =
     (newMaxSize: number) => (dispatch: AppDispatch) => {
         if (historyBuffer == null) {
-            logger.error(
-                'History Buffer is not initialized, this means that the app is not working as it should, and you should try to restart it. If the issue persists, please create a ticket on https://devzone.nordicsemi.com/'
-            );
+            logger.error(HISTORY_BUFFER_NOT_INITIALIZED_MESSAGE);
             return false;
         }
 
@@ -134,9 +133,7 @@ export const writeHistoryLine =
     (line: string): AppThunk<RootState> =>
     (dispatch, getState) => {
         if (historyBuffer == null) {
-            logger.error(
-                'History Buffer is not initialized, this means that the app is not working as it should, and you should try to restart it. If the issue persists, please create a ticket on https://devzone.nordicsemi.com/'
-            );
+            logger.error(HISTORY_BUFFER_NOT_INITIALIZED_MESSAGE);
             return;
         }
 
@@ -159,9 +156,7 @@ export const trimHistoryFile =
     (numberOfLinesToKeep: number): AppThunk<RootState> =>
     (dispatch, getState) => {
         if (historyBuffer == null) {
-            logger.error(
-                'History Buffer is not initialized, this means that the app is not working as it should, and you should try to restart it. If the issue persists, please create a ticket on https://devzone.nordicsemi.com/'
-            );
+            logger.error(HISTORY_BUFFER_NOT_INITIALIZED_MESSAGE);
             return;
         }
 
@@ -190,9 +185,7 @@ export const trimHistoryFile =
 // to 100% of the maximum size
 const trimHistoryFileToMaxSize: AppThunk<RootState> = (dispatch, getStore) => {
     if (historyBuffer == null) {
-        logger.error(
-            'History Buffer is not initialized, this means that the app is not working as it should, and you should try to restart it. If the issue persists, please create a ticket on https://devzone.nordicsemi.com/'
-        );
+        logger.error(HISTORY_BUFFER_NOT_INITIALIZED_MESSAGE);
         return false;
     }
     const maximumNumberOfLines = getMaximumNumberOfLinesInHistory(getStore());
