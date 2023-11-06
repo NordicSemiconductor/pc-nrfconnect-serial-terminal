@@ -47,33 +47,25 @@ const HistoryBufferWrapper = async (pathToHistory: string) => {
     }
     let history: string[] = initialHistory;
 
-    const createMap = () =>
-        history
-            .slice()
-            .map(line => {
-                const command = line.slice(line.indexOf(': '));
-                return command;
-            })
-            .forEach(command => {
-                const commandCount = historyMap.get(command) ?? 0;
-                historyMap.set(command, commandCount + 1);
-            });
-
-    // Map with <commandSent, numberOfTimesItWasSent>
-    // NB: at the time of writing, this map will initialized when the buffer is initialized, and after
-    // that it will only be appended to. Meaning that the history and the historyMap may go out of sync,
-    // but this should not be an issue. In other words, the map is going to contain more data than then
-    // the history, if and only if, the history is truncated/trimmed.
-    const historyMap = new Map<string, number>();
+    let currentLineIndex = history.length;
+    let lastSearchHit: string | undefined;
 
     return {
         pushLineToHistory: (line: string) => {
             if (line.trim() === '') {
                 return;
             }
+
+            const lastLine = history.at(-1);
+            if (
+                lastLine != null &&
+                getCommandFromHistoryEntry(lastLine) === line
+            ) {
+                // Do not record sequential duplicates.
+                return;
+            }
+
             history.push(`${new Date(Date.now()).toISOString()}: ${line}`);
-            const commandCount = historyMap.get(line) ?? 0;
-            historyMap.set(line, commandCount + 1);
         },
 
         trimDownToNumberOfLinesToKeep: (numberOfLinesToKeep: number) => {
@@ -91,7 +83,6 @@ const HistoryBufferWrapper = async (pathToHistory: string) => {
 
         getNumberOfLines: () => history.length,
         getHistory: () => history,
-        getHistoryMap: () => historyMap,
 
         refreshHistoryFromFile: async (path: string) => {
             const newHistory = await getHistoryFromFile(path);
@@ -104,11 +95,94 @@ const HistoryBufferWrapper = async (pathToHistory: string) => {
             history = [...newHistory];
             return history.length;
         },
-        redoHistoryMap: () => {
-            historyMap.clear();
-            createMap();
+
+        resetScrollIndex: () => {
+            currentLineIndex = history.length;
+            lastSearchHit = undefined;
+        },
+
+        scrollBackSearch: (input: string) => {
+            if (currentLineIndex === 0) {
+                return undefined;
+            }
+
+            currentLineIndex -= 1;
+            let nextLine = getCommandFromHistoryEntry(
+                history.at(currentLineIndex)
+            );
+
+            while (
+                (nextLine != null && !nextLine.startsWith(input)) ||
+                nextLine === input ||
+                nextLine === lastSearchHit
+            ) {
+                if (currentLineIndex === 0) {
+                    return undefined;
+                }
+
+                currentLineIndex -= 1;
+                nextLine = getCommandFromHistoryEntry(
+                    history.at(currentLineIndex)
+                );
+            }
+
+            lastSearchHit = nextLine;
+            return nextLine;
+        },
+
+        scrollForwardSearch: (input: string) => {
+            if (currentLineIndex === history.length) {
+                return undefined;
+            }
+
+            currentLineIndex += 1;
+            let nextLine = getCommandFromHistoryEntry(
+                history.at(currentLineIndex)
+            );
+
+            while (
+                (nextLine != null && !nextLine.startsWith(input)) ||
+                nextLine === input ||
+                nextLine === lastSearchHit
+            ) {
+                currentLineIndex += 1;
+
+                if (currentLineIndex === history.length) {
+                    lastSearchHit = undefined;
+                    return undefined;
+                }
+
+                nextLine = getCommandFromHistoryEntry(
+                    history.at(currentLineIndex)
+                );
+            }
+
+            lastSearchHit = nextLine;
+            return nextLine;
+        },
+
+        scrollBackOnce: () => {
+            if (currentLineIndex === 0) {
+                return;
+            }
+            currentLineIndex -= 1;
+            return getCommandFromHistoryEntry(history.at(currentLineIndex));
+        },
+        scrollForwardOnce: () => {
+            if (currentLineIndex === history.length) {
+                return;
+            }
+            currentLineIndex += 1;
+            return getCommandFromHistoryEntry(history.at(currentLineIndex));
         },
     };
 };
 
 export default HistoryBufferWrapper;
+
+const getCommandFromHistoryEntry = (entry?: string) => {
+    if (entry == null) {
+        return undefined;
+    }
+    return entry.slice(entry.indexOf(': ') + 2).trim();
+};
