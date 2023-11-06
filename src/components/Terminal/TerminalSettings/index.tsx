@@ -140,55 +140,63 @@ export default () => {
     ]);
 
     return (
-        <CollapsibleGroup heading="Terminal Settings">
-            <StateSelector
-                items={lineModeItems}
-                onSelect={value => dispatch(setLineMode(value === 0))}
-                selectedItem={lineModeItems[lineMode ? 0 : 1]}
-            />
-            {lineMode && (
-                <>
+        <>
+            <CollapsibleGroup heading="Terminal Settings">
+                <StateSelector
+                    items={lineModeItems}
+                    onSelect={value => dispatch(setLineMode(value === 0))}
+                    selectedItem={lineModeItems[lineMode ? 0 : 1]}
+                />
+                {lineMode && (
+                    <>
+                        <Toggle
+                            isToggled={clearOnSend}
+                            onToggle={value => dispatch(setClearOnSend(value))}
+                            label="Clear on Send"
+                        />
+                        <Dropdown
+                            label="Line Ending"
+                            onSelect={value =>
+                                dispatch(
+                                    setLineEnding(value.value as LineEnding)
+                                )
+                            }
+                            items={lineEndings}
+                            selectedItem={selectedLineEnding}
+                        />
+                    </>
+                )}
+                {!lineMode && (
                     <Toggle
-                        isToggled={clearOnSend}
-                        onToggle={value => dispatch(setClearOnSend(value))}
-                        label="Clear on Send"
+                        title="This option should be on ff the device echo back any data sent. Otherwise this needs to be set to off"
+                        isToggled={echoOnShell}
+                        onToggle={value => dispatch(setEchoOnShell(value))}
+                        label="Device controls echo"
                     />
-                    <Dropdown
-                        label="Line Ending"
-                        onSelect={value =>
-                            dispatch(setLineEnding(value.value as LineEnding))
-                        }
-                        items={lineEndings}
-                        selectedItem={selectedLineEnding}
+                )}
+                <div
+                    title="Set the number of lines it is possible to scroll in the Terminal"
+                    className="tw-flex tw-justify-between tw-pt-1"
+                >
+                    Scrollback
+                    <NumberInlineInput
+                        value={scrollback}
+                        onChange={setScrollback}
+                        onChangeComplete={() => {
+                            if (scrollback !== activeScrollback) {
+                                dispatch(setActiveScrollback(scrollback));
+                            }
+                        }}
+                        range={{ min: 1, max: 2 ** 64 - 1 }}
                     />
-                </>
-            )}
-            {!lineMode && (
-                <Toggle
-                    title="This option should be on ff the device echo back any data sent. Otherwise this needs to be set to off"
-                    isToggled={echoOnShell}
-                    onToggle={value => dispatch(setEchoOnShell(value))}
-                    label="Device controls echo"
-                />
-            )}
-            <div
-                title="Set the number of lines it is possible to scroll in the Terminal"
-                className="tw-flex tw-justify-between tw-pt-1"
-            >
-                Scrollback
-                <NumberInlineInput
-                    value={scrollback}
-                    onChange={setScrollback}
-                    onChangeComplete={() => {
-                        if (scrollback !== activeScrollback) {
-                            dispatch(setActiveScrollback(scrollback));
-                        }
-                    }}
-                    range={{ min: 1, max: 2 ** 64 - 1 }}
-                />
-            </div>
-            <HistoryFile />
-            <ExportLog />
-        </CollapsibleGroup>
+                </div>
+            </CollapsibleGroup>
+            <CollapsibleGroup heading="Write to file">
+                <ExportLog />
+            </CollapsibleGroup>
+            <CollapsibleGroup heading="History File">
+                <HistoryFile />
+            </CollapsibleGroup>
+        </>
     );
 };
