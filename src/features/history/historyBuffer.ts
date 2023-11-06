@@ -55,6 +55,16 @@ const HistoryBufferWrapper = async (pathToHistory: string) => {
             if (line.trim() === '') {
                 return;
             }
+
+            const lastLine = history.at(-1);
+            if (
+                lastLine != null &&
+                getCommandFromHistoryEntry(lastLine) === line
+            ) {
+                // Do not record sequential duplicates.
+                return;
+            }
+
             history.push(`${new Date(Date.now()).toISOString()}: ${line}`);
         },
 
