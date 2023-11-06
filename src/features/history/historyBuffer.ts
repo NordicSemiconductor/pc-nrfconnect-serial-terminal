@@ -47,24 +47,6 @@ const HistoryBufferWrapper = async (pathToHistory: string) => {
     }
     let history: string[] = initialHistory;
 
-    const createMap = () =>
-        history
-            .slice()
-            .map(line => {
-                const command = line.slice(line.indexOf(': '));
-                return command;
-            })
-            .forEach(command => {
-                const commandCount = historyMap.get(command) ?? 0;
-                historyMap.set(command, commandCount + 1);
-            });
-
-    // Map with <commandSent, numberOfTimesItWasSent>
-    // NB: at the time of writing, this map will initialized when the buffer is initialized, and after
-    // that it will only be appended to. Meaning that the history and the historyMap may go out of sync,
-    // but this should not be an issue. In other words, the map is going to contain more data than then
-    // the history, if and only if, the history is truncated/trimmed.
-    const historyMap = new Map<string, number>();
     let currentLineIndex = history.length;
     let lastSearchHit: string | undefined;
 
@@ -74,8 +56,6 @@ const HistoryBufferWrapper = async (pathToHistory: string) => {
                 return;
             }
             history.push(`${new Date(Date.now()).toISOString()}: ${line}`);
-            const commandCount = historyMap.get(line) ?? 0;
-            historyMap.set(line, commandCount + 1);
         },
 
         trimDownToNumberOfLinesToKeep: (numberOfLinesToKeep: number) => {
@@ -93,7 +73,6 @@ const HistoryBufferWrapper = async (pathToHistory: string) => {
 
         getNumberOfLines: () => history.length,
         getHistory: () => history,
-        getHistoryMap: () => historyMap,
 
         refreshHistoryFromFile: async (path: string) => {
             const newHistory = await getHistoryFromFile(path);
@@ -105,10 +84,6 @@ const HistoryBufferWrapper = async (pathToHistory: string) => {
             }
             history = [...newHistory];
             return history.length;
-        },
-        redoHistoryMap: () => {
-            historyMap.clear();
-            createMap();
         },
 
         resetScrollIndex: () => {

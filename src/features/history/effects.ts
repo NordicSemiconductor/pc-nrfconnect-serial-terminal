@@ -68,7 +68,6 @@ export const initializeHistoryBuffer: AppThunk<RootState> = async (
                 return;
             }
 
-            historyBuffer.redoHistoryMap();
             dispatch(setNumberOfLinesInHistory(numberOfLines));
         }
     });
