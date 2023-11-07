@@ -56,6 +56,7 @@ export const openDevice =
             if (!portExists) {
                 return;
             }
+
             let persistedSerialPortOptions = device.persistedSerialPortOptions;
 
             if (device.persistedSerialPortOptions?.path !== cliAutoPortName) {
