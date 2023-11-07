@@ -81,6 +81,7 @@ export const openDevice =
                         })
                     )
                 );
+                await dispatch(setSerialOptions(serialSettings));
             } catch (e) {
                 logger.error(describeError(e));
             }
