@@ -56,25 +56,29 @@ export const openDevice =
             if (!portExists) {
                 return;
             }
+            let persistedSerialPortOptions = device.persistedSerialPortOptions;
+
+            if (device.persistedSerialPortOptions?.path !== cliAutoPortName) {
+                persistedSerialPortOptions = undefined;
+            }
 
             const options =
                 (await getSerialPortOptions(cliAutoPortName)) ??
-                device.persistedSerialPortOptions;
+                persistedSerialPortOptions;
+
+            const serialSettings = {
+                path: cliAutoPortName,
+                baudRate: 115200,
+                ...options,
+            };
 
             try {
                 dispatch(
                     setSerialPort(
-                        await createSerialPort(
-                            {
-                                path: cliAutoPortName,
-                                baudRate: 115200,
-                                ...options,
-                            },
-                            {
-                                overwrite: false,
-                                settingsLocked: false,
-                            }
-                        )
+                        await createSerialPort(serialSettings, {
+                            overwrite: false,
+                            settingsLocked: false,
+                        })
                     )
                 );
             } catch (e) {
