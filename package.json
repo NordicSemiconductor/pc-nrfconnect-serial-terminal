@@ -15,7 +15,7 @@
     "nrfConnectForDesktop": {
         "nrfutil": {
             "device": [
-                "1.4.5"
+                "2.0.2"
             ]
         },
         "html": "dist/index.html"
@@ -42,7 +42,7 @@
         "prepare": "husky install"
     },
     "devDependencies": {
-        "@nordicsemiconductor/pc-nrfconnect-shared": "^121.0.0",
+        "@nordicsemiconductor/pc-nrfconnect-shared": "^123.0.0",
         "ansi-escapes": "^4.3.2",
         "serialport": "^10.5.0",
         "xterm-addon-fit": "^0.8.0",
