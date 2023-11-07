@@ -76,7 +76,7 @@ export default () => {
                     }
 
                     const terminalSettings = getPersistedTerminalSettings(
-                        device.serialNumber,
+                        device,
                         vComIndex
                     );
 
@@ -115,7 +115,7 @@ export default () => {
                 return;
             }
 
-            persistTerminalSettings(device.serialNumber, vComIndex, {
+            persistTerminalSettings(device, vComIndex, {
                 lineMode,
                 echoOnShell,
                 lineEnding,

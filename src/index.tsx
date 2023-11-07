@@ -5,7 +5,11 @@
  */
 
 import React from 'react';
-import { App, render } from '@nordicsemiconductor/pc-nrfconnect-shared';
+import {
+    App,
+    render,
+    usageData,
+} from '@nordicsemiconductor/pc-nrfconnect-shared';
 
 import appReducer from './appReducer';
 import DeviceSelector from './components/DeviceSelector';
@@ -14,9 +18,10 @@ import Terminal from './components/Terminal/Main';
 import TerminalSidePanel from './components/Terminal/SidePanel';
 import TerminalSettings from './features/settings';
 
+usageData.enableTelemetry();
+
 render(
     <App
-        reportUsageData
         appReducer={appReducer}
         deviceSelect={<DeviceSelector />}
         sidePanel={<TerminalSidePanel />}
