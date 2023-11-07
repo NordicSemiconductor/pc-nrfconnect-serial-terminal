@@ -12,6 +12,7 @@ import DeviceSelector from './components/DeviceSelector';
 import DocumentationSections from './components/DocumentationSection';
 import Terminal from './components/Terminal/Main';
 import TerminalSidePanel from './components/Terminal/SidePanel';
+import TerminalSettings from './features/settings';
 
 render(
     <App
@@ -24,6 +25,10 @@ render(
             {
                 name: 'Terminal',
                 Main: Terminal,
+            },
+            {
+                name: 'Terminal Settings',
+                Main: TerminalSettings,
             },
         ]}
         autoReselectByDefault

@@ -7,8 +7,10 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useResizeDetector } from 'react-resize-detector';
+import { logger } from '@nordicsemiconductor/pc-nrfconnect-shared';
 import ansiEscapes from 'ansi-escapes';
 import { clipboard } from 'electron';
+import { writeFile } from 'fs/promises';
 import { XTerm } from 'xterm-for-react';
 
 import {
@@ -18,9 +20,11 @@ import {
     writeHistoryLine,
 } from '../../features/history/effects';
 import {
+    clearWriteLogToFile,
     getEchoOnShell,
     getScrollback,
     getSerialPort,
+    getWriteLogToFile,
 } from '../../features/terminal/terminalSlice';
 import useFitAddon from '../../hooks/useFitAddon';
 
@@ -61,6 +65,7 @@ export default ({
     const echoOnShell = useSelector(getEchoOnShell);
     const serialPort = useSelector(getSerialPort);
     const scrollback = useSelector(getScrollback);
+    const writeLogToFile = useSelector(getWriteLogToFile);
     const dispatch = useDispatch();
 
     const writeLineModeToXterm = (data: string) => {
@@ -94,13 +99,12 @@ export default ({
         [clearOnSend, dispatch, commandCallback]
     );
 
-    const getLastLineShellMode = (): string | undefined => {
+    const getIndexOfLastLine = () => {
         // If the active buffer is larger than the number of rows in the viewport,
         // it means that the user has the options to scroll, and it means that
         // the last line must be at buffer.length - 1.
         // Otherwise, just grab the cursorY, since it must be the last line, since
         // the user cannot have scrolled.
-
         const numberOfRowsInViewport = xtermRef.current?.terminal.rows;
         const activeBuffer = xtermRef.current?.terminal.buffer.active;
 
@@ -116,7 +120,7 @@ export default ({
             lastLineIndex = activeBuffer.cursorY;
         }
 
-        return activeBuffer.getLine(lastLineIndex)?.translateToString();
+        return lastLineIndex;
     };
 
     // In Shell mode we need to only write to the serial port
@@ -126,7 +130,21 @@ export default ({
     const handleUserInputShellMode = useCallback(
         (character: string) => {
             if (character === '\n' || character === '\r') {
-                const lastLine = getLastLineShellMode();
+                const lastLineIndex = getIndexOfLastLine();
+
+                if (lastLineIndex == null) {
+                    return;
+                }
+
+                const activeBuffer = xtermRef.current?.terminal.buffer.active;
+
+                if (activeBuffer == null) {
+                    return;
+                }
+
+                const lastLine = activeBuffer
+                    .getLine(lastLineIndex)
+                    ?.translateToString();
                 if (lastLine) {
                     dispatch(writeHistoryLine(lastLine));
                 }
@@ -213,6 +231,45 @@ export default ({
             }),
         [lineMode, onDataWritten, echoOnShell]
     );
+
+    useEffect(() => {
+        if (writeLogToFile != null && xtermRef.current != null) {
+            const indexOfLastEntry = getIndexOfLastLine();
+            if (indexOfLastEntry == null) {
+                return;
+            }
+
+            const myOwnBuffer: string[] = [];
+            for (
+                let bufferIndex = 0;
+                bufferIndex <= indexOfLastEntry;
+                bufferIndex += 1
+            ) {
+                const line = xtermRef.current.terminal.buffer.active
+                    .getLine(bufferIndex)
+                    ?.translateToString()
+                    .trim();
+
+                if (line != null && line !== '') {
+                    myOwnBuffer.push(`${line}\n`);
+                }
+            }
+
+            const writeContent = async (filePath: string, data: string[]) => {
+                try {
+                    await writeFile(filePath, data);
+                    dispatch(clearWriteLogToFile());
+                } catch (error) {
+                    logger.error(
+                        'Could not write serial terminal session to file: ',
+                        error
+                    );
+                }
+            };
+
+            writeContent(writeLogToFile.filePath, myOwnBuffer);
+        }
+    }, [writeLogToFile, dispatch]);
 
     const terminalOptions = {
         convertEol: false,

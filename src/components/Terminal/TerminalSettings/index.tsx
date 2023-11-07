@@ -4,13 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-4-Clause
  */
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     CollapsibleGroup,
     Dropdown,
     getPersistedTerminalSettings,
-    NumberInlineInput,
     persistTerminalSettings,
     selectedDevice,
     StateSelector,
@@ -22,7 +21,6 @@ import {
     getEchoOnShell,
     getLineEnding,
     getLineMode,
-    getScrollback,
     getSerialOptions,
     getSerialPort,
     LineEnding,
@@ -30,19 +28,15 @@ import {
     setEchoOnShell,
     setLineEnding,
     setLineMode,
-    setScrollback as setActiveScrollback,
 } from '../../../features/terminal/terminalSlice';
 import { convertToDropDownItems } from '../../../utils/dataConstructors';
-import HistoryFile from './HistoryFile';
+import ExportLog from './ExportLog';
 
 export default () => {
     const device = useSelector(selectedDevice);
     const serialPort = useSelector(getSerialPort);
     const lastModemOpenState = useRef(false);
     const selectedSerialport = useSelector(getSerialOptions).path;
-
-    const activeScrollback = useSelector(getScrollback);
-    const [scrollback, setScrollback] = useState(activeScrollback);
 
     const clearOnSend = useSelector(getClearOnSend);
     const lineEnding = useSelector(getLineEnding);
@@ -139,54 +133,44 @@ export default () => {
     ]);
 
     return (
-        <CollapsibleGroup heading="Terminal Settings" defaultCollapsed={false}>
-            <StateSelector
-                items={lineModeItems}
-                onSelect={value => dispatch(setLineMode(value === 0))}
-                selectedItem={lineModeItems[lineMode ? 0 : 1]}
-            />
-            {lineMode && (
-                <>
+        <>
+            <CollapsibleGroup heading="Terminal Settings">
+                <StateSelector
+                    items={lineModeItems}
+                    onSelect={value => dispatch(setLineMode(value === 0))}
+                    selectedItem={lineModeItems[lineMode ? 0 : 1]}
+                />
+                {lineMode && (
+                    <>
+                        <Toggle
+                            isToggled={clearOnSend}
+                            onToggle={value => dispatch(setClearOnSend(value))}
+                            label="Clear on Send"
+                        />
+                        <Dropdown
+                            label="Line Ending"
+                            onSelect={value =>
+                                dispatch(
+                                    setLineEnding(value.value as LineEnding)
+                                )
+                            }
+                            items={lineEndings}
+                            selectedItem={selectedLineEnding}
+                        />
+                    </>
+                )}
+                {!lineMode && (
                     <Toggle
-                        isToggled={clearOnSend}
-                        onToggle={value => dispatch(setClearOnSend(value))}
-                        label="Clear on Send"
+                        title="This option should be on ff the device echo back any data sent. Otherwise this needs to be set to off"
+                        isToggled={echoOnShell}
+                        onToggle={value => dispatch(setEchoOnShell(value))}
+                        label="Device controls echo"
                     />
-                    <Dropdown
-                        label="Line Ending"
-                        onSelect={value =>
-                            dispatch(setLineEnding(value.value as LineEnding))
-                        }
-                        items={lineEndings}
-                        selectedItem={selectedLineEnding}
-                    />
-                </>
-            )}
-            {!lineMode && (
-                <Toggle
-                    title="This option should be on ff the device echo back any data sent. Otherwise this needs to be set to off"
-                    isToggled={echoOnShell}
-                    onToggle={value => dispatch(setEchoOnShell(value))}
-                    label="Device controls echo"
-                />
-            )}
-            <div
-                title="Set the number of lines it is possible to scroll in the Terminal"
-                className="tw-flex tw-justify-between tw-pt-1"
-            >
-                Scrollback
-                <NumberInlineInput
-                    value={scrollback}
-                    onChange={setScrollback}
-                    onChangeComplete={() => {
-                        if (scrollback !== activeScrollback) {
-                            dispatch(setActiveScrollback(scrollback));
-                        }
-                    }}
-                    range={{ min: 1, max: 2 ** 64 - 1 }}
-                />
-            </div>
-            <HistoryFile />
-        </CollapsibleGroup>
+                )}
+            </CollapsibleGroup>
+            <CollapsibleGroup heading="Write to file">
+                <ExportLog />
+            </CollapsibleGroup>
+        </>
     );
 };
