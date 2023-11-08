@@ -25,10 +25,10 @@ const getHistoryFromFile = async (pathToHistory: string) => {
 
     try {
         const content = await readFile(pathToHistory, { encoding: 'utf8' });
-        const history = content.split('\n');
-        if (history.at(-1) === '') {
-            history.pop();
-        }
+        const history = content.split('\n').filter(entry => {
+            const parsedEntry = getCommandFromHistoryEntry(entry);
+            return !!parsedEntry && parsedEntry.length > 0;
+        });
         return history;
     } catch (error) {
         logger.error(
