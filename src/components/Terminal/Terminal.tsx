@@ -146,7 +146,11 @@ export default ({
                     .getLine(lastLineIndex)
                     ?.translateToString();
                 if (lastLine) {
-                    dispatch(writeHistoryLine(lastLine));
+                    dispatch(
+                        writeHistoryLine(
+                            lastLine.replace(/^[a-zA-Z]+:~\$/, '').trim()
+                        )
+                    );
                 }
             }
 
