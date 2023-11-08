@@ -36,7 +36,7 @@ export const MINIMUM_MAX_NUMER_OF_LINES = 10;
 export const MAXIMUM_MAX_NUMBER_OF_LINES = 1_000_000;
 
 const [_getMaxNumberOfLinesInHistoryFile, _setMaxNumberOfLinesInHistoryFile] =
-    fromStore('maxNumberOfLinesInHistoryFile', 10);
+    fromStore('maxNumberOfLinesInHistoryFile', 1000);
 export const getMaxNumberOfLinesInHistoryFile =
     _getMaxNumberOfLinesInHistoryFile;
 export const setMaxNumberOfLinesInHistoryFile = (size: number) => {
