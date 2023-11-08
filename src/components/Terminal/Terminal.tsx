@@ -350,6 +350,9 @@ export default ({
                                 if (event.key === 'Enter') {
                                     if (historyLine) {
                                         handleUserInputLineMode(historyLine);
+                                        if (!clearOnSend) {
+                                            setCmdLine(historyLine);
+                                        }
                                         setHistoryLine(undefined);
                                         resetHistoryScroll();
                                     } else {
