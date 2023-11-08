@@ -54,7 +54,8 @@ const SerialSettings = () => {
     const serialPort = useSelector(getSerialPort);
     const showConflictingSettingsDialog = useSelector(getShowOverwriteDialog);
 
-    const isConnected = serialPort !== undefined;
+    const settingLocked =
+        serialPort !== undefined || availablePorts.length === 0;
 
     const dispatch = useDispatch();
 
@@ -156,7 +157,7 @@ const SerialSettings = () => {
                     onSelect={({ value }) => updateSerialPort({ path: value })}
                     items={comPortsDropdownItems}
                     selectedItem={selectedComPortItem}
-                    disabled={availablePorts.length === 0 || isConnected}
+                    disabled={settingLocked}
                 />
                 {serialPort == null ? (
                     <Button
@@ -184,7 +185,7 @@ const SerialSettings = () => {
             </Group>
             <CollapsibleGroup heading="Serial Settings">
                 <Baudrate
-                    disabled={isConnected}
+                    disabled={settingLocked}
                     updateSerialPort={updateSerialPort}
                 />
                 <Dropdown
@@ -202,7 +203,7 @@ const SerialSettings = () => {
                         dataBitsItems,
                         serialOptions.dataBits
                     )}
-                    disabled={isConnected}
+                    disabled={settingLocked}
                 />
                 <Dropdown
                     label="Stop bits"
@@ -219,7 +220,7 @@ const SerialSettings = () => {
                         stopBitsItems,
                         serialOptions.stopBits
                     )}
-                    disabled={isConnected}
+                    disabled={settingLocked}
                 />
                 <Dropdown
                     label="Parity"
@@ -236,7 +237,7 @@ const SerialSettings = () => {
                         parityItems,
                         serialOptions.parity
                     )}
-                    disabled={isConnected}
+                    disabled={settingLocked}
                 />
                 <Dropdown
                     label="rts/cts"
@@ -250,7 +251,7 @@ const SerialSettings = () => {
                         onOffItems,
                         serialOptions.rtscts
                     )}
-                    disabled={isConnected}
+                    disabled={settingLocked}
                 />
                 <Dropdown
                     label="xOn"
@@ -264,7 +265,7 @@ const SerialSettings = () => {
                         onOffItems,
                         serialOptions.xon
                     )}
-                    disabled={isConnected}
+                    disabled={settingLocked}
                 />
                 <Dropdown
                     label="xOff"
@@ -278,7 +279,7 @@ const SerialSettings = () => {
                         onOffItems,
                         serialOptions.xoff
                     )}
-                    disabled={isConnected}
+                    disabled={settingLocked}
                 />
                 <Dropdown
                     label="xAny"
@@ -292,7 +293,7 @@ const SerialSettings = () => {
                         onOffItems,
                         serialOptions.xany
                     )}
-                    disabled={isConnected}
+                    disabled={settingLocked}
                 />
             </CollapsibleGroup>
             <ConflictingSettingsDialog
