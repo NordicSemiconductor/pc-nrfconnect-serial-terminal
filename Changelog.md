@@ -1,10 +1,11 @@
-## 2.0.0 - UNRELEASED
+## 1.2.0 - UNRELEASED
 
 ### Added
 
 -   Custom baud rate support.
 -   Option to edit the number of lines that can be scrolled back. The default
     `scrollback` is set to 1000 lines.
+-   Support device with serial ports but no serial number.
 
 ### Changed
 
