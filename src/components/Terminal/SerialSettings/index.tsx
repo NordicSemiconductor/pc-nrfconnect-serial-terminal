@@ -183,7 +183,10 @@ const SerialSettings = () => {
                 )}
             </Group>
             <CollapsibleGroup heading="Serial Settings">
-                <Baudrate updateSerialPort={updateSerialPort} />
+                <Baudrate
+                    disabled={isConnected}
+                    updateSerialPort={updateSerialPort}
+                />
                 <Dropdown
                     label="Data bits"
                     onSelect={item =>
