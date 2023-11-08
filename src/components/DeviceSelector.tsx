@@ -13,14 +13,9 @@ import {
 import { DeviceTraits } from '@nordicsemiconductor/pc-nrfconnect-shared/nrfutil';
 
 import { closeDevice, openDevice } from '../actions/deviceActions';
-/**
- * Configures which device types to show in the device selector.
- * The config format is described on
- * https://github.com/NordicSemiconductor/nrf-device-lister-js.
- */
+
 const deviceListing: DeviceTraits = {
     serialPorts: true,
-    jlink: true,
 };
 
 export default () => {
