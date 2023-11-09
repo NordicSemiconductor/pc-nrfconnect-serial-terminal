@@ -20,8 +20,9 @@ interface BaudRateProperties {
     updateSerialPort: (
         options: Partial<SerialPortOpenOptions<AutoDetectTypes>>
     ) => Promise<void>;
+    disabled: boolean;
 }
-export default ({ updateSerialPort }: BaudRateProperties) => {
+export default ({ updateSerialPort, disabled }: BaudRateProperties) => {
     const serialOptions = useSelector(getSerialOptions);
     const serialPort = useSelector(getSerialPort);
 
@@ -46,6 +47,7 @@ export default ({ updateSerialPort }: BaudRateProperties) => {
             }}
             value={serialOptions.baudRate}
             range={{ min: 1, max: 1_000_000, step: 1 }}
+            disabled={disabled}
         />
     );
 };
