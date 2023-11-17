@@ -5,9 +5,13 @@
 -   Custom baud rate support.
 -   Option to edit the number of lines that can be scrolled back. The default
     `scrollback` is set to 1000 lines.
--   Support device with serial ports but no serial number.
--   Command history for line mode. Up and down keys ca be used to navigate the
-    history in the command input field
+-   Save to file, which will save all data in the Terminal Buffer to a file. This
+    is limited to the number of lines that can be viewed in the terminal, hence
+    the amount that can be saved to file is directly affected by the `scrollback`
+    value.
+-   Command history for line mode, where up and down keys can be used to navigate the
+    history in the command input field.
+-   Support for devices with serial ports that does not have any serial number.
 
 ### Changed
 
