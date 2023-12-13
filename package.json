@@ -1,6 +1,6 @@
 {
     "name": "pc-nrfconnect-serial-terminal",
-    "version": "1.2.0",
+    "version": "1.2.1",
     "description": "Terminal emulator for serial port connections",
     "displayName": "Serial Terminal",
     "repository": {
