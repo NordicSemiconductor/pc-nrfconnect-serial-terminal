@@ -1,21 +1,12 @@
-# nRF Connect Cellular Monitor
+# nRF Connect Serial Terminal
 
-nRF Connect for Desktop Cellular Monitor is a cross-platform tool for Nordic Semiconductor nRF91 Series devices. It is used for capturing and analyzing modem traces to evaluate communication and view network parameters.
+nRF Connect Serial Terminal is a cross-platform terminal emulator for serial port communications with Nordic Semiconductor devices over Universal Asynchronous Receiver/Transmitter (UART).
 
-A cellular connection involves the interoperation of diverse components and scenarios. Sometimes not everything goes according to plan, and we need information about the environment. The modem of the nRF91 Series System in Package (SiP) collects data about the connection in a modem trace. With Cellular Monitor, you can access the trace data and use it to visualize and optimize the connection.
+Serial Terminal allows you to configure, monitor, and communicate with virtual serial ports on Nordic Semiconductor devices. It is useful when programming or debugging applications as you can view logging output and enter console inputs. Terminal window supports shell mode for sending commands to a device running a shell, such as Zephyr™ shell, as well as line mode. It supports ANSI escape code, which makes it easy to find warnings and errors.
 
-## Cellular Monitor features
+Serial Terminal is an alternative to tools such as PuTTY and minicom. It is designed for Nordic Semiconductor devices to support device auto-detection, auto-reconnect, and persistence of device settings. The terminal input and output persist after device disconnection. Serial Terminal is designed to share access to a connected device's serial port with other compatible nRF Connect for Desktop apps.
 
-- Get started quickly by programming precompiled sample apps and modem firmware to the device
-- Modem trace capture - live or playback modes
-- Wireshark and serial terminal emulator interfaces
-- Visualization of cellular connection status
-- Packet event viewer
-- Extensive modem connection status dashboard with mouse-over access to detailed information
-- Auto-selection of trace database
-- Play back trace files from Trace Collector, nRF Util Trace, Memfault, and Real Time Transfer (RTT)
-- Modem credential management
+!!! note "Note"
+      All Nordic development kits and prototyping platforms have a USB-to-UART converter onboard to allow serial communication to a computer.
 
-Cellular Monitor replaces the deprecated nRF Connect for Desktop apps Trace Collector and LTE Link Monitor.
-
-Cellular Monitor is installed and updated using [nRF Connect for Desktop](https://docs.nordicsemi.com/bundle/ug_nrf_connect_desktop/page/struct/nrftools_nrfconnect.html).
+Serial Terminal is installed and updated using [nRF Connect for Desktop](https://docs.nordicsemi.com/bundle/nrf-connect-desktop/page/index.html).
