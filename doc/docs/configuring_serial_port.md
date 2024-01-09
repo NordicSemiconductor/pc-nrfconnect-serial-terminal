@@ -1,8 +1,8 @@
-# Configuring serial port and logging
+# Configuring logging to the serial port
 
 Serial Terminal supports Nordic Semiconductor Development Kits (DKs) and prototyping platforms. Your application must enable serial communications and logging over Universal Asynchronous Receiver/Transmitter (UART).
 
-The following sections describe some alternatives for enabling logging to the serial port.
+The following sections describe some alternatives for enabling logging to the serial port in the [nRF Connect SDK](https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/index.html).
 
 ## Configure serial communications and logging over UART in your nRF Connect SDK application
 
@@ -20,4 +20,4 @@ Alternatively, you can install a sample with logging enabled. See **Working with
 
 ## Use a shell sample
 
-Nordic Semiconductor provides samples to enable shell functionality, such as Modem Shell, Wi-Fi: Shell, and Zigbee® Shell. These are found in [nRF Connect SDK documentation](https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/index.html).
+Nordic Semiconductor provides samples to enable shell functionality, such as [Cellular: Modem Shell](https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/samples/cellular/modem_shell/README.html), [Wi-Fi: Shell](https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/samples/wifi/shell/README.html), and [Zigbee® Shell](https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/samples/zigbee/shell/README.html).
