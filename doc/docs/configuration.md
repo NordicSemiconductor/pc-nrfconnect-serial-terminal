@@ -14,7 +14,7 @@ Serial Terminal settings are explained here. Use the default settings unless the
 | **xOff**        | When using software flow control, **xOff** (transmission off) signals that the device is unable to accept more data.         | `off` (default), `on`       |
 | **xAny**        | Software flow control setting.                                                                                          | `off` (default), `on`       |
 
-## Terminal settings
+## Terminal mode
 
 ### Line mode
 

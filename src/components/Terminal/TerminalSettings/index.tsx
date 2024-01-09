@@ -134,7 +134,7 @@ export default () => {
 
     return (
         <>
-            <CollapsibleGroup heading="Terminal Settings">
+            <CollapsibleGroup heading="Terminal Mode">
                 <StateSelector
                     items={lineModeItems}
                     onSelect={value => dispatch(setLineMode(value === 0))}
