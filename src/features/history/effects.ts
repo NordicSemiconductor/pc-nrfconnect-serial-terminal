@@ -145,6 +145,7 @@ export const writeHistoryLine =
         }
 
         historyBuffer.pushLineToHistory(line);
+        historyBuffer.resetScrollIndex();
 
         const maximumNumberOfLinesInHistory = getMaximumNumberOfLinesInHistory(
             getState()

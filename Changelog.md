@@ -5,6 +5,10 @@
 -   Persist state of `show log` panel.
 -   Feedback tab.
 
+# Fixed
+
+-   Invalid history on up key after sending a new command
+
 ## 1.2.0 - 2023-12-07
 
 ### Added
