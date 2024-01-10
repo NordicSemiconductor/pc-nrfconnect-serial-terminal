@@ -66,6 +66,7 @@ const HistoryBufferWrapper = async (pathToHistory: string) => {
             }
 
             history.push(`${new Date(Date.now()).toISOString()}: ${line}`);
+            currentLineIndex = history.length;
         },
 
         trimDownToNumberOfLinesToKeep: (numberOfLinesToKeep: number) => {
