@@ -36,10 +36,10 @@ Use Shell mode when the device you communicate with is running a shell, such as 
 
 ## Write to file
 
-Use the **Save to file** button to save the history of the terminal console to a file.
+Use the **Save to file** button to save the terminal session to a file.
 
-Until saved, the console output is saved in the buffer and a temporary history file that you can configure in the **Terminal Settings** tab.
+Until saved, the console output is saved in a buffer, and is limited by the **XTerm Scrollback** setting, found in the **Terminal settings** tab.
 
 ## Terminal settings tab
 
-In this tab, you can configure scrollback buffer for the console and the size of the temporary history file, in which the console output is kept until you **Save to file**.
+In this tab, you can configure the volatile **XTerm Scrollback** buffer for the console and the size of the persistent **History File**.
