@@ -32,7 +32,7 @@ render(
                 Main: Terminal,
             },
             {
-                name: 'Terminal Settings',
+                name: 'Settings',
                 Main: TerminalSettings,
             },
         ]}
