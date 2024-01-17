@@ -1,9 +1,14 @@
-## 1.3.0 - UNRELEASED
+## 1.3.0 - 2024-01-17
 
 ## Added
 
 -   Persist state of `show log` panel.
 -   Feedback tab.
+
+### Changed
+
+-   Rename "Terminal Settings" tab to "Settings".
+-   Rename "Terminal Settings" side panel section to "Terminal Mode".
 
 ## 1.2.0 - 2023-12-07
 
