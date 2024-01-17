@@ -50,7 +50,7 @@ export const initializeHistoryBuffer: AppThunk<RootState> = async (
         dispatch(setNumberOfLinesInHistory(historyBuffer.getNumberOfLines()));
         if (dispatch(validateNumberOfLinesInHistory)) {
             logger.warn(
-                'History file is full. You can find more information about the history file in the Terminal Settings tab.'
+                'History file is full. You can find more information about the history file in the Settings tab.'
             );
         }
     }
