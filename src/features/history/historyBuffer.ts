@@ -80,6 +80,7 @@ const HistoryBufferWrapper = async (pathToHistory: string) => {
             logger.debug(
                 `Deleted ${numberOfLinesToDelete} lines from history file, it should not only contain ${numberOfLinesToKeep} lines.`
             );
+            currentLineIndex = history.length;
         },
 
         getNumberOfLines: () => history.length,
