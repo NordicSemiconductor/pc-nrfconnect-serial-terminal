@@ -38,8 +38,8 @@ Use Shell mode when the device you communicate with is running a shell, such as 
 
 Use the **Save to file** button to save the terminal session to a file.
 
-Until saved, the console output is saved in a buffer, and is limited by the **XTerm Scrollback** setting, found in the **Terminal settings** tab.
+Until saved, the console output is saved in a buffer, and is limited by the **XTerm Scrollback** setting, found in the **Settings** tab.
 
-## Terminal settings tab
+## Settings tab
 
 In this tab, you can configure the volatile **XTerm Scrollback** buffer for the console and the size of the persistent **History File**.
