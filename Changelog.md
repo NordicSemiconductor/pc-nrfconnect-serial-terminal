@@ -1,6 +1,12 @@
+## 1.3.1 - UNRELEASED
+
+### Changed
+
+-   Update nrfutil device to v2.1.1.
+
 ## 1.3.0 - 2024-01-17
 
-## Added
+### Added
 
 -   Persist state of `show log` panel.
 -   Feedback tab.
