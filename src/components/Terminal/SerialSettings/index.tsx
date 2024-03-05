@@ -8,7 +8,6 @@ import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
     Button,
-    CollapsibleGroup,
     ConflictingSettingsDialog,
     createSerialPort,
     Dropdown,
@@ -183,7 +182,7 @@ const SerialSettings = () => {
                     </Button>
                 )}
             </Group>
-            <CollapsibleGroup heading="Serial Settings">
+            <Group heading="Serial Settings" collapsible>
                 <Baudrate
                     disabled={settingLocked}
                     updateSerialPort={updateSerialPort}
@@ -295,7 +294,7 @@ const SerialSettings = () => {
                     )}
                     disabled={settingLocked}
                 />
-            </CollapsibleGroup>
+            </Group>
             <ConflictingSettingsDialog
                 isVisible={showConflictingSettingsDialog}
                 localSettings={serialOptions}
