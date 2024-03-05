@@ -8,7 +8,7 @@ import React from 'react';
 import {
     App,
     render,
-    usageData,
+    telemetry,
 } from '@nordicsemiconductor/pc-nrfconnect-shared';
 
 import appReducer from './appReducer';
@@ -18,7 +18,7 @@ import Terminal from './components/Terminal/Main';
 import TerminalSidePanel from './components/Terminal/SidePanel';
 import TerminalSettings from './features/settings';
 
-usageData.enableTelemetry();
+telemetry.enableTelemetry();
 
 render(
     <App

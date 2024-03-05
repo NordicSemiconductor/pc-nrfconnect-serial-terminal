@@ -7,9 +7,9 @@
 import React, { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-    CollapsibleGroup,
     Dropdown,
     getPersistedTerminalSettings,
+    Group,
     persistTerminalSettings,
     selectedDevice,
     StateSelector,
@@ -134,7 +134,7 @@ export default () => {
 
     return (
         <>
-            <CollapsibleGroup heading="Terminal Mode">
+            <Group heading="Terminal Mode" collapsible>
                 <StateSelector
                     items={lineModeItems}
                     onSelect={value => dispatch(setLineMode(value === 0))}
@@ -167,10 +167,10 @@ export default () => {
                         label="Device controls echo"
                     />
                 )}
-            </CollapsibleGroup>
-            <CollapsibleGroup heading="Write to file">
+            </Group>
+            <Group collapsible heading="Write to file">
                 <ExportLog />
-            </CollapsibleGroup>
+            </Group>
         </>
     );
 };
