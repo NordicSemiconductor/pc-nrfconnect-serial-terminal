@@ -13,7 +13,8 @@ const DocumentationSections = [
         linkLabel="Go to TechDocs"
         link="https://docs.nordicsemi.com/bundle/nrf-connect-serial-terminal/page/index.html"
     >
-        Visit our Technical Documentation for more documentation about using the app.
+        Visit our Technical Documentation for more documentation about using the
+        app.
     </DocumentationSection>,
 ];
 
