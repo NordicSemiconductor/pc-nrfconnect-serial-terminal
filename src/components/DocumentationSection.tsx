@@ -10,10 +10,10 @@ import { DocumentationSection } from '@nordicsemiconductor/pc-nrfconnect-shared'
 const DocumentationSections = [
     <DocumentationSection
         key="infocenter"
-        linkLabel="Go to Infocenter"
-        link="https://infocenter.nordicsemi.com/topic/ug_serial_terminal/UG/serial_terminal/intro.html"
+        linkLabel="Go to TechDocs"
+        link="https://docs.nordicsemi.com/bundle/nrf-connect-serial-terminal/page/index.html"
     >
-        Visit our Infocenter for more documentation about using the app.
+        Visit our Technical Documentation for more documentation about using the app.
     </DocumentationSection>,
 ];
 
