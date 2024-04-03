@@ -1,3 +1,9 @@
+## 1.3.2 - UNRELEASED
+
+### Changed
+
+-   Updated documentation links to point to the TechDocs platform.
+
 ## 1.3.1 - 2024-03-13
 
 ### Changed
