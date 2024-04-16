@@ -3,8 +3,7 @@
 ### Changed
 
 -   Updated documentation links to point to the TechDocs platform.
--   Moved feedback tab to a dialog which can be opened by going to the about tab
-    and click Give Feedback.
+-   Reworked the Feedback tab to be a dialog in the About tab (Give Feedback).
 
 ## 1.3.1 - 2024-03-13
 
