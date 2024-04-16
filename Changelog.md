@@ -1,8 +1,9 @@
-## 1.3.2 - UNRELEASED
+## 1.4.0 - 2024-04-16
 
 ### Changed
 
 -   Updated documentation links to point to the TechDocs platform.
+-   Reworked the Feedback tab to be a dialog in the About tab (Give Feedback).
 
 ## 1.3.1 - 2024-03-13
 
