@@ -1,3 +1,9 @@
+## 1.4.1 - unreleased
+
+### Added
+
+-   Support for Apple silicon.
+
 ## 1.4.0 - 2024-04-16
 
 ### Changed
