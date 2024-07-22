@@ -1,3 +1,9 @@
+## 1.4.2 - Unreleased
+
+### Fixed
+
+-   Invalid name when exporting logs on Windows.
+
 ## 1.4.1 - 2024-06-04
 
 ### Added

@@ -16,9 +16,19 @@ export default () => {
     const saveToFile = async () => {
         const browserWindow = getCurrentWindow();
 
-        const fileName = `serial-terminal-${new Date(
-            Date.now()
-        ).toISOString()}.txt`;
+        const date = new Date(Date.now());
+        const formattedDate = `${date.getDate().toString().padStart(2, '0')}${(
+            date.getMonth() + 1
+        )
+            .toString()
+            .padStart(2, '0')}${date.getFullYear()}_${date
+            .getHours()
+            .toString()
+            .padStart(2, '0')}${date
+            .getMinutes()
+            .toString()
+            .padStart(2, '0')}${date.getSeconds().toString().padStart(2, '0')}`;
+        const fileName = `serial-terminal-${formattedDate}.txt`;
         const { filePath, canceled } = await dialog.showSaveDialog(
             browserWindow,
             {
