@@ -2,7 +2,7 @@
 
 ### Fixed
 
--   Invalid name when exporting logs on Windows.
+-   Invalid file name when exporting logs on Windows.
 
 ## 1.4.1 - 2024-06-04
 
