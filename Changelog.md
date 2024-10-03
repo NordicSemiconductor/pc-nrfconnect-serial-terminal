@@ -5,6 +5,8 @@
 -   Invalid file name when exporting logs on Windows.
 -   Serialport dropdown list no longer populates with ports from a device that
     was deselected just after selecting.
+-   Auto connecting to Deviec with serial number or COM port now works as
+    expected when there is more than one device connected.
 
 ## 1.4.1 - 2024-06-04
 
