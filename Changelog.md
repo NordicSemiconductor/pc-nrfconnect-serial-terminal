@@ -3,6 +3,8 @@
 ### Fixed
 
 -   Invalid file name when exporting logs on Windows.
+-   Serialport dropdown list no longer populates with ports from a device that
+    was deselected just after selecting.
 
 ## 1.4.1 - 2024-06-04
 

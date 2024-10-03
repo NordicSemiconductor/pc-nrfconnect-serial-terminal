@@ -30,8 +30,12 @@ export const closeDevice = (): AppThunk<RootState> => dispatch => {
 let cliAutoConnectDone = false;
 
 export const openDevice =
-    (device: Device): AppThunk<RootState> =>
+    (device: Device, abortControler: AbortController): AppThunk<RootState> =>
     async (dispatch, getState) => {
+        if (abortControler.signal.aborted) {
+            return;
+        }
+
         // Reset serial port settings
         const autoReselect = getState().deviceAutoSelect.autoReselect;
         const ports = device.serialPorts;
@@ -66,6 +70,10 @@ export const openDevice =
             const options =
                 (await getSerialPortOptions(cliAutoPortName)) ??
                 persistedSerialPortOptions;
+
+            if (abortControler.signal.aborted) {
+                return;
+            }
 
             const serialSettings = {
                 path: cliAutoPortName,

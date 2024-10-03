@@ -33,8 +33,8 @@ export default () => {
             onDeviceDisconnected={device => {
                 logger.info(`Device Disconnected SN:${device.serialNumber}`);
             }}
-            onDeviceSelected={device => {
-                dispatch(openDevice(device));
+            onDeviceSelected={(device, _, abortControler) => {
+                dispatch(openDevice(device, abortControler));
             }}
             onDeviceDeselected={() => {
                 dispatch(closeDevice());
