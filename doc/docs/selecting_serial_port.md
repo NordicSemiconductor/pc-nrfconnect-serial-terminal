@@ -1,8 +1,7 @@
 # Selecting a serial port
 
 The number of serial ports available in Serial Terminal depends on the selected device and the onboard application firmware.
-
-When you [select a device](connecting.md), the application automatically connects to the serial port with the lowest virtual serial port index.
+You can see the available serial ports when you [connect to the device](connecting.md).
 
 ## Identifying serial ports
 

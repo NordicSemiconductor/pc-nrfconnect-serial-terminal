@@ -10,17 +10,17 @@ To start using Serial Terminal:
     ![Select Device window](./screenshots/serial_term_select_device.png "Serial Terminal Select Device view")
 
     !!! note "Note"
-         Depending on the application firmware on the device, you might see J-Link in place of the product name.
+         Depending on the application firmware on the device, you might see "J-Link" in place of the product name.
 
 1. Optionally, toggle **Auto-reconnect** on or off depending if you want Serial Terminal to automatically select the last connected serial port and attempt to connect to that port again in the future.
 
 1. Click the device entry to select the device.</br>
-   Serial Terminal selects the serial port with the lowest virtual serial port index (if the device has more than one port). See [Selecting a serial port](selecting_serial_port.md) for more information about the serial port naming conventions.
+   Serial Terminal selects the serial port with the lowest virtual serial port index (if the device has more than one port) or the previously used serial port (if you connected the device to Serial Terminal before). See [Selecting a serial port](selecting_serial_port.md) for more information about the serial port naming conventions.
 
 1. Click **Connect to port** to connect to the selected serial port.
 
     !!! note "Note"
-         If you toggled **Auto-reconnect** on, this step is not required, as the application connects automatically to the last connected serial port or the the serial port with the lowest virtual serial port index.
+         If you are reconnecting a previously used device, this step is not required, as the application connects automatically to the last connected serial port.
 
     Depending on the application firmware running on the device, you might see logging output. You can view information on the device's connection status and settings in the [**Log**](overview.md#log).
 

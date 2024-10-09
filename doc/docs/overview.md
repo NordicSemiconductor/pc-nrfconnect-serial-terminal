@@ -1,7 +1,7 @@
 # Overview and user interface
 
 When you start the Serial Terminal app, the application main window appears with no device selected and the console empty.
-In the background, the application initializes the required nRF Util module in the background and detects the devices connected to the computer, as you can see in the log:
+In the background, the application initializes the required nRF Util module and detects the devices connected to the computer, as you can see in the log:
 
 ![nRF Connect Serial Terminal default view at startup](./screenshots/serial_term_startup.png "nRF Connect Serial Terminal default view")
 
@@ -9,7 +9,7 @@ In the background, the application initializes the required nRF Util module in t
 
 Once you connect a device to the system, it becomes visible and available when you click on the **Select device** drop-down list. Choose a device from the list of connected devices to [connect to it](connecting.md).
 
-## Settings sections
+## Settings section
 
 Use the default settings unless the onboard application firmware uses other settings. See [DevAcademy Serial communication (UART)](https://academy.nordicsemi.com/topic/uart-driver/) for more information.
 
