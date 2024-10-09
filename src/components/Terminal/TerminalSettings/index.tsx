@@ -161,7 +161,7 @@ export default () => {
                 )}
                 {!lineMode && (
                     <Toggle
-                        title="This option should be on ff the device echo back any data sent. Otherwise this needs to be set to off"
+                        title="Toggle this option on if the device echoes back any data sent. If it doesn't, toggle this option off."
                         isToggled={echoOnShell}
                         onToggle={value => dispatch(setEchoOnShell(value))}
                         label="Device controls echo"

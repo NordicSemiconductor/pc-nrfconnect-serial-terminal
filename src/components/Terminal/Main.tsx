@@ -75,7 +75,7 @@ export default ({ active }: PaneProps) => {
 
     const commandCallback = useCallback(
         (command: string) => {
-            if (!serialPort) return 'Please connect a device\r\n';
+            if (!serialPort) return 'Connect to a device\r\n';
 
             if (lineMode) {
                 switch (lineEnding) {

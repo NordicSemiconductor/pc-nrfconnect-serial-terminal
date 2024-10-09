@@ -265,7 +265,7 @@ export default ({
                     dispatch(clearWriteLogToFile());
                 } catch (error) {
                     logger.error(
-                        'Could not write serial terminal session to file: ',
+                        'Could not write the serial terminal session to file: ',
                         error
                     );
                 }
@@ -344,7 +344,7 @@ export default ({
                             ref={lineModeInputRef}
                             value={historyLine != null ? historyLine : cmdLine}
                             type="text"
-                            placeholder="Type and press enter to send"
+                            placeholder="Type and press Enter to send"
                             onChange={({ target }) => {
                                 resetHistoryScroll();
                                 setHistoryLine(undefined);
