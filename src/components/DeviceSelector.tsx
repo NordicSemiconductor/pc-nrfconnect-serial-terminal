@@ -28,10 +28,14 @@ export default () => {
             }
             deviceListing={deviceListing}
             onDeviceConnected={device => {
-                logger.info(`Device Connected SN:${device.serialNumber}`);
+                logger.info(
+                    `Connected to device with the serial number ${device.serialNumber}`
+                );
             }}
             onDeviceDisconnected={device => {
-                logger.info(`Device Disconnected SN:${device.serialNumber}`);
+                logger.info(
+                    `Disconnected from device with the serial number ${device.serialNumber}`
+                );
             }}
             onDeviceSelected={(device, _, abortControler) => {
                 dispatch(openDevice(device, abortControler));

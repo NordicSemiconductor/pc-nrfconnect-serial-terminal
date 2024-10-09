@@ -40,7 +40,7 @@ export default () => {
 
         if (canceled || filePath == null) {
             logger.debug(
-                'Save was cancelled while selecting log file location'
+                'Saving cancelled while selecting the log file location.'
             );
             return;
         }

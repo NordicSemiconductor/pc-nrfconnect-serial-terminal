@@ -122,7 +122,7 @@ const SerialSettings = () => {
                     dispatch(setShowOverwriteDialog(true));
                 } else {
                     logger.error(
-                        'Port could not be opened. Verify it is not used by some other applications'
+                        'Port could not be opened. Verify it is not used by other applications.'
                     );
                 }
             }
@@ -239,7 +239,7 @@ const SerialSettings = () => {
                     disabled={settingLocked}
                 />
                 <Dropdown
-                    label="rts/cts"
+                    label="RTS/CTS"
                     onSelect={item =>
                         updateSerialPort({
                             rtscts: convertOnOffItemToBoolean(item),
