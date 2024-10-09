@@ -60,9 +60,9 @@ extra:
 nav:
   - Home: index.md
   - Installing Serial Terminal app: installing.md
+  - Overview and user interface: overview.md
   - Getting started: connecting.md
-  - Configuring logging to the serial port: configuring_serial_port.md
   - Selecting a serial port: selecting_serial_port.md
-  - Serial Terminal configuration: configuration.md
+  - Configuring logging to the serial port: configuring_serial_port.md
   - Troubleshooting: troubleshooting.md
   - Revision history: revision_history.md
