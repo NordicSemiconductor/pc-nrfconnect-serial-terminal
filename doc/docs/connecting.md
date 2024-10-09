@@ -14,7 +14,7 @@ To start using Serial Terminal:
 
 1. Optionally, toggle **Auto-reconnect** on or off depending if you want Serial Terminal to automatically select the last connected serial port and attempt to connect to that port again in the future.
 
-1. Click the device you want to use to select.</br>
+1. Click the device entry to select the device.</br>
    Serial Terminal selects the serial port with the lowest virtual serial port index (if the device has more than one port). See [Selecting a serial port](selecting_serial_port.md) for more information about the serial port naming conventions.
 
 1. Click **Connect to port** to connect to the selected serial port.
