@@ -14,15 +14,17 @@ To start using Serial Terminal:
 
 1. Optionally, toggle **Auto-reconnect** on or off depending if you want Serial Terminal to automatically select the last connected serial port and attempt to connect to that port again in the future.
 
-1. Click the device you want to use.</br>
-   If the device has more than one port, Serial Terminal selects the serial port with the lowest virtual serial port index. See [Selecting a serial port](selecting_serial_port.md) for more information. You are free to select another serial port.
+1. Click the device you want to use to select.</br>
+   Serial Terminal selects the serial port with the lowest virtual serial port index (if the device has more than one port). See [Selecting a serial port](selecting_serial_port.md) for more information about the serial port naming conventions.
 
-    ![Serial Terminal with a device selected](./screenshots/serial_term_connect_to_port.png "Serial Terminal with a device selected")
+1. Click **Connect to port** to connect to the selected serial port.
 
-1. Click **Connect to port** to connect to the selected serial port and, optionally, reset the device.</br>
-   Depending on the application firmware running on the device, you might see logging output. You can view information on the device's connection status and settings in the Serial Terminal **Log** view.
+    !!! note "Note"
+         If you toggled **Auto-reconnect** on, this step is not required, as the application connects automatically to the last connected serial port or the the serial port with the lowest virtual serial port index.
 
-1. Optionally, expand **Terminal Mode** side panel section to select **Shell** or **Line**, depending on the device's capabilities and the mode you want to work in.</br>
-   See [Serial Terminal configuration](./configuration.md) for more information.
+    Depending on the application firmware running on the device, you might see logging output. You can view information on the device's connection status and settings in the [**Log**](overview.md#log).
 
+     ![Serial Terminal with a device selected](./screenshots/serial_term_connect_to_port.png "Serial Terminal with a device selected")
+
+1. Optionally, expand [**Terminal Mode** side panel section](overview.md#terminal-mode) to select **Shell** or **Line**, depending on the device's capabilities and the mode you want to work in.
 1. Send a command to the device by typing or pasting it at the top of the terminal window and pressing Enter or clicking **Send** when in the Line mode.
