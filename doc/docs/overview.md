@@ -9,6 +9,10 @@ In the background, the application initializes the required nRF Util module and 
 
 Once you connect a device to the system, it becomes visible and available when you click on the **Select device** drop-down list. Choose a device from the list of connected devices to [connect to it](connecting.md).
 
+## Serial port
+
+In this section, you can select the serial port of the connected device and connect to it.
+
 ## Settings section
 
 Use the default settings unless the onboard application firmware uses other settings. See [DevAcademy Serial communication (UART)](https://academy.nordicsemi.com/topic/uart-driver/) for more information.

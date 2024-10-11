@@ -12,17 +12,17 @@ To start using Serial Terminal:
     !!! note "Note"
          Depending on the application firmware on the device, you might see "J-Link" in place of the product name.
 
-1. Optionally, toggle **Auto-reconnect** on or off depending if you want Serial Terminal to automatically select the last connected serial port and attempt to connect to that port again in the future.
+1. Optionally, toggle **Auto-reconnect** on or off depending if you want Serial Terminal to automatically select the last connected serial port or attempt to connect to the port again in the future.
 
-1. Click the device entry to select the device.</br>
-   Serial Terminal selects the serial port with the lowest virtual serial port index (if the device has more than one port) or the previously used serial port (if you connected the device to Serial Terminal before). See [Selecting a serial port](selecting_serial_port.md) for more information about the serial port naming conventions.
-
-1. Click **Connect to port** to connect to the selected serial port.
+1. Click the device name to select the device.
+1. In [Serial port](overview.md), select the serial port of the device.</br>
+   See [Selecting a serial port](selecting_serial_port.md) for more information about the serial port naming conventions.
 
     !!! note "Note"
-         If you are reconnecting a previously used device, this step is not required, as the application connects automatically to the last connected serial port.
+         If you are auto-reconnecting a previously used device, this and the next step are not required, as the application connects automatically to the last connected serial port on that device.
 
-    Depending on the application firmware running on the device, you might see logging output. You can view information on the device's connection status and settings in the [**Log**](overview.md#log).
+1. Click **Connect to port** to connect to the selected serial port.</br>
+   Depending on the application firmware running on the device, you might see logging output. You can view information on the device's connection status and settings in the [**Log**](overview.md#log).
 
      ![Serial Terminal with a device selected](./screenshots/serial_term_connect_to_port.png "Serial Terminal with a device selected")
 
