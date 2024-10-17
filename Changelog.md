@@ -4,8 +4,6 @@
 
 -   Updated `nrfutil device` to v2.6.4.
 
-### Fixed
-
 ## 1.4.2 - 2024-10-08
 
 ### Fixed
