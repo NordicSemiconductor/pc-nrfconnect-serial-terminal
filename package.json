@@ -1,6 +1,6 @@
 {
     "name": "pc-nrfconnect-serial-terminal",
-    "version": "1.4.2",
+    "version": "1.4.3",
     "description": "Terminal emulator for serial port connections",
     "displayName": "Serial Terminal",
     "repository": {
@@ -15,7 +15,7 @@
     "nrfConnectForDesktop": {
         "nrfutil": {
             "device": [
-                "2.1.1"
+                "2.6.4"
             ]
         },
         "html": "dist/index.html"
@@ -42,7 +42,7 @@
         "prepare": "husky install"
     },
     "devDependencies": {
-        "@nordicsemiconductor/pc-nrfconnect-shared": "^187.0.0",
+        "@nordicsemiconductor/pc-nrfconnect-shared": "^188.0.0",
         "ansi-escapes": "^4.3.2",
         "serialport": "^10.5.0",
         "xterm-addon-fit": "^0.8.0",
