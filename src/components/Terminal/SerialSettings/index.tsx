@@ -9,9 +9,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
     Button,
     ConflictingSettingsDialog,
+    convertToDropDownItems,
     createSerialPort,
     Dropdown,
     DropdownItem,
+    getSelectedDropdownItem,
     Group,
     logger,
     persistSerialPortOptions,
@@ -31,10 +33,6 @@ import {
     setShowOverwriteDialog,
     updateSerialOptions,
 } from '../../../features/terminal/terminalSlice';
-import {
-    convertToDropDownItems,
-    getSelectedDropdownItem,
-} from '../../../utils/dataConstructors';
 import Baudrate from './Baudrate';
 
 type Parity = 'none' | 'even' | 'mark' | 'odd' | 'space' | undefined;
