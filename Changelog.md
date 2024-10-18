@@ -3,6 +3,7 @@
 ### Changed
 
 -   Extracted dataConstrutors to dropdown helper in shared.
+-   Updated `nrfutil device` to v2.6.4.
 
 ## 1.4.2 - 2024-10-08
 
