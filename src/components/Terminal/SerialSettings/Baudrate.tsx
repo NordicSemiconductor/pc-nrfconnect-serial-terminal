@@ -6,10 +6,7 @@
 
 import React from 'react';
 import { useSelector } from 'react-redux';
-import {
-    convertToNumberDropDownItems,
-    NumberInputWithDropdown,
-} from '@nordicsemiconductor/pc-nrfconnect-shared';
+import { NumberInputWithDropdown } from '@nordicsemiconductor/pc-nrfconnect-shared';
 import type { AutoDetectTypes } from '@serialport/bindings-cpp';
 import { SerialPortOpenOptions } from 'serialport';
 
@@ -17,6 +14,7 @@ import {
     getSerialOptions,
     getSerialPort,
 } from '../../../features/terminal/terminalSlice';
+import { convertToNumberDropDownItems } from '../../../utils/dataConstructors';
 
 interface BaudRateProperties {
     updateSerialPort: (
