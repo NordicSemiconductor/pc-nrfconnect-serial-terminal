@@ -11,7 +11,7 @@ const fitAddon = new FitAddon();
 
 export default (height = 0, width = 0, lineMode = false) => {
     useEffect(() => {
-        if (width * height > 0) fitAddon.fit();
+        if (width * height > 0) setTimeout(() => fitAddon.fit());
     }, [width, height, lineMode]);
 
     return fitAddon;
