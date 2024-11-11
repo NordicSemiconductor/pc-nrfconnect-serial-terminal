@@ -7,7 +7,6 @@
 import React, { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-    convertToDropDownItems,
     Dropdown,
     getPersistedTerminalSettings,
     Group,
@@ -30,6 +29,7 @@ import {
     setLineEnding,
     setLineMode,
 } from '../../../features/terminal/terminalSlice';
+import { convertToDropDownItems } from '../../../utils/dataConstructors';
 import ExportLog from './ExportLog';
 
 export default () => {
