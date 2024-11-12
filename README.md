@@ -1,15 +1,15 @@
-# nRF Serial Terminal
+# Serial Terminal app
 
 [![Build Status](https://dev.azure.com/NordicSemiconductor/Wayland/_apis/build/status/pc-nrfconnect-serial-terminal?branchName=main)](https://dev.azure.com/NordicSemiconductor/Wayland/_build/latest?definitionId=126&branchName=main)
 [![License](https://img.shields.io/badge/license-Modified%20BSD%20License-blue.svg)](LICENSE)
 
-nRF Serial Terminal is a tool that allows you to connect to serial devices.
+The Serial Terminal app allows you to connect to serial devices.
 
 ![screenshot](resources/screenshoot.gif)
 
 ## Installation
 
-nRF Serial Terminal is installed from nRF Connect from Desktop. For detailed
+The Serial Terminal app is installed from nRF Connect from Desktop. For detailed
 steps, see
 [Installing nRF Connect for Desktop apps](https://docs.nordicsemi.com/bundle/nrf-connect-desktop/page/installing_apps.html)
 in the nRF Connect from Desktop documentation.

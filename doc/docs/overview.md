@@ -1,9 +1,9 @@
 # Overview and user interface
 
-When you start the Serial Terminal app, the application main window appears with no device selected and the console empty.
+When you start the {{app_name}}, the application main window appears with no device selected and the console empty.
 In the background, the application initializes the required nRF Util module and detects the devices connected to the computer, as you can see in the log:
 
-![nRF Connect Serial Terminal default view at startup](./screenshots/serial_term_startup.png "nRF Connect Serial Terminal default view")
+![{{app_name}} default view at startup](./screenshots/serial_term_startup.png "{{app_name}} default view")
 
 ## Select Device
 
