@@ -293,46 +293,89 @@ export default ({
     }
 
     useEffect(() => {
-        if (xtermRef.current != null) {
-            xtermRef.current?.terminal.attachCustomKeyEventHandler(event => {
+        const onMouseClick = (e: MouseEvent) => {
+            const isMiddleMouseClick = e.button === 1;
+
+            if (!isMiddleMouseClick) return;
+
+            const hasSelection = xtermRef.current?.terminal.hasSelection();
+
+            if (hasSelection) {
                 const selection = xtermRef.current?.terminal.getSelection();
-                const hasSelection =
-                    selection !== undefined && selection.length > 0;
-                const { platform } = process;
-                const isMac = platform === 'darwin';
-                if (
-                    ((!isMac && event.ctrlKey) || (isMac && event.metaKey)) &&
-                    !event.repeat &&
-                    event.type === 'keydown'
-                ) {
-                    switch (event.code) {
-                        case 'KeyC':
-                            if (hasSelection) {
-                                clipboard.writeText(
-                                    selection.trim(),
-                                    'clipboard'
-                                );
-                                xtermRef.current?.terminal.clearSelection();
-                                event.preventDefault();
-                            }
-                            return !hasSelection;
-                        case 'KeyV':
-                            if (!lineMode) {
-                                handleUserInputShellMode(
-                                    clipboard.readText('clipboard')
-                                );
-                                event.preventDefault();
-                            }
-                            return false;
-                        case 'KeyA':
-                            xtermRef.current?.terminal.selectAll();
-                            event.preventDefault();
-                            return false;
-                    }
-                }
-                return true;
-            });
+
+                // @ts-expect-error Selection is checked by hasSelection
+                clipboard.writeText(selection.trim(), 'clipboard');
+                xtermRef.current?.terminal.clearSelection();
+            }
+
+            const hasClipboard = clipboard.readText('clipboard').trim() !== '';
+
+            if (!hasSelection && !lineMode && hasClipboard) {
+                handleUserInputShellMode(clipboard.readText('clipboard'));
+            }
+        };
+
+        const xTermRefLocal = xtermRef.current;
+
+        if (xTermRefLocal == null) {
+            return;
         }
+
+        xTermRefLocal?.terminal.element?.addEventListener(
+            'mousedown',
+            onMouseClick
+        );
+
+        return () => {
+            xTermRefLocal?.terminal.element?.removeEventListener(
+                'mousedown',
+                onMouseClick
+            );
+        };
+    }, [xtermRef, lineMode, handleUserInputShellMode]);
+
+    useEffect(() => {
+        if (xtermRef.current == null) {
+            return;
+        }
+
+        xtermRef.current?.terminal.attachCustomKeyEventHandler(event => {
+            const selection = xtermRef.current?.terminal.getSelection();
+
+            const hasSelection =
+                selection !== undefined && selection.length > 0;
+            const { platform } = process;
+            const isMac = platform === 'darwin';
+
+            if (
+                ((!isMac && event.ctrlKey) || (isMac && event.metaKey)) &&
+                !event.repeat &&
+                event.type === 'keydown'
+            ) {
+                switch (event.code) {
+                    case 'KeyC':
+                        if (hasSelection) {
+                            clipboard.writeText(selection.trim(), 'clipboard');
+                            xtermRef.current?.terminal.clearSelection();
+                            event.preventDefault();
+                        }
+                        return !hasSelection;
+                    case 'KeyV':
+                        if (!lineMode) {
+                            handleUserInputShellMode(
+                                clipboard.readText('clipboard')
+                            );
+                            event.preventDefault();
+                        }
+                        return false;
+                    case 'KeyA':
+                        xtermRef.current?.terminal.selectAll();
+                        event.preventDefault();
+                        return false;
+                }
+            }
+            return true;
+        });
     }, [xtermRef, lineMode, handleUserInputShellMode, cmdLine]);
 
     return (
@@ -382,6 +425,38 @@ export default ({
                                     setCmdLine('');
                                     setHistoryLine(undefined);
                                 }
+                            }}
+                            onMouseDown={e => {
+                                const isMiddleMouseClick = e.button === 1;
+
+                                if (!isMiddleMouseClick) return;
+
+                                const hasClipboard =
+                                    clipboard.readText('clipboard').trim() !==
+                                    '';
+
+                                if (!hasClipboard) {
+                                    return;
+                                }
+
+                                if (historyLine != null) {
+                                    setCmdLine(
+                                        `${historyLine}${clipboard.readText(
+                                            'clipboard'
+                                        )}`
+                                    );
+
+                                    resetHistoryScroll();
+                                    setHistoryLine(undefined);
+
+                                    return;
+                                }
+
+                                setCmdLine(
+                                    `${cmdLine}${clipboard.readText(
+                                        'clipboard'
+                                    )}`
+                                );
                             }}
                         />
                     </div>

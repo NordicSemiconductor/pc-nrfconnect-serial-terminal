@@ -1,3 +1,9 @@
+## 1.5.0 - unreleased
+
+### Added
+
+-   Ability to copy and paste with the middle mouse button click.
+
 ## 1.4.3 - 2024-11-11
 
 ### Changed
