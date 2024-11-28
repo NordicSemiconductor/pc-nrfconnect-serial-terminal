@@ -2,7 +2,7 @@
 
 ### Added
 
--   Ability to copy and paste with the middle mouse button click.
+-   Support for copying and pasting the console output with the middle mouse button.
 
 ## 1.4.3 - 2024-11-11
 
