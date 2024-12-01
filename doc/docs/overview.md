@@ -61,6 +61,9 @@ This is where you can type a command or paste it in and send it to the device by
 
 Use the **CLEAR CONSOLE** button in the bottom right corner to clear the console view.
 
+!!! info "Tip"
+      You can select the console output and use the middle mouse button to copy and paste it.
+
 ## Settings tab
 
 In this tab, you can configure the volatile **XTerm Scrollback** buffer for the console and the size of the persistent **History File**.
