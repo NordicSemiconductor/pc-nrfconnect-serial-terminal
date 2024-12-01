@@ -300,19 +300,39 @@ export default ({
 
             const hasSelection = xtermRef.current?.terminal.hasSelection();
 
-            if (hasSelection) {
-                const selection = xtermRef.current?.terminal.getSelection();
+            // if (! hasSelection) { return; }
 
-                // @ts-expect-error Selection is checked by hasSelection
-                clipboard.writeText(selection.trim(), 'clipboard');
+            const selection = xtermRef.current?.terminal.getSelection();
+            const selectedText = selection?.trim();
+
+            const textToPaste = hasSelection
+                ? selectedText
+                : clipboard.readText('clipboard');
+
+            if (!textToPaste) return;
+
+            if (selectedText && hasSelection) {
+                clipboard.writeText(selectedText, 'clipboard');
                 xtermRef.current?.terminal.clearSelection();
             }
 
-            const hasClipboard = clipboard.readText('clipboard').trim() !== '';
-
-            if (!hasSelection && !lineMode && hasClipboard) {
-                handleUserInputShellMode(clipboard.readText('clipboard'));
+            if (!lineMode) {
+                // shell mode
+                handleUserInputShellMode(textToPaste);
+                return;
             }
+
+            /* Line mode */
+            if (historyLine != null) {
+                setCmdLine(`${historyLine}${textToPaste}`);
+
+                resetHistoryScroll();
+                setHistoryLine(undefined);
+
+                return;
+            }
+
+            setCmdLine(`${cmdLine}${textToPaste}`);
         };
 
         const xTermRefLocal = xtermRef.current;
@@ -332,7 +352,7 @@ export default ({
                 onMouseClick
             );
         };
-    }, [xtermRef, lineMode, handleUserInputShellMode]);
+    }, [xtermRef, lineMode, cmdLine, historyLine, handleUserInputShellMode]);
 
     useEffect(() => {
         if (xtermRef.current == null) {
@@ -426,38 +446,44 @@ export default ({
                                     setHistoryLine(undefined);
                                 }
                             }}
-                            onMouseDown={e => {
-                                const isMiddleMouseClick = e.button === 1;
-
-                                if (!isMiddleMouseClick) return;
-
-                                const hasClipboard =
-                                    clipboard.readText('clipboard').trim() !==
-                                    '';
-
-                                if (!hasClipboard) {
-                                    return;
-                                }
-
-                                if (historyLine != null) {
-                                    setCmdLine(
-                                        `${historyLine}${clipboard.readText(
-                                            'clipboard'
-                                        )}`
-                                    );
-
-                                    resetHistoryScroll();
-                                    setHistoryLine(undefined);
-
-                                    return;
-                                }
-
-                                setCmdLine(
-                                    `${cmdLine}${clipboard.readText(
-                                        'clipboard'
-                                    )}`
-                                );
-                            }}
+                            // onMouseDown={e => {
+                            //     const isMiddleMouseClick = e.button === 1;
+                            //
+                            //     if (!isMiddleMouseClick) return;
+                            //
+                            //     const hasClipboard =
+                            //         clipboard.readText('clipboard').trim() !==
+                            //         '';
+                            //
+                            //     console.log('onMouseDown e', e);
+                            //     console.log(
+                            //         'lineModeInputRef: selectionStart ',
+                            //         lineModeInputRef.current?.selectionStart
+                            //     );
+                            //
+                            //     if (!hasClipboard) {
+                            //         return;
+                            //     }
+                            //
+                            //     if (historyLine != null) {
+                            //         setCmdLine(
+                            //             `${historyLine}${clipboard.readText(
+                            //                 'clipboard'
+                            //             )}`
+                            //         );
+                            //
+                            //         resetHistoryScroll();
+                            //         setHistoryLine(undefined);
+                            //
+                            //         return;
+                            //     }
+                            //
+                            //     setCmdLine(
+                            //         `${cmdLine}${clipboard.readText(
+                            //             'clipboard'
+                            //         )}`
+                            //     );
+                            // }}
                         />
                     </div>
                     <button
