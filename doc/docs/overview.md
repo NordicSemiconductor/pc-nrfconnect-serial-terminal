@@ -62,7 +62,7 @@ This is where you can type a command or paste it in and send it to the device by
 Use the **CLEAR CONSOLE** button in the bottom right corner to clear the console view.
 
 !!! info "Tip"
-      You can select the console output and use the middle mouse button to copy and paste it.
+      You can select the terminal output and use the middle mouse button to copy and paste it.
 
 ## Settings tab
 
