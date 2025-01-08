@@ -17,3 +17,8 @@ It can be used as an alternative to tools such as PuTTY and minicom.
 ## Supported devices
 
 The {{app_name}} supports Nordic Semiconductor Development Kits (DKs) and prototyping platforms. It is also compatible with all devices that have a USB-to-UART converter onboard that allows serial communication to a computer.
+
+## Application source code
+
+The code of the application is open source and [available on GitHub](https://github.com/NordicSemiconductor/pc-nrfconnect-serial-terminal).
+Feel free to fork the repository and clone it for secondary development or feature contributions.
