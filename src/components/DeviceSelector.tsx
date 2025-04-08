@@ -6,10 +6,7 @@
 
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import {
-    DeviceSelector,
-    logger,
-} from '@nordicsemiconductor/pc-nrfconnect-shared';
+import { DeviceSelector } from '@nordicsemiconductor/pc-nrfconnect-shared';
 import { DeviceTraits } from '@nordicsemiconductor/pc-nrfconnect-shared/nrfutil/device';
 
 import { closeDevice, openDevice } from '../actions/deviceActions';
@@ -27,16 +24,6 @@ export default () => {
                 !!(device.serialPorts && device.serialPorts.length > 0)
             }
             deviceListing={deviceListing}
-            onDeviceConnected={device => {
-                logger.info(
-                    `Connected to device with the serial number ${device.serialNumber}`
-                );
-            }}
-            onDeviceDisconnected={device => {
-                logger.info(
-                    `Disconnected from device with the serial number ${device.serialNumber}`
-                );
-            }}
             onDeviceSelected={(device, _, abortControler) => {
                 dispatch(openDevice(device, abortControler));
             }}
