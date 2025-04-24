@@ -1,3 +1,9 @@
+## 1.4.4 - unreleased
+
+### Changed
+
+-   Update dependencies to support the nRF Connect for Desktop v5.2.0 release.
+
 ## 1.4.3 - 2024-11-11
 
 ### Changed

@@ -21,7 +21,6 @@ import {
 } from '../features/terminal/terminalSlice';
 
 export const closeDevice = (): AppThunk<RootState> => dispatch => {
-    logger.info('Closing device');
     dispatch(setAvailableSerialPorts([]));
     dispatch(updateSerialOptions({ path: '' }));
     dispatch(setSerialPort(undefined));
