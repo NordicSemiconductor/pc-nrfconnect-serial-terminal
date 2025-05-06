@@ -446,44 +446,44 @@ export default ({
                                     setHistoryLine(undefined);
                                 }
                             }}
-                            // onMouseDown={e => {
-                            //     const isMiddleMouseClick = e.button === 1;
-                            //
-                            //     if (!isMiddleMouseClick) return;
-                            //
-                            //     const hasClipboard =
-                            //         clipboard.readText('clipboard').trim() !==
-                            //         '';
-                            //
-                            //     console.log('onMouseDown e', e);
-                            //     console.log(
-                            //         'lineModeInputRef: selectionStart ',
-                            //         lineModeInputRef.current?.selectionStart
-                            //     );
-                            //
-                            //     if (!hasClipboard) {
-                            //         return;
-                            //     }
-                            //
-                            //     if (historyLine != null) {
-                            //         setCmdLine(
-                            //             `${historyLine}${clipboard.readText(
-                            //                 'clipboard'
-                            //             )}`
-                            //         );
-                            //
-                            //         resetHistoryScroll();
-                            //         setHistoryLine(undefined);
-                            //
-                            //         return;
-                            //     }
-                            //
-                            //     setCmdLine(
-                            //         `${cmdLine}${clipboard.readText(
-                            //             'clipboard'
-                            //         )}`
-                            //     );
-                            // }}
+                            onMouseDown={e => {
+                                const isMiddleMouseClick = e.button === 1;
+
+                                if (!isMiddleMouseClick) return;
+
+                                const hasClipboard =
+                                    clipboard.readText('clipboard').trim() !==
+                                    '';
+
+                                console.log('onMouseDown e', e);
+                                console.log(
+                                    'lineModeInputRef: selectionStart ',
+                                    lineModeInputRef.current?.selectionStart
+                                );
+
+                                if (!hasClipboard) {
+                                    return;
+                                }
+
+                                if (historyLine != null) {
+                                    setCmdLine(
+                                        `${historyLine}${clipboard.readText(
+                                            'clipboard'
+                                        )}`
+                                    );
+
+                                    resetHistoryScroll();
+                                    setHistoryLine(undefined);
+
+                                    return;
+                                }
+
+                                setCmdLine(
+                                    `${cmdLine}${clipboard.readText(
+                                        'clipboard'
+                                    )}`
+                                );
+                            }}
                         />
                     </div>
                     <button
