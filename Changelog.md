@@ -1,4 +1,9 @@
-## 1.4.4 - unreleased
+## 1.5.0 - 2025-05-14
+
+### Added
+
+-   Support for copying and pasting the terminal output with the middle mouse
+    button.
 
 ### Changed
 

@@ -293,46 +293,109 @@ export default ({
     }
 
     useEffect(() => {
-        if (xtermRef.current != null) {
-            xtermRef.current?.terminal.attachCustomKeyEventHandler(event => {
-                const selection = xtermRef.current?.terminal.getSelection();
-                const hasSelection =
-                    selection !== undefined && selection.length > 0;
-                const { platform } = process;
-                const isMac = platform === 'darwin';
-                if (
-                    ((!isMac && event.ctrlKey) || (isMac && event.metaKey)) &&
-                    !event.repeat &&
-                    event.type === 'keydown'
-                ) {
-                    switch (event.code) {
-                        case 'KeyC':
-                            if (hasSelection) {
-                                clipboard.writeText(
-                                    selection.trim(),
-                                    'clipboard'
-                                );
-                                xtermRef.current?.terminal.clearSelection();
-                                event.preventDefault();
-                            }
-                            return !hasSelection;
-                        case 'KeyV':
-                            if (!lineMode) {
-                                handleUserInputShellMode(
-                                    clipboard.readText('clipboard')
-                                );
-                                event.preventDefault();
-                            }
-                            return false;
-                        case 'KeyA':
-                            xtermRef.current?.terminal.selectAll();
-                            event.preventDefault();
-                            return false;
-                    }
-                }
-                return true;
-            });
+        const onMouseClick = (e: MouseEvent) => {
+            const isMiddleMouseClick = e.button === 1;
+
+            if (!isMiddleMouseClick) return;
+
+            const hasSelection = xtermRef.current?.terminal.hasSelection();
+
+            // if (! hasSelection) { return; }
+
+            const selection = xtermRef.current?.terminal.getSelection();
+            const selectedText = selection?.trim();
+
+            const textToPaste = hasSelection
+                ? selectedText
+                : clipboard.readText('clipboard');
+
+            if (!textToPaste) return;
+
+            if (selectedText && hasSelection) {
+                clipboard.writeText(selectedText, 'clipboard');
+                xtermRef.current?.terminal.clearSelection();
+            }
+
+            if (!lineMode) {
+                // shell mode
+                handleUserInputShellMode(textToPaste);
+                return;
+            }
+
+            /* Line mode */
+            if (historyLine != null) {
+                setCmdLine(`${historyLine}${textToPaste}`);
+
+                resetHistoryScroll();
+                setHistoryLine(undefined);
+
+                return;
+            }
+
+            setCmdLine(`${cmdLine}${textToPaste}`);
+        };
+
+        const xTermRefLocal = xtermRef.current;
+
+        if (xTermRefLocal == null) {
+            return;
         }
+
+        xTermRefLocal?.terminal.element?.addEventListener(
+            'mousedown',
+            onMouseClick
+        );
+
+        return () => {
+            xTermRefLocal?.terminal.element?.removeEventListener(
+                'mousedown',
+                onMouseClick
+            );
+        };
+    }, [xtermRef, lineMode, cmdLine, historyLine, handleUserInputShellMode]);
+
+    useEffect(() => {
+        if (xtermRef.current == null) {
+            return;
+        }
+
+        xtermRef.current?.terminal.attachCustomKeyEventHandler(event => {
+            const selection = xtermRef.current?.terminal.getSelection();
+
+            const hasSelection =
+                selection !== undefined && selection.length > 0;
+            const { platform } = process;
+            const isMac = platform === 'darwin';
+
+            if (
+                ((!isMac && event.ctrlKey) || (isMac && event.metaKey)) &&
+                !event.repeat &&
+                event.type === 'keydown'
+            ) {
+                switch (event.code) {
+                    case 'KeyC':
+                        if (hasSelection) {
+                            clipboard.writeText(selection.trim(), 'clipboard');
+                            xtermRef.current?.terminal.clearSelection();
+                            event.preventDefault();
+                        }
+                        return !hasSelection;
+                    case 'KeyV':
+                        if (!lineMode) {
+                            handleUserInputShellMode(
+                                clipboard.readText('clipboard')
+                            );
+                            event.preventDefault();
+                        }
+                        return false;
+                    case 'KeyA':
+                        xtermRef.current?.terminal.selectAll();
+                        event.preventDefault();
+                        return false;
+                }
+            }
+            return true;
+        });
     }, [xtermRef, lineMode, handleUserInputShellMode, cmdLine]);
 
     return (
