@@ -1,3 +1,9 @@
+## 1.5.1 - UNRELEASED
+
+### Added
+
+-   Maintenance release to update the dependencies.
+
 ## 1.5.0 - 2025-05-22
 
 ### Added
