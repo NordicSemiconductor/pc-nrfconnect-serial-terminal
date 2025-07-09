@@ -22,5 +22,6 @@ jobs:
         with:
             source: ${{ inputs.source }}
             ref: ${{ inputs.ref }}
+            doc_bundle_name: nrf-connect-serial-terminal
             node_version: 18
         secrets: inherit
