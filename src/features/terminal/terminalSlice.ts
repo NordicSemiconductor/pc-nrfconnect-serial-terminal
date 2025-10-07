@@ -9,6 +9,10 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { AutoDetectTypes } from '@serialport/bindings-cpp';
 import type { SerialPortOpenOptions } from 'serialport';
 
+import {
+    getScrollback as getPersistedScrollback,
+    setScrollback as persistScrollback,
+} from '../../app/store';
 import type { RootState } from '../../appReducer';
 
 export type LineEnding = 'NONE' | 'LF' | 'CR' | 'CRLF';
@@ -41,7 +45,7 @@ const initialState: TerminalState = {
     lineMode: true,
     echoOnShell: true,
     showOverwriteDialog: false,
-    scrollback: 1000, // Default by Xterm.js
+    scrollback: getPersistedScrollback(), // Load from persistent storage
 };
 
 const cleanUndefined = <T>(obj: T) => JSON.parse(JSON.stringify(obj));
@@ -106,6 +110,7 @@ const terminalSlice = createSlice({
             { payload: scrollback }: PayloadAction<number>
         ) => {
             state.scrollback = scrollback;
+            persistScrollback(scrollback);
         },
         setWriteLogToFile: (
             state,

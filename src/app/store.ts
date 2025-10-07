@@ -14,6 +14,7 @@ import { join } from 'path';
 interface StoreSchema {
     pathToHistoryFile: string;
     maxNumberOfLinesInHistoryFile: number;
+    scrollback: number;
 }
 
 const store = getPersistentStore<StoreSchema>({
@@ -54,3 +55,5 @@ export const setMaxNumberOfLinesInHistoryFile = (size: number) => {
     _setMaxNumberOfLinesInHistoryFile(size);
     return true;
 };
+
+export const [getScrollback, setScrollback] = fromStore('scrollback', 10000);
