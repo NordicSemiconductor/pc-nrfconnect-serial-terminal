@@ -14,6 +14,7 @@ import { join } from 'path';
 interface StoreSchema {
     pathToHistoryFile: string;
     maxNumberOfLinesInHistoryFile: number;
+    searchHighlightColor: string;
 }
 
 const store = getPersistentStore<StoreSchema>({
@@ -54,3 +55,8 @@ export const setMaxNumberOfLinesInHistoryFile = (size: number) => {
     _setMaxNumberOfLinesInHistoryFile(size);
     return true;
 };
+
+export const [getSearchHighlightColor, setSearchHighlightColor] = fromStore(
+    'searchHighlightColor',
+    'rgba(135, 206, 250, 0.35)' // Light blue with 35% opacity
+);

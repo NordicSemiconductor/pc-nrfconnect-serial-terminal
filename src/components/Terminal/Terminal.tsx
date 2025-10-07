@@ -4,13 +4,20 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-4-Clause
  */
 
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, {
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useResizeDetector } from 'react-resize-detector';
 import { logger } from '@nordicsemiconductor/pc-nrfconnect-shared';
 import ansiEscapes from 'ansi-escapes';
 import { clipboard } from 'electron';
 import { writeFile } from 'fs/promises';
+import { SearchAddon } from 'xterm-addon-search';
 import { XTerm } from 'xterm-for-react';
 
 import {
@@ -23,6 +30,9 @@ import {
     clearWriteLogToFile,
     getEchoOnShell,
     getScrollback,
+    getSearchHighlightColor,
+    getSearchQuery,
+    getSearchRegex,
     getSerialPort,
     getWriteLogToFile,
 } from '../../features/terminal/terminalSlice';
@@ -59,13 +69,20 @@ export default ({
         undefined
     );
     const xtermRef = useRef<XTerm | null>(null);
+    const searchAddonRef = useRef<SearchAddon | null>(null);
     const lineModeInputRef = useRef<HTMLInputElement | null>(null);
+    const lastSearchRef = useRef<{ query: string; regex: boolean } | null>(
+        null
+    );
     const { width, height, ref: resizeRef } = useResizeDetector();
     const fitAddon = useFitAddon(height, width, lineMode);
     const echoOnShell = useSelector(getEchoOnShell);
     const serialPort = useSelector(getSerialPort);
     const scrollback = useSelector(getScrollback);
     const writeLogToFile = useSelector(getWriteLogToFile);
+    const searchQuery = useSelector(getSearchQuery);
+    const searchRegex = useSelector(getSearchRegex);
+    const searchHighlightColor = useSelector(getSearchHighlightColor);
     const dispatch = useDispatch();
 
     const writeLineModeToXterm = (data: string) => {
@@ -283,6 +300,7 @@ export default ({
         },
         disableStdin: lineMode, // Line mode user needs to use the input field not the terminal
         scrollback,
+        allowProposedApi: true,
     };
 
     if (
@@ -397,6 +415,103 @@ export default ({
             return true;
         });
     }, [xtermRef, lineMode, handleUserInputShellMode, cmdLine]);
+
+    // Initialize search addon
+    useEffect(() => {
+        if (!xtermRef.current || searchAddonRef.current) return;
+
+        searchAddonRef.current = new SearchAddon();
+        xtermRef.current.terminal.loadAddon(searchAddonRef.current);
+    }, []);
+
+    // Memoize search decoration options to avoid recalculating on every render
+    const searchDecorationOptions = useMemo(() => {
+        // Create slightly more opaque versions for borders and active states
+        const activeMatchColor = searchHighlightColor.replace(
+            /[\d.]+\)$/,
+            '0.55)'
+        );
+
+        return {
+            matchBackground: searchHighlightColor,
+            matchBorder: searchHighlightColor,
+            matchOverviewRuler: searchHighlightColor,
+            activeMatchBackground: activeMatchColor,
+            activeMatchBorder: activeMatchColor,
+            activeMatchColorOverviewRuler: activeMatchColor,
+        };
+    }, [searchHighlightColor]);
+
+    // Perform search when query or regex setting changes
+    useEffect(() => {
+        if (!searchAddonRef.current || !xtermRef.current) return;
+
+        // Clear previous decorations first
+        searchAddonRef.current.clearDecorations();
+
+        if (!searchQuery) {
+            lastSearchRef.current = null;
+            return;
+        }
+
+        // Performance safeguard: For very large buffers, warn the user or limit search
+        const bufferLength = xtermRef.current.terminal.buffer.active.length;
+        const isLargeBuffer = bufferLength > 10000; // Threshold for "large" buffer
+
+        if (isLargeBuffer && searchQuery.length < 3) {
+            // For large buffers, require at least 3 characters to prevent performance issues
+            logger.debug(
+                'Search query too short for large buffer. Minimum 3 characters required.'
+            );
+            return;
+        }
+
+        const currentSearch = { query: searchQuery, regex: searchRegex };
+        const isSameSearch =
+            lastSearchRef.current &&
+            lastSearchRef.current.query === currentSearch.query &&
+            lastSearchRef.current.regex === currentSearch.regex;
+
+        try {
+            // If it's the same search but only colors changed, just update decorations
+            if (isSameSearch) {
+                // Re-apply the search with new decoration options
+                searchAddonRef.current.findNext(searchQuery, {
+                    regex: searchRegex,
+                    wholeWord: false,
+                    caseSensitive: true,
+                    incremental: false,
+                    decorations: searchDecorationOptions,
+                });
+            } else {
+                // New search - perform full search operation
+                const found = searchAddonRef.current.findNext(searchQuery, {
+                    regex: searchRegex,
+                    wholeWord: false,
+                    caseSensitive: true,
+                    incremental: false,
+                    decorations: searchDecorationOptions,
+                });
+
+                // If no match found when searching forward, try from the beginning
+                if (!found) {
+                    searchAddonRef.current.findPrevious(searchQuery, {
+                        regex: searchRegex,
+                        wholeWord: false,
+                        caseSensitive: true,
+                        incremental: false,
+                        decorations: searchDecorationOptions,
+                    });
+                }
+
+                lastSearchRef.current = currentSearch;
+            }
+        } catch (error) {
+            // Handle invalid regex
+            logger.debug('Invalid search pattern:', error);
+            lastSearchRef.current = null;
+        }
+    }, [searchQuery, searchRegex, searchDecorationOptions]);
 
     return (
         <div ref={resizeRef} style={{ height: '100%' }}>

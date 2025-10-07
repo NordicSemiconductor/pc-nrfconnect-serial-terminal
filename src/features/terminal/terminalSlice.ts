@@ -9,6 +9,10 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { AutoDetectTypes } from '@serialport/bindings-cpp';
 import type { SerialPortOpenOptions } from 'serialport';
 
+import {
+    getSearchHighlightColor as getPersistedSearchHighlightColor,
+    setSearchHighlightColor as persistSearchHighlightColor,
+} from '../../app/store';
 import type { RootState } from '../../appReducer';
 
 export type LineEnding = 'NONE' | 'LF' | 'CR' | 'CRLF';
@@ -27,6 +31,9 @@ interface TerminalState {
     showOverwriteDialog: boolean;
     scrollback: number;
     writeLogToFile?: WriteToFileAction;
+    searchQuery: string;
+    searchRegex: boolean;
+    searchHighlightColor: string;
 }
 
 const initialState: TerminalState = {
@@ -42,6 +49,9 @@ const initialState: TerminalState = {
     echoOnShell: true,
     showOverwriteDialog: false,
     scrollback: 1000, // Default by Xterm.js
+    searchQuery: '',
+    searchRegex: false,
+    searchHighlightColor: getPersistedSearchHighlightColor(),
 };
 
 const cleanUndefined = <T>(obj: T) => JSON.parse(JSON.stringify(obj));
@@ -116,6 +126,16 @@ const terminalSlice = createSlice({
         clearWriteLogToFile: state => {
             state.writeLogToFile = undefined;
         },
+        setSearchQuery: (state, action: PayloadAction<string>) => {
+            state.searchQuery = action.payload;
+        },
+        setSearchRegex: (state, action: PayloadAction<boolean>) => {
+            state.searchRegex = action.payload;
+        },
+        setSearchHighlightColor: (state, action: PayloadAction<string>) => {
+            state.searchHighlightColor = action.payload;
+            persistSearchHighlightColor(action.payload);
+        },
     },
 });
 
@@ -138,6 +158,12 @@ export const getScrollback = (state: RootState) =>
     state.app.terminal.scrollback;
 export const getWriteLogToFile = (state: RootState) =>
     state.app.terminal.writeLogToFile;
+export const getSearchQuery = (state: RootState) =>
+    state.app.terminal.searchQuery;
+export const getSearchRegex = (state: RootState) =>
+    state.app.terminal.searchRegex;
+export const getSearchHighlightColor = (state: RootState) =>
+    state.app.terminal.searchHighlightColor;
 
 export const {
     setSerialPort,
@@ -153,5 +179,8 @@ export const {
     setScrollback,
     setWriteLogToFile,
     clearWriteLogToFile,
+    setSearchQuery,
+    setSearchRegex,
+    setSearchHighlightColor,
 } = terminalSlice.actions;
 export default terminalSlice.reducer;
