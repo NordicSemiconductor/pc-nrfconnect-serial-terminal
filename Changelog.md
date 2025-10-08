@@ -1,3 +1,9 @@
+## 1.6.0 - Unreleasd
+
+### Added
+
+-   Persist the `X Term Scrollback` setting for the next session
+
 ## 1.5.2 - 2025-07-14
 
 ### Fixed
