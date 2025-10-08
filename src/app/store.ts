@@ -56,4 +56,4 @@ export const setMaxNumberOfLinesInHistoryFile = (size: number) => {
     return true;
 };
 
-export const [getScrollback, setScrollback] = fromStore('scrollback', 10000);
+export const [getScrollback, setScrollback] = fromStore('scrollback', 1000);
