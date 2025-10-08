@@ -4,7 +4,10 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-4-Clause
  */
 
-import { SerialPort } from '@nordicsemiconductor/pc-nrfconnect-shared';
+import {
+    AppThunk,
+    SerialPort,
+} from '@nordicsemiconductor/pc-nrfconnect-shared';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { AutoDetectTypes } from '@serialport/bindings-cpp';
 import type { SerialPortOpenOptions } from 'serialport';
@@ -110,7 +113,6 @@ const terminalSlice = createSlice({
             { payload: scrollback }: PayloadAction<number>
         ) => {
             state.scrollback = scrollback;
-            persistScrollback(scrollback);
         },
         setWriteLogToFile: (
             state,
@@ -144,6 +146,13 @@ export const getScrollback = (state: RootState) =>
 export const getWriteLogToFile = (state: RootState) =>
     state.app.terminal.writeLogToFile;
 
+export const setActiveScrollback =
+    (scrollback: number): AppThunk<RootState> =>
+    dipatch => {
+        dipatch(terminalSlice.actions.setScrollback(scrollback));
+        persistScrollback(scrollback);
+    };
+
 export const {
     setSerialPort,
     setAvailableSerialPorts,
@@ -155,7 +164,6 @@ export const {
     setLineMode,
     setEchoOnShell,
     setShowOverwriteDialog,
-    setScrollback,
     setWriteLogToFile,
     clearWriteLogToFile,
 } = terminalSlice.actions;
