@@ -66,7 +66,10 @@ Use the **CLEAR CONSOLE** button in the bottom right corner to clear the console
 
 ## Settings tab
 
-In this tab, you can configure the volatile **XTerm Scrollback** buffer for the console and the size of the persistent **History File**.
+In this tab, you can configure the size of the following settings:
+
+* **XTerm Scrollback** buffer for storing the console output. The buffer value persists between app sessions.
+* **History File** for storing the command history between app sessions.
 
 ## About tab
 

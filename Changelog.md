@@ -1,8 +1,8 @@
 ## 1.6.0 - Unreleasd
 
-### Added
+### Changed
 
--   Persist the `X Term Scrollback` setting for the next session
+-   The **XTerm Scrollback** setting value now persists between app sessions.
 
 ## 1.5.2 - 2025-07-14
 
