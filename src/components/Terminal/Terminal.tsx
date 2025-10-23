@@ -56,7 +56,7 @@ export default ({
 }: Props) => {
     const [cmdLine, setCmdLine] = useState('');
     const [historyLine, setHistoryLine] = useState<string | undefined>(
-        undefined
+        undefined,
     );
     const xtermRef = useRef<XTerm | null>(null);
     const lineModeInputRef = useRef<HTMLInputElement | null>(null);
@@ -72,7 +72,7 @@ export default ({
         if (data.length === 1 && data.charCodeAt(0) === 12) return;
 
         xtermRef.current?.terminal.writeln(
-            `\x1b[32;1m> ${data.trim()}\x1b[32;0m`
+            `\x1b[32;1m> ${data.trim()}\x1b[32;0m`,
         );
     };
 
@@ -96,7 +96,7 @@ export default ({
                 xtermRef.current?.terminal.write(ret);
             }
         },
-        [clearOnSend, dispatch, commandCallback]
+        [clearOnSend, dispatch, commandCallback],
     );
 
     const getIndexOfLastLine = () => {
@@ -148,8 +148,8 @@ export default ({
                 if (lastLine) {
                     dispatch(
                         writeHistoryLine(
-                            lastLine.replace(/^[a-zA-Z]+:~\$/, '').trim()
-                        )
+                            lastLine.replace(/^[a-zA-Z]+:~\$/, '').trim(),
+                        ),
                     );
                 }
             }
@@ -159,7 +159,7 @@ export default ({
                 xtermRef.current?.terminal.write(ret);
             }
         },
-        [commandCallback, dispatch]
+        [commandCallback, dispatch],
     );
 
     // Prepare Terminal for new connection or mode
@@ -219,7 +219,7 @@ export default ({
                     xtermRef.current?.terminal.write(data);
                 }
             }),
-        [onData]
+        [onData],
     );
 
     useEffect(
@@ -233,7 +233,7 @@ export default ({
                     writeLineModeToXterm(data.toString());
                 }
             }),
-        [lineMode, onDataWritten, echoOnShell]
+        [lineMode, onDataWritten, echoOnShell],
     );
 
     useEffect(() => {
@@ -266,7 +266,7 @@ export default ({
                 } catch (error) {
                     logger.error(
                         'Could not write the serial terminal session to file: ',
-                        error
+                        error,
                     );
                 }
             };
@@ -343,13 +343,13 @@ export default ({
 
         xTermRefLocal?.terminal.element?.addEventListener(
             'mousedown',
-            onMouseClick
+            onMouseClick,
         );
 
         return () => {
             xTermRefLocal?.terminal.element?.removeEventListener(
                 'mousedown',
-                onMouseClick
+                onMouseClick,
             );
         };
     }, [xtermRef, lineMode, cmdLine, historyLine, handleUserInputShellMode]);
@@ -383,7 +383,7 @@ export default ({
                     case 'KeyV':
                         if (!lineMode) {
                             handleUserInputShellMode(
-                                clipboard.readText('clipboard')
+                                clipboard.readText('clipboard'),
                             );
                             event.preventDefault();
                         }

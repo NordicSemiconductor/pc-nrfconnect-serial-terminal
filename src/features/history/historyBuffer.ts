@@ -30,9 +30,9 @@ const getHistoryFromFile = async (pathToHistory: string) => {
             return !!parsedEntry && parsedEntry.length > 0;
         });
         return history;
-    } catch (error) {
+    } catch {
         logger.error(
-            `Could not read the content of the history file. Make sure that the file ${pathToHistory} is not locked by an application, and then restart the Serial Terminal.`
+            `Could not read the content of the history file. Make sure that the file ${pathToHistory} is not locked by an application, and then restart the Serial Terminal.`,
         );
         return null;
     }
@@ -73,12 +73,12 @@ const HistoryBufferWrapper = async (pathToHistory: string) => {
             const numberOfLinesToDelete = history.length - numberOfLinesToKeep;
             if (numberOfLinesToDelete > history.length) {
                 logger.debug(
-                    `Attempted to delete more lines from history than there are lines in the buffer. NumberOfLinesToDelete=${numberOfLinesToDelete}, numberOfLinesToKeep=${numberOfLinesToKeep}, numberOfLinesInHistoryBuffer=${history.length}`
+                    `Attempted to delete more lines from history than there are lines in the buffer. NumberOfLinesToDelete=${numberOfLinesToDelete}, numberOfLinesToKeep=${numberOfLinesToKeep}, numberOfLinesInHistoryBuffer=${history.length}`,
                 );
             }
             history.splice(0, numberOfLinesToDelete);
             logger.debug(
-                `Deleted ${numberOfLinesToDelete} lines from history file, it should not only contain ${numberOfLinesToKeep} lines.`
+                `Deleted ${numberOfLinesToDelete} lines from history file, it should not only contain ${numberOfLinesToKeep} lines.`,
             );
             currentLineIndex = history.length;
         },
@@ -90,7 +90,7 @@ const HistoryBufferWrapper = async (pathToHistory: string) => {
             const newHistory = await getHistoryFromFile(path);
             if (newHistory == null) {
                 logger.error(
-                    `The .history file may be out-of-sync. Attempted to refresh the content of the file, but was not successful. If you worry about content being lost, make sure that the file ${path} is not locked by an application, and then restart the Serial Terminal.`
+                    `The .history file may be out-of-sync. Attempted to refresh the content of the file, but was not successful. If you worry about content being lost, make sure that the file ${path} is not locked by an application, and then restart the Serial Terminal.`,
                 );
                 return;
             }
@@ -110,7 +110,7 @@ const HistoryBufferWrapper = async (pathToHistory: string) => {
 
             currentLineIndex -= 1;
             let nextLine = getCommandFromHistoryEntry(
-                history.at(currentLineIndex)
+                history.at(currentLineIndex),
             );
 
             while (
@@ -124,7 +124,7 @@ const HistoryBufferWrapper = async (pathToHistory: string) => {
 
                 currentLineIndex -= 1;
                 nextLine = getCommandFromHistoryEntry(
-                    history.at(currentLineIndex)
+                    history.at(currentLineIndex),
                 );
             }
 
@@ -139,7 +139,7 @@ const HistoryBufferWrapper = async (pathToHistory: string) => {
 
             currentLineIndex += 1;
             let nextLine = getCommandFromHistoryEntry(
-                history.at(currentLineIndex)
+                history.at(currentLineIndex),
             );
 
             while (
@@ -155,7 +155,7 @@ const HistoryBufferWrapper = async (pathToHistory: string) => {
                 }
 
                 nextLine = getCommandFromHistoryEntry(
-                    history.at(currentLineIndex)
+                    history.at(currentLineIndex),
                 );
             }
 

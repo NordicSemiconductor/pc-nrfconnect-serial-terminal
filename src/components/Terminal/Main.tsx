@@ -34,7 +34,7 @@ export default ({ active }: PaneProps) => {
 
             return serialPort.onDataWritten(listener);
         },
-        [serialPort]
+        [serialPort],
     );
     const onData = useCallback(
         (listener: (data: Uint8Array) => void) => {
@@ -42,7 +42,7 @@ export default ({ active }: PaneProps) => {
 
             return serialPort.onData(listener);
         },
-        [serialPort]
+        [serialPort],
     );
 
     useEffect(() => {
@@ -53,7 +53,7 @@ export default ({ active }: PaneProps) => {
                 setSerialOptions({
                     path: serialOptions.path,
                     ...options,
-                })
+                }),
             );
         });
 
@@ -93,7 +93,7 @@ export default ({ active }: PaneProps) => {
 
             serialPort?.write(command);
         },
-        [serialPort, lineEnding, lineMode]
+        [serialPort, lineEnding, lineMode],
     );
 
     return (

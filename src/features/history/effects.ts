@@ -34,11 +34,11 @@ const HISTORY_BUFFER_NOT_INITIALIZED_MESSAGE =
 
 export const initializeHistoryBuffer: AppThunk<RootState> = async (
     dispatch,
-    getState
+    getState,
 ) => {
     if (historyBuffer != null) {
         logger.debug(
-            'History Buffer is already initialized, and should only be initialized once.'
+            'History Buffer is already initialized, and should only be initialized once.',
         );
         return;
     }
@@ -50,7 +50,7 @@ export const initializeHistoryBuffer: AppThunk<RootState> = async (
         dispatch(setNumberOfLinesInHistory(historyBuffer.getNumberOfLines()));
         if (dispatch(validateNumberOfLinesInHistory)) {
             logger.warn(
-                'History file is full. You can find more information about the history file in the Settings tab.'
+                'History file is full. You can find more information about the history file in the Settings tab.',
             );
         }
     }
@@ -58,11 +58,10 @@ export const initializeHistoryBuffer: AppThunk<RootState> = async (
     getCurrentWindow().on('focus', async () => {
         if (historyBuffer) {
             logger.debug(
-                `The app will need to read the content of ${pathToHistoryFile}, becuase it may not be in-sync with the (in-memory) history buffer.`
+                `The app will need to read the content of ${pathToHistoryFile}, becuase it may not be in-sync with the (in-memory) history buffer.`,
             );
-            const numberOfLines = await historyBuffer.refreshHistoryFromFile(
-                pathToHistoryFile
-            );
+            const numberOfLines =
+                await historyBuffer.refreshHistoryFromFile(pathToHistoryFile);
 
             if (numberOfLines == null) {
                 return;
@@ -75,15 +74,14 @@ export const initializeHistoryBuffer: AppThunk<RootState> = async (
 
 const validateNumberOfLinesInHistory: AppThunk<RootState, boolean> = (
     dispatch,
-    getState
+    getState,
 ) => {
     if (historyBuffer == null) {
         logger.error(HISTORY_BUFFER_NOT_INITIALIZED_MESSAGE);
         return false;
     }
-    const maximumNumberOfLinesInHistory = getMaximumNumberOfLinesInHistory(
-        getState()
-    );
+    const maximumNumberOfLinesInHistory =
+        getMaximumNumberOfLinesInHistory(getState());
     const numberOfLinesInHistory = getNumberOfLinesInHistory(getState());
 
     if (numberOfLinesInHistory <= maximumNumberOfLinesInHistory) {
@@ -109,7 +107,7 @@ export const setNewMaximumNumberOfLinesInHistory =
             newMaxSize > MAXIMUM_MAX_NUMBER_OF_LINES
         ) {
             logger.error(
-                `Cannot set max number of lines in history file to ${newMaxSize}, it must be between ${MINIMUM_MAX_NUMER_OF_LINES} and ${MAXIMUM_MAX_NUMBER_OF_LINES}.`
+                `Cannot set max number of lines in history file to ${newMaxSize}, it must be between ${MINIMUM_MAX_NUMER_OF_LINES} and ${MAXIMUM_MAX_NUMBER_OF_LINES}.`,
             );
             return false;
         }
@@ -120,7 +118,7 @@ export const setNewMaximumNumberOfLinesInHistory =
 
         if (currentNumberOfLinesInHistoryFile > newMaxSize) {
             logger.debug(
-                `New history max size ${newMaxSize} is less than the current history file.`
+                `New history max size ${newMaxSize} is less than the current history file.`,
             );
             dispatch(trimHistoryFileToMaxSize);
         }
@@ -128,7 +126,7 @@ export const setNewMaximumNumberOfLinesInHistory =
 
 export const getHistoryPercentage: AppThunk<RootState> = (
     _dispatch,
-    getState
+    getState,
 ) => {
     const historySize = getNumberOfLinesInHistory(getState());
     const maximumHistorySize = getMaximumNumberOfLinesInHistory(getState());
@@ -146,13 +144,12 @@ export const writeHistoryLine =
 
         historyBuffer.pushLineToHistory(line);
 
-        const maximumNumberOfLinesInHistory = getMaximumNumberOfLinesInHistory(
-            getState()
-        );
+        const maximumNumberOfLinesInHistory =
+            getMaximumNumberOfLinesInHistory(getState());
 
         if (historyBuffer.getNumberOfLines() > maximumNumberOfLinesInHistory) {
             historyBuffer.trimDownToNumberOfLinesToKeep(
-                maximumNumberOfLinesInHistory
+                maximumNumberOfLinesInHistory,
             );
         }
 
@@ -167,16 +164,15 @@ export const trimHistoryFile =
             return;
         }
 
-        const maximumNumberOfLines = getMaximumNumberOfLinesInHistory(
-            getState()
-        );
+        const maximumNumberOfLines =
+            getMaximumNumberOfLinesInHistory(getState());
 
         if (
             numberOfLinesToKeep > maximumNumberOfLines ||
             numberOfLinesToKeep < 0
         ) {
             logger.error(
-                `Invalid number of lines to keep: ${numberOfLinesToKeep}, must be between [0, ${maximumNumberOfLines}]`
+                `Invalid number of lines to keep: ${numberOfLinesToKeep}, must be between [0, ${maximumNumberOfLines}]`,
             );
             return;
         }
@@ -211,15 +207,15 @@ const writeHistory =
         const pathToHistoryFile = getPathToHistoryFile(getState());
         const pathToTemporaryFile = join(
             dirname(pathToHistoryFile),
-            'temporary_history_file'
+            'temporary_history_file',
         );
 
         try {
             if ((await stat(pathToHistoryFile)).isFile())
                 await rename(pathToHistoryFile, pathToTemporaryFile);
-        } catch (error) {
+        } catch {
             logger.error(
-                `Could not make necessary changes to the history file, ${pathToHistoryFile}. Verify that the file is not locked, usually by another app.`
+                `Could not make necessary changes to the history file, ${pathToHistoryFile}. Verify that the file is not locked, usually by another app.`,
             );
             return;
         }
@@ -227,10 +223,10 @@ const writeHistory =
         try {
             await writeFile(pathToHistoryFile, history.join('\n'));
             await rm(pathToTemporaryFile);
-        } catch (error) {
+        } catch {
             logger.error(
                 'Could not write the (in-memory) history buffer to the (persistent) history file',
-                pathToHistoryFile
+                pathToHistoryFile,
             );
             rename(pathToTemporaryFile, pathToHistoryFile);
             return;

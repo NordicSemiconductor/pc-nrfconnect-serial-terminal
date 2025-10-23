@@ -18,7 +18,7 @@ import { convertToNumberDropDownItems } from '../../../utils/dataConstructors';
 
 interface BaudRateProperties {
     updateSerialPort: (
-        options: Partial<SerialPortOpenOptions<AutoDetectTypes>>
+        options: Partial<SerialPortOpenOptions<AutoDetectTypes>>,
     ) => Promise<void>;
     disabled: boolean;
 }

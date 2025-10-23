@@ -68,7 +68,7 @@ const SerialSettings = () => {
                       })),
                   ]
                 : [{ label: 'Not connected', value: '' }],
-        [availablePorts]
+        [availablePorts],
     );
 
     const selectedComPortItem = useMemo(
@@ -76,14 +76,14 @@ const SerialSettings = () => {
             serialOptions.path !== ''
                 ? getSelectedDropdownItem(
                       comPortsDropdownItems,
-                      serialOptions.path
+                      serialOptions.path,
                   )
                 : comPortsDropdownItems[0],
-        [comPortsDropdownItems, serialOptions]
+        [comPortsDropdownItems, serialOptions],
     );
 
     const updateSerialPort = async (
-        options: Partial<SerialPortOpenOptions<AutoDetectTypes>>
+        options: Partial<SerialPortOpenOptions<AutoDetectTypes>>,
     ) => {
         // If a port is not selected : just update settings
         if (options.path === '') {
@@ -104,7 +104,7 @@ const SerialSettings = () => {
 
     const connectToSelectedSerialPort = async (
         overwrite = false,
-        options: Partial<SerialPortOpenOptions<AutoDetectTypes>> = {}
+        options: Partial<SerialPortOpenOptions<AutoDetectTypes>> = {},
     ) => {
         const completeOptions = { ...serialOptions, ...options };
 
@@ -122,7 +122,7 @@ const SerialSettings = () => {
                     dispatch(setShowOverwriteDialog(true));
                 } else {
                     logger.error(
-                        'Port could not be opened. Verify it is not used by other applications.'
+                        'Port could not be opened. Verify it is not used by other applications.',
                     );
                 }
             }
@@ -193,14 +193,14 @@ const SerialSettings = () => {
                         updateSerialPort({
                             dataBits: convertItemToValue(
                                 ['8', '7', '6', '5'],
-                                item
+                                item,
                             ) as DataBits,
                         })
                     }
                     items={dataBitsItems}
                     selectedItem={getSelectedDropdownItem(
                         dataBitsItems,
-                        serialOptions.dataBits
+                        serialOptions.dataBits,
                     )}
                     disabled={settingLocked}
                 />
@@ -210,14 +210,14 @@ const SerialSettings = () => {
                         updateSerialPort({
                             stopBits: convertItemToValue(
                                 ['1', '2'],
-                                item
+                                item,
                             ) as StopBits,
                         })
                     }
                     items={stopBitsItems}
                     selectedItem={getSelectedDropdownItem(
                         stopBitsItems,
-                        serialOptions.stopBits
+                        serialOptions.stopBits,
                     )}
                     disabled={settingLocked}
                 />
@@ -227,14 +227,14 @@ const SerialSettings = () => {
                         updateSerialPort({
                             parity: convertItemToValue(
                                 parityOptions(),
-                                item
+                                item,
                             ) as Parity,
                         })
                     }
                     items={parityItems}
                     selectedItem={getSelectedDropdownItem(
                         parityItems,
-                        serialOptions.parity
+                        serialOptions.parity,
                     )}
                     disabled={settingLocked}
                 />
@@ -248,7 +248,7 @@ const SerialSettings = () => {
                     items={onOffItems}
                     selectedItem={getSelectedDropdownItem(
                         onOffItems,
-                        serialOptions.rtscts
+                        serialOptions.rtscts,
                     )}
                     disabled={settingLocked}
                 />
@@ -262,7 +262,7 @@ const SerialSettings = () => {
                     items={onOffItems}
                     selectedItem={getSelectedDropdownItem(
                         onOffItems,
-                        serialOptions.xon
+                        serialOptions.xon,
                     )}
                     disabled={settingLocked}
                 />
@@ -276,7 +276,7 @@ const SerialSettings = () => {
                     items={onOffItems}
                     selectedItem={getSelectedDropdownItem(
                         onOffItems,
-                        serialOptions.xoff
+                        serialOptions.xoff,
                     )}
                     disabled={settingLocked}
                 />
@@ -290,7 +290,7 @@ const SerialSettings = () => {
                     items={onOffItems}
                     selectedItem={getSelectedDropdownItem(
                         onOffItems,
-                        serialOptions.xany
+                        serialOptions.xany,
                     )}
                     disabled={settingLocked}
                 />
