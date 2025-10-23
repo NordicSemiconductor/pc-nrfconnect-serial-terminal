@@ -58,7 +58,7 @@ export const initializeHistoryBuffer: AppThunk<RootState> = async (
     getCurrentWindow().on('focus', async () => {
         if (historyBuffer) {
             logger.debug(
-                `The app will need to read the content of ${pathToHistoryFile}, becuase it may not be in-sync with the (in-memory) history buffer.`,
+                `The app will need to read the content of ${pathToHistoryFile}, because it may not be in-sync with the (in-memory) history buffer.`,
             );
             const numberOfLines =
                 await historyBuffer.refreshHistoryFromFile(pathToHistoryFile);
