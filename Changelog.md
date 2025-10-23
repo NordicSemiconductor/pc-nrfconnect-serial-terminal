@@ -1,3 +1,9 @@
+## 1.5.3 - Unreleased
+
+### Fixed
+
+- Do not send big, unneeded telemetry data for dependencies.
+
 ## 1.5.2 - 2025-07-14
 
 ### Fixed
