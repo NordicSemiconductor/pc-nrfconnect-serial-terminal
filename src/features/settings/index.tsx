@@ -37,11 +37,11 @@ const HistorySettings = () => {
     const pathToHistoryFile = useSelector(getPathToHistoryFile);
     const numberOfLinesInHistory = useSelector(getNumberOfLinesInHistory);
     const maximumNumberOfLinesInHistory = useSelector(
-        getMaximumNumberOfLinesInHistory
+        getMaximumNumberOfLinesInHistory,
     );
 
     const [newMaximumNumberOfLines, setNewMaximumNumberOfLines] = useState(
-        maximumNumberOfLinesInHistory
+        maximumNumberOfLinesInHistory,
     );
 
     const historyUsagePercentage =

@@ -40,7 +40,7 @@ export const openDevice =
         const ports = device.serialPorts;
         if (ports && ports?.length > 0) {
             dispatch(
-                setAvailableSerialPorts(ports.map(port => port.comName ?? ''))
+                setAvailableSerialPorts(ports.map(port => port.comName ?? '')),
             );
             dispatch(updateSerialOptions({ path: ports[0].comName ?? '' }));
         }
@@ -86,8 +86,8 @@ export const openDevice =
                         await createSerialPort(serialSettings, {
                             overwrite: false,
                             settingsLocked: false,
-                        })
-                    )
+                        }),
+                    ),
                 );
                 await dispatch(setSerialOptions(serialSettings));
             } catch (e) {
@@ -105,8 +105,8 @@ export const openDevice =
                         await createSerialPort(serialSettings, {
                             overwrite: false,
                             settingsLocked: false,
-                        })
-                    )
+                        }),
+                    ),
                 );
             }
         }

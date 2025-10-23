@@ -35,12 +35,12 @@ export default () => {
                 title: 'Save Serial Terminal logs',
                 defaultPath: fileName,
                 properties: ['createDirectory', 'showOverwriteConfirmation'],
-            }
+            },
         );
 
         if (canceled || filePath == null) {
             logger.debug(
-                'Saving cancelled while selecting the log file location.'
+                'Saving cancelled while selecting the log file location.',
             );
             return;
         }

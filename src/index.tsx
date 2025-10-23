@@ -37,5 +37,5 @@ render(
             },
         ]}
         autoReselectByDefault
-    />
+    />,
 );

@@ -55,7 +55,7 @@ const terminalSlice = createSlice({
         },
         setSerialPort: (
             state,
-            action: PayloadAction<SerialPort | undefined>
+            action: PayloadAction<SerialPort | undefined>,
         ) => {
             state.serialPort?.close();
             state.serialPort = action.payload;
@@ -64,7 +64,7 @@ const terminalSlice = createSlice({
             state,
             action: PayloadAction<
                 Partial<SerialPortOpenOptions<AutoDetectTypes>>
-            >
+            >,
         ) => {
             state.serialOptions = cleanUndefined({
                 ...state.serialOptions,
@@ -73,7 +73,7 @@ const terminalSlice = createSlice({
         },
         setSetOptions: (
             state,
-            action: PayloadAction<SerialPortOpenOptions<AutoDetectTypes>>
+            action: PayloadAction<SerialPortOpenOptions<AutoDetectTypes>>,
         ) => {
             state.serialOptions = cleanUndefined({
                 ...state.serialOptions,
@@ -82,7 +82,7 @@ const terminalSlice = createSlice({
         },
         setSerialOptions: (
             state,
-            action: PayloadAction<SerialPortOpenOptions<AutoDetectTypes>>
+            action: PayloadAction<SerialPortOpenOptions<AutoDetectTypes>>,
         ) => {
             state.serialOptions = cleanUndefined(action.payload);
         },
@@ -103,13 +103,13 @@ const terminalSlice = createSlice({
         },
         setScrollback: (
             state,
-            { payload: scrollback }: PayloadAction<number>
+            { payload: scrollback }: PayloadAction<number>,
         ) => {
             state.scrollback = scrollback;
         },
         setWriteLogToFile: (
             state,
-            { payload: options }: PayloadAction<WriteToFileAction>
+            { payload: options }: PayloadAction<WriteToFileAction>,
         ) => {
             state.writeLogToFile = options;
         },
