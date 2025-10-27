@@ -31,6 +31,7 @@ import {
 } from '../../../features/terminal/terminalSlice';
 import { convertToDropDownItems } from '../../../utils/dataConstructors';
 import ExportLog from './ExportLog';
+import SearchSettings from './SearchSettings';
 
 export default () => {
     const device = useSelector(selectedDevice);
@@ -134,6 +135,9 @@ export default () => {
 
     return (
         <>
+            <Group heading="Search" collapsible defaultCollapsed={false}>
+                <SearchSettings />
+            </Group>
             <Group heading="Terminal Mode" collapsible>
                 <StateSelector
                     items={lineModeItems}
