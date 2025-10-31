@@ -30,7 +30,7 @@ const fromStore = <T extends keyof StoreSchema>(key: T, defaultValue?: any) =>
 
 export const [getPathToHistoryFile, setPathToHistoryFile] = fromStore(
     'pathToHistoryFile',
-    join(getAppDataDir(), '.history')
+    join(getAppDataDir(), '.history'),
 );
 
 export const MINIMUM_MAX_NUMER_OF_LINES = 10;
@@ -46,7 +46,7 @@ export const setMaxNumberOfLinesInHistoryFile = (size: number) => {
         size > MAXIMUM_MAX_NUMBER_OF_LINES
     ) {
         logger.error(
-            `Cannot set max number of lines in history file to ${size}, it must be between ${MINIMUM_MAX_NUMER_OF_LINES} and ${MAXIMUM_MAX_NUMBER_OF_LINES}.`
+            `Cannot set max number of lines in history file to ${size}, it must be between ${MINIMUM_MAX_NUMER_OF_LINES} and ${MAXIMUM_MAX_NUMBER_OF_LINES}.`,
         );
         return false;
     }

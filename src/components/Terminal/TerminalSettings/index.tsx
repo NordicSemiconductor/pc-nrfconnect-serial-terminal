@@ -48,7 +48,7 @@ export default () => {
 
     const lineEndings = convertToDropDownItems<string>(
         ['NONE', 'LF', 'CR', 'CRLF'],
-        false
+        false,
     );
 
     const selectedLineEnding = lineEnding
@@ -68,7 +68,7 @@ export default () => {
             serialPort.isOpen().then(open => {
                 if (lastModemOpenState.current !== open && device) {
                     const vComIndex = device.serialPorts?.findIndex(
-                        dev => dev.comName === selectedSerialport
+                        dev => dev.comName === selectedSerialport,
                     );
 
                     if (vComIndex === undefined || vComIndex === -1) {
@@ -77,7 +77,7 @@ export default () => {
 
                     const terminalSettings = getPersistedTerminalSettings(
                         device,
-                        vComIndex
+                        vComIndex,
                     );
 
                     if (terminalSettings) {
@@ -85,8 +85,8 @@ export default () => {
                         dispatch(setEchoOnShell(terminalSettings.echoOnShell));
                         dispatch(
                             setLineEnding(
-                                terminalSettings.lineEnding as LineEnding
-                            )
+                                terminalSettings.lineEnding as LineEnding,
+                            ),
                         );
                         dispatch(setClearOnSend(terminalSettings.clearOnSend));
                     }
@@ -104,11 +104,11 @@ export default () => {
             return;
         }
 
-        !serialPort?.isOpen().then(open => {
+        serialPort?.isOpen().then(open => {
             if (!open) return;
 
             const vComIndex = device.serialPorts?.findIndex(
-                dev => dev.comName === selectedSerialport
+                dev => dev.comName === selectedSerialport,
             );
 
             if (vComIndex === undefined || vComIndex === -1) {
@@ -151,7 +151,7 @@ export default () => {
                             label="Line Ending"
                             onSelect={value =>
                                 dispatch(
-                                    setLineEnding(value.value as LineEnding)
+                                    setLineEnding(value.value as LineEnding),
                                 )
                             }
                             items={lineEndings}

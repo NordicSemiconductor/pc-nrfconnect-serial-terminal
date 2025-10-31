@@ -33,7 +33,7 @@ const historySlice = createSlice({
     reducers: {
         setNumberOfLinesInHistory: (
             state,
-            { payload: numberOfLines }: PayloadAction<number>
+            { payload: numberOfLines }: PayloadAction<number>,
         ) => {
             state.numberOfLinesInHistory = numberOfLines;
         },
@@ -45,14 +45,14 @@ const historySlice = createSlice({
         },
         setMaxNumberOfLinesInHistoryFile: (
             state,
-            { payload: numberOfLines }: PayloadAction<number>
+            { payload: numberOfLines }: PayloadAction<number>,
         ) => {
             state.maximumNumberOfLinesInHistory = numberOfLines;
             persistMaximumNumberOfLinesInHistoryFile(numberOfLines);
         },
         setPathToHistoryFile: (
             state,
-            { payload: path }: PayloadAction<string>
+            { payload: path }: PayloadAction<string>,
         ) => {
             state.pathToHistoryFile = path;
             persistPathToHistoryFile(path);
