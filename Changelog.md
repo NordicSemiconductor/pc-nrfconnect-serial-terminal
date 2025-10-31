@@ -2,7 +2,7 @@
 
 ### Changed
 
--   The **XTerm Scrollback** setting value now persists between app sessions.
+- The **XTerm Scrollback** setting value now persists between app sessions.
 
 ### Fixed
 
