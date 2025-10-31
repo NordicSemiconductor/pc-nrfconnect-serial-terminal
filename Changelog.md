@@ -1,4 +1,8 @@
-## 1.5.3 - Unreleased
+## 1.6.0 - Unreleasd
+
+### Changed
+
+-   The **XTerm Scrollback** setting value now persists between app sessions.
 
 ### Fixed
 

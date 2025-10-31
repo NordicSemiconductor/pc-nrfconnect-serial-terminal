@@ -26,10 +26,7 @@ import {
     getMaximumNumberOfLinesInHistory,
     getNumberOfLinesInHistory,
 } from '../history/historySlice';
-import {
-    getScrollback,
-    setScrollback as setActiveScrollback,
-} from '../terminal/terminalSlice';
+import { getScrollback, setActiveScrollback } from '../terminal/terminalSlice';
 
 const HistorySettings = () => {
     const dispatch = useDispatch();
