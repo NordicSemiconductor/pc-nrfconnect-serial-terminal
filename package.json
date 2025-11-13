@@ -49,8 +49,5 @@
         "xterm-addon-fit": "^0.8.0",
         "xterm-for-react": "github:NordicPlayground/xterm-for-react"
     },
-    "eslintConfig": {
-        "extends": "./node_modules/@nordicsemiconductor/pc-nrfconnect-shared/config/eslintrc"
-    },
     "prettier": "@nordicsemiconductor/pc-nrfconnect-shared/config/prettier.config.js"
 }
