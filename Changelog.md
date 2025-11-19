@@ -1,12 +1,10 @@
-## 1.6.0 - Unreleasd
+## 1.6.0 - 2025-11-20
 
 ### Changed
 
 - The **XTerm Scrollback** setting value now persists between app sessions.
-
-### Fixed
-
-- Do not send big, unneeded telemetry data for dependencies.
+- Modified telemetry behavior to avoid sending unneeded large packets of
+  telemetry data for dependencies.
 
 ## 1.5.2 - 2025-07-14
 
