@@ -13,6 +13,7 @@ import {
     persistTerminalSettings,
     selectedDevice,
     StateSelector,
+    telemetry,
     Toggle,
 } from '@nordicsemiconductor/pc-nrfconnect-shared';
 
@@ -56,6 +57,12 @@ export default () => {
         : lineEndings[0];
 
     const lineModeItems = ['Line', 'Shell'];
+
+    useEffect(() => {
+        if (lineMode) {
+            telemetry.sendEvent('Line Ending', { lineEnding });
+        }
+    }, [lineEnding, lineMode]);
 
     useEffect(() => {
         if (!serialPort) {
