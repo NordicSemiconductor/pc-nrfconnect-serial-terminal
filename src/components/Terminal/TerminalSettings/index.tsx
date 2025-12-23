@@ -61,6 +61,7 @@ export default () => {
     useEffect(() => {
         if (lineMode) {
             telemetry.sendEvent('Line Ending', { lineEnding });
+            console.log('-----> Telemetry event: \'Line Ending\'', { lineEnding } );
         }
     }, [lineEnding, lineMode]);
 
