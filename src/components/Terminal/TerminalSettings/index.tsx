@@ -59,13 +59,14 @@ export default () => {
     const lineModeItems = ['Line', 'Shell'];
 
     useEffect(() => {
-        if (lineMode) {
+        if (lineMode && device) {
             telemetry.sendEvent('Line Ending', { lineEnding });
+
             console.log("-----> Telemetry event: 'Line Ending'", {
                 lineEnding,
             });
         }
-    }, [lineEnding, lineMode]);
+    }, [lineEnding, lineMode, device]);
 
     useEffect(() => {
         if (!serialPort) {
