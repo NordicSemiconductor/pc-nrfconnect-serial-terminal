@@ -16,6 +16,7 @@ import {
     telemetry,
     Toggle,
 } from '@nordicsemiconductor/pc-nrfconnect-shared';
+import { selectedSerialNumber } from '@nordicsemiconductor/pc-nrfconnect-shared/src/Device/deviceSlice';
 
 import {
     getClearOnSend,
@@ -38,6 +39,7 @@ export default () => {
     const serialPort = useSelector(getSerialPort);
     const lastModemOpenState = useRef(false);
     const selectedSerialport = useSelector(getSerialOptions).path;
+    const currentSerialNumber = useSelector(selectedSerialNumber);
 
     const clearOnSend = useSelector(getClearOnSend);
     const lineEnding = useSelector(getLineEnding);
@@ -47,7 +49,7 @@ export default () => {
 
     const dispatch = useDispatch();
 
-    const lineEndings = convertToDropDownItems<string>(
+    const lineEndings = convertToDropDownItems<LineEnding>(
         ['NONE', 'LF', 'CR', 'CRLF'],
         false,
     );
@@ -58,11 +60,26 @@ export default () => {
 
     const lineModeItems = ['Line', 'Shell'];
 
+    const prevLineEndingRef = useRef<LineEnding | undefined>(undefined);
+    const prevSerialNumberRef = useRef<string | null | undefined>(undefined);
+
     useEffect(() => {
-        if (lineMode) {
-            telemetry.sendEvent('Line Ending', { lineEnding });
-        }
-    }, [lineEnding, lineMode]);
+        if (!lineMode || !device) return;
+
+        const timerId = setTimeout(() => {
+            if (
+                prevLineEndingRef.current !== lineEnding ||
+                prevSerialNumberRef.current !== currentSerialNumber
+            ) {
+                telemetry.sendEvent('Line Ending', { lineEnding });
+
+                prevLineEndingRef.current = lineEnding;
+                prevSerialNumberRef.current = currentSerialNumber;
+            }
+        }, 500);
+
+        return () => clearTimeout(timerId);
+    }, [lineEnding, lineMode, device, currentSerialNumber]);
 
     useEffect(() => {
         if (!serialPort) {

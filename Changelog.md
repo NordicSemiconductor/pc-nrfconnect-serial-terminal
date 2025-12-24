@@ -1,3 +1,9 @@
+## 1.6.1 - 2025-12-24
+
+### Changed
+
+- Maintenance release to update the dependencies.
+
 ## 1.6.0 - 2025-11-20
 
 ### Changed
