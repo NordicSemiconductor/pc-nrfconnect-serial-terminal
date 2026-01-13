@@ -82,11 +82,13 @@ This is where you can type a command or paste it in and send it to the device.
 !!! info "Tip"
       You can select the terminal output and use the middle mouse button to copy and paste it.
 
+Commands sent to the device are displayed with a green ">" prefix. Responses from the device are displayed in white. The terminal supports ANSI escape codes, which allows for color-coded output if your device firmware uses them.
+
 ### Terminal tab in Line mode
 
 ![Serial Terminal AT commands view](./screenshots/serial_term_at_commands.png "Serial Terminal AT commands view")
 
-The following actions are available when in [Line mode](#terminal-mode), for example when [viewing and sending AT commands](viewing_and_sending_at_commands.md).
+The following actions are available when in [Line mode](#terminal-mode).
 
 | Action                              | Description                                                                    |
 |-------------------------------------|--------------------------------------------------------------------------------|
@@ -94,7 +96,7 @@ The following actions are available when in [Line mode](#terminal-mode), for exa
 | **CLEAR CONSOLE**                   | Clears the terminal view.                                                      |
 | **Arrow Up/Down**                   | Navigate through previously sent commands in the input field.                  |
 
-When using the terminal tab in the Line mode, commands sent to the device are displayed with a green ">" prefix. Responses from the device are displayed in white. The terminal supports ANSI escape codes, which allows for color-coded output if your device firmware uses them.
+When using the terminal tab in the Line mode, the line ending is automatically appended to the command based on the [**Line Ending** selection](#line-mode).
 
 ## Settings tab
 

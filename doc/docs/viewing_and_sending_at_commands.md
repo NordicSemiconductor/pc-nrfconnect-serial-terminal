@@ -6,15 +6,6 @@ The terminal displays the AT communication with the modem.
 
 ![Serial Terminal AT commands view](./screenshots/serial_term_at_commands.png "Serial Terminal AT commands view")
 
-To interact with the modem by sending AT commands:
-
-1. Switch to Line mode:
-
-    1. Expand the [terminal mode settings](overview.md#terminal-mode) in the side panel.
-    2. Select **Line**.
-    3. Configure the **Line Ending** setting to match your modem's requirements. Most modems expect ``CR LF`` (carriage return + line feed).
-
-1. Enter text in the command line located directly above the terminal and send it to the modem by pressing Enter or clicking **Send**.<br/>
-   The line ending is automatically appended to the command.
+To interact with the modem by sending AT commands, enter text in the command line located directly above the terminal and send it to the modem by pressing Enter or clicking **Send**. In the [Line mode](overview.md#line-mode), the selected line ending is automatically appended to the command.
 
 Each command is sent separately to the device, and the device processes each command and returns a response before waiting for the next command. This is the standard behavior for AT command communication.
