@@ -2,6 +2,7 @@
 
 |     Date     |                                                                  Description                                                                   |
 | ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| January 2026 | - Added the [Viewing and sending AT commands](./viewing_and_sending_at_commands.md) page with instructions for using AT commands.<br/>- Updated the [Overview](overview.md) page with images and more detailed information about different UI elements. |
 | October 2025 | Updated the [Settings tab](./overview.md#settings-tab) section on the [Overview](./overview.md) page with information about the **XTerm Scrollback** setting value now persisting between app sessions. |
 | January 2025 | Added the [Application source code](./index.md#application-source-code) section on the [Home](./index.md) page |
 | November 2024 | Editorial changes |
