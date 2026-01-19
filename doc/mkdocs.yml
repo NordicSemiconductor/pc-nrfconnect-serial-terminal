@@ -54,6 +54,7 @@ plugins:
 extra:
   test: This is a test abbreviation snippet
   app_name: Serial Terminal app
+  NCS: nRF Connect SDK
 
 nav:
   - Home: index.md
@@ -62,5 +63,6 @@ nav:
   - Getting started: connecting.md
   - Selecting a serial port: selecting_serial_port.md
   - Configuring logging to the serial port: configuring_serial_port.md
+  - Viewing and sending AT commands: viewing_and_sending_at_commands.md
   - Troubleshooting: troubleshooting.md
   - Revision history: revision_history.md
