@@ -53,7 +53,6 @@ plugins:
 
 extra:
   test: This is a test abbreviation snippet
-  app_name: Serial Terminal app
   NCS: nRF Connect SDK
 
 nav:
