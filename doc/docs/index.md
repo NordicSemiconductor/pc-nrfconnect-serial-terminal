@@ -5,6 +5,10 @@ It can be used as an alternative to tools such as PuTTY and minicom.
 
 Serial Terminal app is installed and updated using [nRF Connect for Desktop](https://docs.nordicsemi.com/bundle/nrf-connect-desktop/page/index.html).
 
+## Installing the Serial Terminal app
+
+For installation instructions, see [Installing nRF Connect for Desktop apps](https://docs.nordicsemi.com/bundle/nrf-connect-desktop/page/installing_apps.html) in the nRF Connect for Desktop documentation.
+
 ## Serial Terminal app features
 
 - Configure, monitor, and communicate with virtual serial ports on Nordic Semiconductor devices.
