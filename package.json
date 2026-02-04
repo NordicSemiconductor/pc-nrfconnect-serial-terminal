@@ -43,7 +43,7 @@
         "prepare": "husky install"
     },
     "devDependencies": {
-        "@nordicsemiconductor/pc-nrfconnect-shared": "^241.0.0",
+        "@nordicsemiconductor/pc-nrfconnect-shared": "^244.0.0",
         "ansi-escapes": "^4.3.2",
         "serialport": "^10.5.0",
         "xterm-addon-fit": "^0.8.0",
