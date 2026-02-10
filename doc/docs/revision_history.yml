@@ -1,0 +1,28 @@
+tool:
+- name: Serial Terminal app
+  link: true
+sections:
+- name: January 2026
+  entries:
+  - "Renamed the Home page to [Get started](./index.md)."
+  - "Removed the separate Installing the Serial Terminal app page. This page is now a section of the Get started page."
+  - "Added the [Viewing and sending AT commands](./viewing_and_sending_at_commands.md) page with instructions for using AT commands."
+  - "Updated the [Overview](overview.md) page with images and more detailed information about different UI elements."
+- name: October 2025
+  entries:
+  - "Updated the [Settings tab](./overview.md#settings-tab) section on the [Overview](./overview.md) page with information about the **XTerm Scrollback** setting value now persisting between app sessions."
+- name: January 2025
+  entries:
+  - "Added the [Application source code](./index.md#application-source-code) section on the [Home](./index.md) page."
+- name: November 2024
+  entries:
+  - "Editorial changes."
+- name: October 2024
+  entries:
+  - "Updated for [nRF Connect Serial Terminal v1.4.2](https://github.com/NordicSemiconductor/pc-nrfconnect-serial-terminal/blob/main/Changelog.md)."
+- name: January 2024
+  entries:
+  - "Updated for [nRF Connect Serial Terminal v1.3.0](https://github.com/NordicSemiconductor/pc-nrfconnect-serial-terminal/blob/main/Changelog.md)."
+- name: June 2023
+  entries:
+  - "First release."
