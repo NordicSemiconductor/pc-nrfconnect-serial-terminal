@@ -1,4 +1,4 @@
-# Serial Terminal app
+# Get started
 
 The Serial Terminal app is a cross-platform terminal emulator for serial port communications with Nordic Semiconductor devices over Universal Asynchronous Receiver/Transmitter (UART).
 It can be used as an alternative to tools such as PuTTY and minicom.
