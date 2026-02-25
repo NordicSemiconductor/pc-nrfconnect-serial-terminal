@@ -25,7 +25,7 @@ To start using Serial Terminal:
          If you are auto-reconnecting a previously used device, this and the next step are not required, as the application connects automatically to the last connected serial port on that device.
 
 1. Click **Connect to port** to connect to the selected serial port.</br>
-   Depending on the application firmware running on the device, you might see logging output. You can view information on the device's connection status and settings in the [**Log**](overview.md#log).
+   Depending on the application firmware running on the device, you might see logging output. You can view information on the device's connection status and settings in the [**Log**](overview.md#common-interface).
 
      ![Serial Terminal with a device selected](./screenshots/serial_term_connect_to_port.png "Serial Terminal with a device selected")
 
