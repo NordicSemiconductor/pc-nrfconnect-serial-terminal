@@ -2,6 +2,10 @@ tool:
 - name: Serial Terminal app
   link: true
 sections:
+- name: February 2026
+  entries:
+  - "Renamed [Getting started](connecting.md) to [Connecting to a serial port](connecting.md)."
+  - "Renamed [Selecting a serial port](selecting_serial_port.md) to [Selecting the right serial port](selecting_serial_port.md)."
 - name: January 2026
   entries:
   - "Renamed the Home page to [Get started](./index.md)."

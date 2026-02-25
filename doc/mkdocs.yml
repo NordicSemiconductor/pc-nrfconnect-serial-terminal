@@ -57,8 +57,8 @@ extra:
 nav:
   - Get started: index.md
   - Overview and user interface: overview.md
-  - Getting started: connecting.md
-  - Selecting a serial port: selecting_serial_port.md
+  - Connecting to a serial port: connecting.md
+  - Selecting the right serial port: selecting_serial_port.md
   - Configuring logging to the serial port: configuring_serial_port.md
   - Viewing and sending AT commands: viewing_and_sending_at_commands.md
   - Troubleshooting: troubleshooting.md

@@ -1,7 +1,7 @@
-# Selecting a serial port
+# Selecting the right serial port
 
 The number of serial ports available in the Serial Terminal app depends on the selected device and the onboard application firmware.
-You can see the available serial ports when you [start using the application](connecting.md).
+You can see the available serial ports when you [connect to a serial port](connecting.md).
 
 !!! info "Tip"
       If you have [nRF Util installed](https://docs.nordicsemi.com/bundle/nrfutil/page/guides/installing.html), you can see the available serial ports of the connected Nordic Semiconductor devices before selecting a device in the Serial Terminal app. Use the `nrfutil device list` command in a terminal.
