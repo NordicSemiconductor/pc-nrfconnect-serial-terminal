@@ -6,8 +6,8 @@
 
 import { getCurrentWindow } from '@electron/remote';
 import {
-    AppDispatch,
-    AppThunk,
+    type AppDispatch,
+    type AppThunk,
     logger,
 } from '@nordicsemiconductor/pc-nrfconnect-shared';
 import { rename, rm, stat, writeFile } from 'fs/promises';
@@ -17,7 +17,7 @@ import {
     MAXIMUM_MAX_NUMBER_OF_LINES,
     MINIMUM_MAX_NUMER_OF_LINES,
 } from '../../app/store';
-import { RootState } from '../../appReducer';
+import { type RootState } from '../../appReducer';
 import HistoryBufferWrapper from './historyBuffer';
 import {
     getMaximumNumberOfLinesInHistory,

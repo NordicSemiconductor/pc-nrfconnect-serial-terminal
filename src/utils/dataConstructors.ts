@@ -5,8 +5,8 @@
  */
 
 import {
-    DropdownItem,
-    NumberDropdownItem,
+    type DropdownItem,
+    type NumberDropdownItem,
 } from '@nordicsemiconductor/pc-nrfconnect-shared';
 
 export const getSelectedDropdownItem = (

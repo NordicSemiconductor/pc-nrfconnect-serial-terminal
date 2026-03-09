@@ -4,15 +4,15 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-4-Clause
  */
 import {
-    AppThunk,
+    type AppThunk,
     createSerialPort,
     describeError,
-    Device,
+    type Device,
     getSerialPortOptions,
     logger,
 } from '@nordicsemiconductor/pc-nrfconnect-shared';
 
-import { RootState } from '../appReducer';
+import { type RootState } from '../appReducer';
 import {
     setAvailableSerialPorts,
     setSerialOptions,
