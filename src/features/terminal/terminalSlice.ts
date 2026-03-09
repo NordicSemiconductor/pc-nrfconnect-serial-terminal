@@ -5,10 +5,10 @@
  */
 
 import {
-    AppThunk,
-    SerialPort,
+    type AppThunk,
+    type SerialPort,
 } from '@nordicsemiconductor/pc-nrfconnect-shared';
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import type { AutoDetectTypes } from '@serialport/bindings-cpp';
 import type { SerialPortOpenOptions } from 'serialport';
 

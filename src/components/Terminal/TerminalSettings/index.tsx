@@ -25,7 +25,7 @@ import {
     getLineMode,
     getSerialOptions,
     getSerialPort,
-    LineEnding,
+    type LineEnding,
     setClearOnSend,
     setEchoOnShell,
     setLineEnding,

@@ -11,15 +11,15 @@ import {
     ConflictingSettingsDialog,
     createSerialPort,
     Dropdown,
-    DropdownItem,
+    type DropdownItem,
     Group,
     logger,
     persistSerialPortOptions,
-    SerialPort,
+    type SerialPort,
     truncateMiddle,
 } from '@nordicsemiconductor/pc-nrfconnect-shared';
 import type { AutoDetectTypes } from '@serialport/bindings-cpp';
-import { SerialPortOpenOptions } from 'serialport';
+import { type SerialPortOpenOptions } from 'serialport';
 
 import {
     getAvailableSerialPorts,
