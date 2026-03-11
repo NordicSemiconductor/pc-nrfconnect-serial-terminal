@@ -14,5 +14,5 @@ Here are some basic troubleshooting steps to help you fix issues you might encou
 
 - Reset the device.
 - Reset Serial Terminal using CTRL+R on Windows and Linux or CMD+R on macOS.
-- Check that the onboard application has enabled serial communications and UART logging for at least one UART on the board. See [Configuring serial port and logging](./configuring_serial_port.md) and [Selecting a serial port](./selecting_serial_port.md).
+- Check that the onboard application has enabled serial communications and UART logging for at least one UART on the board. See [Configuring serial port and logging](./configuring_serial_port.md) and [Selecting the right serial port](./selecting_serial_port.md).
 - Check that you have enabled all instances of UART peripheral you require. See [DevAcademy device driver model](https://academy.nordicsemi.com/topic/device-driver-model/) for more information.

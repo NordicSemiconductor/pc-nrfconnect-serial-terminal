@@ -5,9 +5,11 @@ In the background, the application initializes the required nRF Util module and 
 
 ![Serial Terminal app default view at startup](./screenshots/serial_term_startup.png "Serial Terminal app default view")
 
-## Select Device
+## Common interface
 
-Once you connect a device to the system, it becomes visible and available when you click on the **Select device** drop-down list. Choose a device from the list of connected devices to [connect to it](connecting.md).
+This app uses the nRF Connect for Desktop UI framework. Shared UI elements such as **Select device**, **About** tab, and **Log** panel are described in the [Common user interface](https://docs.nordicsemi.com/bundle/swtools_docs/page/common_interface.html) documentation.
+
+Choose a device from the **Select device** drop-down list to [connect to it](connecting.md).
 
 ## Serial port
 
@@ -106,16 +108,3 @@ In this tab, you can configure the size of the following settings:
 
 * **XTerm Scrollback** buffer for storing the console output. The buffer value persists between app sessions.
 * **History File** for storing the command history between app sessions.
-
-## About tab
-
-You can view application information, restore defaults, access source code and documentation. You also can find information on the selected device, access support tools, send feedback, and enable verbose logging.
-
-## Log
-
-The Log panel allows you to view the most important log events, tagged with a timestamp. Each time you open the app, a new session log file is created. You can find the Log panel and its controls, below the main application Window.
-
-- When troubleshooting, to view more detailed information than shown in the Log panel, use **Open log file** to open the current log file in a text editor.
-- To clear the information currently displayed in the Log panel, use **Clear Log**. The contents of the log file are not affected.
-- To hide or display the Log panel in the user interface, use **Show Log**.
-- To freeze Log panel scrolling, use **Autoscroll Log**.
