@@ -11,8 +11,14 @@ The Serial Terminal app allows you to connect to serial devices.
 
 The Serial Terminal app is installed from nRF Connect from Desktop. For detailed
 steps, see
-[Installing nRF Connect for Desktop apps](https://docs.nordicsemi.com/bundle/nrf-connect-desktop/page/installing_apps.html)
+[Installing nRF Connect for Desktop apps](https://docs.nordicsemi.com/bundle/swtools_docs/page/app/nrf-connect-desktop/installing_apps.html)
 in the nRF Connect from Desktop documentation.
+
+## Documentation
+
+Read the
+[Serial Terminal app](https://docs.nordicsemi.com/bundle/swtools_docs/page/app/pc-nrfconnect-serial-terminal/index.html)
+official documentation.
 
 ## Development
 
